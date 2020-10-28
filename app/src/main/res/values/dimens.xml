@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- shapes -->
+    <dimen name="button_border_radius">7dp</dimen>
+
+
+
+</resources>

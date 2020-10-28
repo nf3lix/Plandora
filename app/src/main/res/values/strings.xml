@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Plandora</string>
+
+    <!--- sign in/sign out -->
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_out">Sign out</string>
+    <string name="unique_username">Name</string>
+    <string name="display_name">Display name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="password_repeat">Repeat password</string>
+
+    <!--- dashboard -->
+    <string name="dashboard_display_name">Dashboard</string>
+    <string name="dashboard_toolbar_title">Upcoming Events</string>
+
+    <!--- notifications -->
+    <string name="notifications_display_name">Notifications</string>
+    <string name="notifications_toolbar_title">Notifications</string>
+
+    <!--- profile -->
+    <string name="profile_display_name">Profile</string>
+    <string name="profile_toolbar_title">Profile</string>
+
+    <!--- string values for specific activities -->
+    <string name="sign_in_description_text">Please enter your login credentials</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+</resources>

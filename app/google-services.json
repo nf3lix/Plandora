@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "265547455576",
+    "firebase_url": "https://plandora.firebaseio.com",
+    "project_id": "plandora",
+    "storage_bucket": "plandora.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265547455576:android:31d091b1637feb3a053e2d",
+        "android_client_info": {
+          "package_name": "com.plandora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265547455576-erndqf9npeh1dl459l4bcanlc5i05ctl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMg98IfdpVRqTK9mhsyWSuiNfyI3J1CYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265547455576-erndqf9npeh1dl459l4bcanlc5i05ctl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottom_nav_dashboard"
+        android:icon="@drawable/ic_vector_dashboard"
+        android:title="@string/dashboard_display_name" />
+
+    <item
+        android:id="@+id/bottom_nav_notifications"
+        android:icon="@drawable/ic_vector_notifications"
+        android:title="@string/notifications_display_name" />
+
+    <item
+        android:id="@+id/bottom_nav_profile"
+        android:icon="@drawable/ic_user_profile"
+        android:title="@string/profile_display_name" />
+
+</menu>
