@@ -1,6 +1,7 @@
 package com.plandora.models
 
 import android.os.Parcelable
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 import kotlin.math.roundToInt
@@ -18,6 +19,7 @@ class Event(
         const val MILLIS_PER_DAY = 864e5
     }
 
+    @IgnoredOnParcel
     var remainingDays: Int
 
     init {

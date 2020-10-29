@@ -1,13 +1,11 @@
 package com.plandora.activity.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.plandora.R
-import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
