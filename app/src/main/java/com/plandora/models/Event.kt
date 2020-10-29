@@ -1,4 +1,12 @@
 package com.plandora.models
 
-class Event {
+import java.time.LocalDateTime
+
+class Event(
+    val title: String,
+    val eventType: EventType,
+    val description: String
+) {
+
+
 }
