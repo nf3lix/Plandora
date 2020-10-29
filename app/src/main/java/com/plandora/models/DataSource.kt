@@ -1,7 +1,5 @@
 package com.plandora.models
 
-import java.time.LocalDateTime
-
 class DataSource {
 
     companion object {
@@ -10,21 +8,9 @@ class DataSource {
         fun createDataSet(): ArrayList<Event> {
             val list = ArrayList<Event>()
 
-            list.add(
-                Event("Title", EventType.ANNIVERSARY, "Test")
-            )
-
-            list.add(
-                Event("Title", EventType.ANNIVERSARY, "Test")
-            )
-
-            list.add(
-                Event("Title", EventType.ANNIVERSARY, "Test")
-            )
-
-            list.add(
-                Event("Title", EventType.ANNIVERSARY, "Test")
-            )
+            for(i in 0..30) {
+                list.add(Event("Event $i", EventType.ANNIVERSARY, "Test"))
+            }
 
             return list
 

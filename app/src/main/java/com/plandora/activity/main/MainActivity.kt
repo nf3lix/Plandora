@@ -19,7 +19,6 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         addActionBar()
-        fab_create_board.setOnClickListener { startActivity(Intent(this, CreateEventActivity::class.java)) }
         main_nav_view.setNavigationItemSelectedListener(this)
         updateFragmentViewById(R.id.bottom_nav_dashboard)
         bottom_navigation_view.setOnNavigationItemSelectedListener {
