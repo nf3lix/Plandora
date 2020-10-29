@@ -3,6 +3,7 @@ package com.plandora.models
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
@@ -36,10 +37,14 @@ class EventRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class EventViewHolder constructor(itemView: View): RecyclerView.ViewHolder(itemView) {
         private val eventTitle: TextView = itemView.event_title
         private val eventDescription: TextView = itemView.event_description
+        private val eventRemainingDays: TextView = itemView.event_remaining_days
+        private val eventIconView: ImageView = itemView.event_icon_image_view
 
         fun bind(event: Event) {
             eventTitle.text = event.title
             eventDescription.text = event.description
+            eventRemainingDays.text = "In ${event.remainingDays} days"
+            eventIconView.setImageResource(event.eventType.iconId)
         }
     }
 

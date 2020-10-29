@@ -2,7 +2,7 @@ package com.plandora.models
 
 import com.plandora.R
 
-enum class EventType(private val iconId: Int) {
+enum class EventType(val iconId: Int) {
 
     BIRTHDAY(R.drawable.event_type_birthday) {
 
