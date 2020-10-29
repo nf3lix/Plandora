@@ -19,7 +19,7 @@
             android:layout_height="45dp"
             android:layout_margin="14dp"
             android:layout_gravity="center_vertical"
-            android:contentDescription="Event Icon"
+            android:contentDescription="@string/event_item_icon_description"
             android:id="@+id/event_icon_image_view"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout

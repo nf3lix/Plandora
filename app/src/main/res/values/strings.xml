@@ -27,4 +27,8 @@
     <string name="sign_in_description_text">Please enter your login credentials</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
+    <!-- dashboard -->
+    <string name="event_item_icon_description">Event Icon</string>
+    <string name="remaining_days_template">In {time} days</string>
+
 </resources>

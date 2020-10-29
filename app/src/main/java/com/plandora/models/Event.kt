@@ -1,15 +1,18 @@
 package com.plandora.models
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 import kotlin.math.roundToInt
 
+@Parcelize
 class Event(
     val title: String,
     val eventType: EventType,
     val description: String,
     val annual: Boolean,
-    timestamp: Long
-) {
+    val timestamp: Long
+) : Parcelable {
 
     companion object {
         const val MILLIS_PER_DAY = 864e5
@@ -42,5 +45,5 @@ class Event(
     private fun millisToDays(millis: Long): Int {
         return (millis / MILLIS_PER_DAY).roundToInt()
     }
-    
+
 }
