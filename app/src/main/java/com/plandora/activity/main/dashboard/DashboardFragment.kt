@@ -1,4 +1,4 @@
-package com.plandora.activity.main
+package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.models.DataSource
 import com.plandora.models.EventRecyclerAdapter
-import kotlinx.android.synthetic.main.activity_recycler_view_test.*
-import kotlinx.android.synthetic.main.fragment_dashboard_main.*
 
 class DashboardFragment : Fragment() {
 
-    protected lateinit var rootView: View
+    private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,6 +26,7 @@ class DashboardFragment : Fragment() {
     private fun addRecyclerView() {
         rootView.findViewById<RecyclerView>(R.id.recycler_view).apply {
             layoutManager = LinearLayoutManager(activity)
+            addItemDecoration(EventItemSpacingDecoration(40))
             eventAdapter = EventRecyclerAdapter()
             adapter = eventAdapter
         }

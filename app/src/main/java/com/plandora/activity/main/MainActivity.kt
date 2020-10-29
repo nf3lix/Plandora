@@ -9,6 +9,7 @@ import com.google.android.material.navigation.NavigationView
 import com.plandora.R
 import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
