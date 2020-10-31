@@ -16,13 +16,4 @@
             app:popupTheme="@style/AppTheme.PopularOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="100dp"
-        android:layout_marginEnd="50dp"
-        android:id="@+id/fab_create_board"
-        app:srcCompat="@drawable/ic_vector_new_entry" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

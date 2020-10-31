@@ -1,16 +1,13 @@
 package com.plandora.activity.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.plandora.R
-import com.plandora.activity.NewEventActivity
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -20,7 +17,6 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         addActionBar()
-        fab_create_board.setOnClickListener { startActivity(Intent(this, NewEventActivity::class.java)) }
         main_nav_view.setNavigationItemSelectedListener(this)
         updateFragmentViewById(R.id.bottom_nav_dashboard)
         bottom_navigation_view.setOnNavigationItemSelectedListener {
