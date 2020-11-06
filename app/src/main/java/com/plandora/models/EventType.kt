@@ -18,6 +18,6 @@ enum class EventType(val iconId: Int) {
 
     OTHERS(R.drawable.event_type_birthday) {
 
-    },
+    }
 
 }

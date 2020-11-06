@@ -1,37 +1,65 @@
 package com.plandora.models
 
+import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
-@Parcelize
-class Event(
-    val title: String,
-    val eventType: EventType,
-    val description: String,
-    val annual: Boolean,
-    val timestamp: Long
+data class Event(
+    val title: String = "",
+    val eventType: EventType = EventType.OTHERS,
+    val description: String = "",
+    val annual: Boolean = false,
+    val timestamp: Long = 0,
+    val ownerId: String = "",
+    val attendees: ArrayList<PlandoraUser> = ArrayList()
 ) : Parcelable {
 
-    companion object {
-        const val MILLIS_PER_DAY = 864e5
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        EventType.values()[parcel.readInt()],
+        parcel.readString()!!,
+        parcel.readByte() != 0.toByte(),
+        parcel.readLong(),
+        parcel.readString()!!,
+        parcel.createTypedArrayList(PlandoraUser.CREATOR)!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(title)
+        parcel.writeInt(eventType.ordinal)
+        parcel.writeString(description)
+        parcel.writeByte(if (annual) 1 else 0)
+        parcel.writeLong(timestamp)
+        parcel.writeString(ownerId)
+        parcel.writeTypedList(attendees)
     }
 
-    @IgnoredOnParcel
-    var remainingDays: Int
-
-    init {
-        remainingDays = calculateRemainingDays(timestamp)
+    override fun describeContents(): Int {
+        return 0
     }
 
-    private fun calculateRemainingDays(timestamp: Long): Int {
+    companion object CREATOR : Parcelable.Creator<Event> {
+        override fun createFromParcel(parcel: Parcel): Event {
+            return Event(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Event?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+    fun remainingDays(): Int {
         val diff = timestamp - System.currentTimeMillis()
         return when(annual && diff < 0) {
             true -> millisToDays(getNextEvent(timestamp))
             else -> millisToDays(diff)
         }
+    }
+
+    fun isOwner(user: PlandoraUser): Boolean {
+        return user.id.contentEquals(this.ownerId)
     }
 
     private fun getNextEvent(timestamp: Long): Long {
@@ -45,7 +73,8 @@ class Event(
     }
 
     private fun millisToDays(millis: Long): Int {
-        return (millis / MILLIS_PER_DAY).roundToInt()
+        return (millis / 864e5).roundToInt()
     }
+
 
 }

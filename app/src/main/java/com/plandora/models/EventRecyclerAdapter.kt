@@ -44,7 +44,7 @@ class EventRecyclerAdapter(private var items: List<Event>, private val onClickLi
             eventDescription.text = event.description
             eventIconView.setImageResource(event.eventType.iconId)
             eventRemainingDays.text = itemView.context.getString(R.string.remaining_days_template)
-                .replace("{time}", event.remainingDays.toString(), true)
+                .replace("{time}", event.remainingDays().toString(), true)
         }
 
         override fun onClick(v: View?) {
