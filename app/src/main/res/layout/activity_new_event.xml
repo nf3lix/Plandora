@@ -26,7 +26,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Event"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:textSize="30dp"/>
 
@@ -85,9 +85,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Attendees"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:textSize="30dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/attendees_list"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
@@ -108,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Gift Ideas"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:textSize="30dp"/>
 
