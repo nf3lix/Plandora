@@ -1,4 +1,4 @@
-package com.plandora.models
+package com.plandora.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
+import com.plandora.models.Event
 import kotlinx.android.synthetic.main.layout_event_list_item.view.*
 
 class EventRecyclerAdapter(private var items: List<Event>, private val onClickListener: OnClickListener)
