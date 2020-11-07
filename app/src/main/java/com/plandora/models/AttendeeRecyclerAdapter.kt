@@ -35,12 +35,13 @@ class AttendeeRecyclerAdapter(private var event: Event, private var items: List<
     class AttendeeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val displayName: TextView = itemView.attendee_displayName
         private val eventOwnerIcon: ImageView = itemView.attendee_owner_icon
-        private val eventDeleteButton: ImageButton = itemView.attendee_delete_button
+        private val eventDeleteButton: ImageView = itemView.attendee_delete_button
 
         fun bind(event: Event, user: PlandoraUser) {
             displayName.text = user.displayName
             if(event.isOwner(user)) {
                 eventOwnerIcon.setImageResource(R.drawable.ic_event_owner_icon)
+                eventDeleteButton.visibility
             } else {
                 eventDeleteButton.setImageResource(R.drawable.ic_remove_attendee_icon)
             }
