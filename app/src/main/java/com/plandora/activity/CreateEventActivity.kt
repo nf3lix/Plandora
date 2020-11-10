@@ -61,13 +61,13 @@ class CreateEventActivity : AppCompatActivity() {
 
     // TODO
     private fun loadGiftIdeas() {
-        val idea1 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
-        val idea2 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
-        val idea3 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
+        //val idea1 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
+        //val idea2 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
+        //val idea3 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
         giftIdeas = ArrayList()
-        giftIdeas.add(idea1)
-        giftIdeas.add(idea2)
-        giftIdeas.add(idea3)
+        //giftIdeas.add(idea1)
+        //giftIdeas.add(idea2)
+        //giftIdeas.add(idea3)
     }
 
 }
