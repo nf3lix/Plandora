@@ -13,4 +13,12 @@
     <style name="AppTheme.AppBarOverLay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.PopularOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="SpinnerDatePicker" parent="android:Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
+    <style name="SpinnerDatePickerStyle" parent="android:Theme.Material.Dialog">
+        <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
+    </style>
+
 </resources>

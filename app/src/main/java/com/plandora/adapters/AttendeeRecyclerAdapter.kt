@@ -11,14 +11,14 @@ import com.plandora.models.Event
 import com.plandora.models.PlandoraUser
 import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 
-class AttendeeRecyclerAdapter(private var event: Event, private var items: List<PlandoraUser>)
+class AttendeeRecyclerAdapter(private var event: Event, private var items: List<PlandoraUser>, private val onDeleteButtonListener: OnDeleteButtonListener)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return AttendeeViewHolder(
             LayoutInflater
                 .from(parent.context)
-                .inflate(R.layout.layout_attendees_list_item, parent, false))
+                .inflate(R.layout.layout_attendees_list_item, parent, false), onDeleteButtonListener)
     }
 
     override fun getItemCount(): Int {
@@ -33,7 +33,7 @@ class AttendeeRecyclerAdapter(private var event: Event, private var items: List<
         }
     }
 
-    class AttendeeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class AttendeeViewHolder(itemView: View, private val onClickListener: OnDeleteButtonListener) : RecyclerView.ViewHolder(itemView), OnDeleteButtonListener {
         private val displayName: TextView = itemView.attendee_displayName
         private val eventOwnerIcon: ImageView = itemView.attendee_owner_icon
         private val eventDeleteButton: ImageView = itemView.attendee_delete_button
@@ -45,8 +45,18 @@ class AttendeeRecyclerAdapter(private var event: Event, private var items: List<
                 eventDeleteButton.visibility
             } else {
                 eventDeleteButton.setImageResource(R.drawable.ic_remove_attendee_icon)
+                eventDeleteButton.setOnClickListener{ onButtonClickListener(adapterPosition) }
             }
         }
+
+        override fun onButtonClickListener(position: Int) {
+            onClickListener.onButtonClickListener(adapterPosition)
+        }
+
+    }
+
+    interface OnDeleteButtonListener {
+        fun onButtonClickListener(position: Int)
     }
 
 }
