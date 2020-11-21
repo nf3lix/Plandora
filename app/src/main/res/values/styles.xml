@@ -21,4 +21,8 @@
         <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
     </style>
 
+    <style name="HeaderBar">
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

@@ -2,18 +2,22 @@ package com.plandora.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 data class Event(
-    val title: String = "",
-    val eventType: EventType = EventType.OTHERS,
-    val description: String = "",
-    val annual: Boolean = false,
-    val timestamp: Long = 0,
-    val ownerId: String = "",
-    val attendees: ArrayList<PlandoraUser> = ArrayList()
+    var title: String = "",
+    var eventType: EventType = EventType.OTHERS,
+    var description: String = "",
+    var annual: Boolean = false,
+    var timestamp: Long = 0,
+    var attendees: ArrayList<PlandoraUser> = ArrayList(),
+    var giftIdeas: ArrayList<GiftIdea> = ArrayList(),
+    var ownerId: String = ""
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -22,8 +26,9 @@ data class Event(
         parcel.readString()!!,
         parcel.readByte() != 0.toByte(),
         parcel.readLong(),
-        parcel.readString()!!,
-        parcel.createTypedArrayList(PlandoraUser.CREATOR)!!
+        parcel.createTypedArrayList(PlandoraUser.CREATOR)!!,
+        parcel.createTypedArrayList(GiftIdea.CREATOR)!!,
+        parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -32,8 +37,9 @@ data class Event(
         parcel.writeString(description)
         parcel.writeByte(if (annual) 1 else 0)
         parcel.writeLong(timestamp)
-        parcel.writeString(ownerId)
         parcel.writeTypedList(attendees)
+        parcel.writeTypedList(giftIdeas)
+        parcel.writeString(ownerId)
     }
 
     override fun describeContents(): Int {
@@ -76,5 +82,9 @@ data class Event(
         return (millis / 864e5).roundToInt()
     }
 
+    fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
+        return SimpleDateFormat("dd-MM-yyyy mm:HH", Locale.US)
+            .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time
+    }
 
 }

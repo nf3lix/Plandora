@@ -45,18 +45,18 @@ class AttendeeRecyclerAdapter(private var event: Event, private var items: List<
                 eventDeleteButton.visibility
             } else {
                 eventDeleteButton.setImageResource(R.drawable.ic_remove_attendee_icon)
-                eventDeleteButton.setOnClickListener{ onButtonClickListener(adapterPosition) }
+                eventDeleteButton.setOnClickListener{ onDeleteAttendeeButtonClicked(adapterPosition) }
             }
         }
 
-        override fun onButtonClickListener(position: Int) {
-            onClickListener.onButtonClickListener(adapterPosition)
+        override fun onDeleteAttendeeButtonClicked(position: Int) {
+            onClickListener.onDeleteAttendeeButtonClicked(adapterPosition)
         }
 
     }
 
     interface OnDeleteButtonListener {
-        fun onButtonClickListener(position: Int)
+        fun onDeleteAttendeeButtonClicked(position: Int)
     }
 
 }

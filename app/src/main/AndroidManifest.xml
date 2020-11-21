@@ -10,7 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.main.dashboard.EventDetailActivity"></activity>
-        <activity android:name=".activity.CreateEventActivity" />
+        <activity android:name=".activity.CreateEventActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.PlandoraActivity" />
         <activity
             android:name=".activity.SettingsActivity"

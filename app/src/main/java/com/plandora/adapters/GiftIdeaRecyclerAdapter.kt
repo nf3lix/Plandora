@@ -7,6 +7,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
+import com.plandora.account.Firestore
 import com.plandora.models.GiftIdea
 import kotlinx.android.synthetic.main.layout_gift_ideas_list_item.view.*
 
@@ -47,7 +48,7 @@ class GiftIdeaRecyclerAdapter(
 
         fun bind(giftIdea: GiftIdea) {
             title.text = giftIdea.title
-            creator.text = giftIdea.ownerId // TODO: display name
+            creator.text = Firestore().getUserFromId(giftIdea.ownerId).displayName
             ratingBar.rating = giftIdea.rating
 
             when(giftIdea.selected) {

@@ -8,7 +8,7 @@
         android:layout_height="wrap_content">
 
         <AutoCompleteTextView
-            android:id="@+id/input"
+            android:id="@+id/add_attendee_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name or Email"

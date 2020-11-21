@@ -1,16 +1,19 @@
 package com.plandora.activity
 
-import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
+import com.plandora.account.Firestore
+import com.plandora.account.PlandoraUserManager
+import com.plandora.activity.dialogs.AddAttendeeDialog
+import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
@@ -18,148 +21,170 @@ import com.plandora.models.Event
 import com.plandora.models.EventType
 import com.plandora.models.GiftIdea
 import com.plandora.models.PlandoraUser
-import kotlinx.android.synthetic.main.activity_new_event.*
+import kotlinx.android.synthetic.main.activity_create_event.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 class CreateEventActivity :
-    AppCompatActivity(),
+    PlandoraActivity(),
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
-    private lateinit var attendees: ArrayList<PlandoraUser>
-    private lateinit var event: Event
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
-    private lateinit var giftIdeas: ArrayList<GiftIdea>
+    private var attendeesList: ArrayList<PlandoraUser> = ArrayList()
+    private var giftIdeasList: ArrayList<GiftIdea> = ArrayList()
+
+    private lateinit var event: Event
+
+    private var year = Calendar.getInstance().get(Calendar.YEAR)
+    private var monthOfYear = Calendar.getInstance().get(Calendar.MONTH)
+    private var dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    private var hours = 0; private var minutes = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_event)
-        loadUsers()
-        event = Event(ownerId = attendees[0].id)
+        setContentView(R.layout.activity_create_event)
+
+        attendeesList.add(Firestore().getUserFromId(PlandoraUserManager().currentUserId()))
+        event = Event(ownerId = PlandoraUserManager().currentUserId())
+
         addAttendeesRecyclerView()
-        loadGiftIdeas()
         addGiftIdeasRecyclerView()
-        btn_date_picker.setOnClickListener {
-            selectDate()
-        }
+        addActionBar()
 
-        btn_time_picker.setOnClickListener {
-            selectTime()
-        }
+        displaySelectedDate()
+        displaySelectedTime()
 
-        event_date_input.setOnClickListener {
-            selectDate()
-        }
-
-        event_time_input.setOnClickListener {
-            selectTime()
-        }
+        btn_date_picker.setOnClickListener { selectDate() }
+        btn_time_picker.setOnClickListener { selectTime() }
+        event_date_input.setOnClickListener { selectDate() }
+        event_time_input.setOnClickListener { selectTime() }
 
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
 
         btn_add_attendee.setOnClickListener {
-            val viewInflated: View = LayoutInflater
-                .from(it.context)
-                .inflate(R.layout.dialog_add_attendee, it.rootView as? ViewGroup, false)
-            val b = AlertDialog.Builder(this)
-                .setTitle("Add Attendee")
-                .setView(viewInflated)
-            // TODO: validate input
-            b.setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
-            b.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-            b.show()
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }
 
         btn_add_gift_idea.setOnClickListener {
-            val viewInflated: View = LayoutInflater
-                .from(it.context)
-                .inflate(R.layout.dialog_add_gift_idea, it.rootView as? ViewGroup, false)
-            val b = AlertDialog.Builder(this)
-                .setTitle("Add Gift Idea")
-                .setView(viewInflated)
-            // TODO: validate input
-            b.setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
-            b.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-            b.show()
+            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }
 
         btn_delete_items.setOnClickListener {
-            val selectedItems = giftIdeaAdapter.getSelectedItems()
-            for(i in 0 until selectedItems.size) {
-                giftIdeas.remove(selectedItems[i])
-            }
-            btn_delete_items.visibility = View.GONE
-            addGiftIdeasRecyclerView()
+            deleteAttendee()
         }
 
     }
 
-    private fun addAttendeesRecyclerView() {
+    fun addAttendeesRecyclerView() {
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@CreateEventActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
-            attendeesAdapter = AttendeeRecyclerAdapter(event, attendees, this@CreateEventActivity)
+            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@CreateEventActivity)
             adapter = attendeesAdapter
         }
     }
 
-    private fun addGiftIdeasRecyclerView() {
+    fun addGiftIdeasRecyclerView() {
         gift_ideas_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@CreateEventActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
-            giftIdeaAdapter = GiftIdeaRecyclerAdapter(giftIdeas, this@CreateEventActivity)
+            giftIdeaAdapter = GiftIdeaRecyclerAdapter(giftIdeasList, this@CreateEventActivity)
             adapter = giftIdeaAdapter
         }
     }
 
-    // TODO
-    private fun loadUsers() {
-        attendees = ArrayList()
-        attendees.add(PlandoraUser("test", "test", "Felix", "test@test.de"))
-        attendees.add(PlandoraUser("test1", "test", "Henry", "test@test.de"))
-        attendees.add(PlandoraUser("test2", "test", "Vanessa", "test@test.de"))
-    }
-
-    // TODO
-    private fun loadGiftIdeas() {
-        val idea1 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
-        val idea2 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
-        val idea3 = GiftIdea("Geschenk1", "Beschreibung", "id1", 4.5F, ArrayList())
-        giftIdeas = ArrayList()
-        giftIdeas.add(idea1)
-        giftIdeas.add(idea2)
-        giftIdeas.add(idea3)
+    private fun deleteAttendee() {
+        val selectedItems = giftIdeaAdapter.getSelectedItems()
+        for(i in 0 until selectedItems.size) {
+            giftIdeasList.remove(selectedItems[i])
+        }
+        btn_delete_items.visibility = View.GONE
+        addGiftIdeasRecyclerView()
     }
 
     private fun selectDate() {
-        val year = Calendar.getInstance().get(Calendar.YEAR)
-        val month = Calendar.getInstance().get(Calendar.MONTH)
-        val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         val datePickerDialog = DatePickerDialog(this@CreateEventActivity,
             R.style.SpinnerDatePickerStyle,
-            { _, year, monthOfYear, dayOfMonth ->
-                event_date_input.setText("${monthOfYear}-${dayOfMonth}-${year}")
-            }, year, month, day)
+            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                year = selectedYear
+                monthOfYear = selectedMonth
+                dayOfMonth = selectedDayOfMonth
+                displaySelectedDate()
+            },  year, monthOfYear, dayOfMonth)
         datePickerDialog.show()
     }
 
     private fun selectTime() {
         val timePickerDialog = TimePickerDialog(this@CreateEventActivity, {
-                _, h, m ->
-            event_time_input.setText("${h}:${m}")
+                _, selectedHours, selectedMinutes ->
+            hours = selectedHours
+            minutes = selectedMinutes
+            displaySelectedTime()
         }, 0, 0, true)
         timePickerDialog.show()
     }
 
-    override fun onButtonClickListener(position: Int) {
-        attendees.remove(attendees[position])
+    private fun displaySelectedDate() {
+        event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
+            "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
+    }
+
+    private fun displaySelectedTime() {
+        event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
+            "%02d".format(hours), "%02d".format(minutes)))
+    }
+
+    override fun onDeleteAttendeeButtonClicked(position: Int) {
+        attendeesList.remove(attendeesList[position])
         addAttendeesRecyclerView()
     }
 
     override fun onGiftItemClicked(activated: Boolean) {
         btn_delete_items.visibility = if(activated) View.VISIBLE else View.GONE
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.create_event_tool_bar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.save_entry -> {
+                event.apply {
+                    title = event_title_input.text.toString()
+                    eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
+                    description = event_description_input.toString()
+                    annual = cb_annual.isSelected
+                    timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
+                    attendees = attendeesList
+                    giftIdeas = giftIdeasList
+                }
+                Firestore().createEvent(this, event)
+                finish()
+                true
+            }
+            R.id.close_creation -> {
+                finish()
+                true
+            }
+            else -> false
+        }
+    }
+
+    override fun addActionBar() {
+        setSupportActionBar(toolbar_main_activity)
+    }
+
+    fun addAttendee(attendee: PlandoraUser) {
+        attendeesList.add(attendee)
+    }
+
+    fun addGiftIdea(giftIdea: GiftIdea) {
+        giftIdeasList.add(giftIdea)
     }
 
 }
