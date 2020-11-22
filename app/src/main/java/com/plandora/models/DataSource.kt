@@ -9,7 +9,7 @@ class DataSource {
             val list = ArrayList<Event>()
             var timestamp = 1604498694000
             for(i in 0..30) {
-                list.add(Event("Event $i", EventType.ANNIVERSARY, "Test", true, timestamp))
+                list.add(Event("Event $i", EventType.ANNIVERSARY, "Event Description $i", true, timestamp))
                 timestamp += 84700000
             }
             return list

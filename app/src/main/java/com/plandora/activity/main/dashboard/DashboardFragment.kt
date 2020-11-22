@@ -13,7 +13,7 @@ import com.plandora.R
 import com.plandora.activity.CreateEventActivity
 import com.plandora.models.DataSource
 import com.plandora.models.Event
-import com.plandora.models.EventRecyclerAdapter
+import com.plandora.adapters.EventRecyclerAdapter
 
 class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 

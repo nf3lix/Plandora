@@ -32,7 +32,7 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun addActionBar() {
+    override fun addActionBar() {
         setSupportActionBar(toolbar_main_activity)
         toolbar_main_activity.setNavigationIcon(R.drawable.ic_vector_burger_menu)
         toolbar_main_activity.setNavigationOnClickListener {

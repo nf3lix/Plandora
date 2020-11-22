@@ -12,4 +12,12 @@ class PlandoraUserManager {
         }
     }
 
+    fun currentUserId(): String {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        return when(currentUser != null) {
+            false -> ""
+            else -> currentUser.uid
+        }
+    }
+
 }

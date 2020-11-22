@@ -14,6 +14,8 @@
     <!--- dashboard -->
     <string name="dashboard_display_name">Dashboard</string>
     <string name="dashboard_toolbar_title">Upcoming Events</string>
+    <string name="event_item_icon_description">Event Icon</string>
+    <string name="remaining_days_template">In {time} days</string>
 
     <!--- notifications -->
     <string name="notifications_display_name">Notifications</string>
@@ -23,12 +25,12 @@
     <string name="profile_display_name">Profile</string>
     <string name="profile_toolbar_title">Profile</string>
 
+    <!-- events -->
+    <string name="event_time_display">%1$s : %2$s</string>
+    <string name="event_date_display">%1$s-%2$s-%3$s</string>
+
     <!--- string values for specific activities -->
     <string name="sign_in_description_text">Please enter your login credentials</string>
     <string name="title_activity_settings">SettingsActivity</string>
-
-    <!-- dashboard -->
-    <string name="event_item_icon_description">Event Icon</string>
-    <string name="remaining_days_template">In {time} days</string>
 
 </resources>
