@@ -45,6 +45,8 @@ class EventRecyclerAdapter(private var items: List<Event>, private val onClickLi
             eventIconView.setImageResource(event.eventType.iconId)
             eventRemainingDays.text = itemView.context.getString(R.string.remaining_days_template)
                 .replace("{time}", event.remainingDays.toString(), true)
+            //if (event.remainingDays < 9) Farbe Orange
+            //else Farbe Dunkelblau
         }
 
         override fun onClick(v: View?) {

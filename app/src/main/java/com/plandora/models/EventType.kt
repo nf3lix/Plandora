@@ -8,15 +8,15 @@ enum class EventType(val iconId: Int) {
 
     },
 
-    HOLIDAY(R.drawable.event_type_birthday) {
+    HOLIDAY(R.drawable.event_type_holiday) {
 
     },
 
-    ANNIVERSARY(R.drawable.event_type_birthday) {
+    ANNIVERSARY(R.drawable.event_type_anniversary) {
 
     },
 
-    OTHERS(R.drawable.event_type_birthday) {
+    OTHERS(R.drawable.event_type_others) {
 
     },
 
