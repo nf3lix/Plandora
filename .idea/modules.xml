@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Plandora.iml" filepath="$PROJECT_DIR$/.idea/modules/Plandora.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Plandora.iml" filepath="$PROJECT_DIR$/.idea/Plandora.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Plandora.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Plandora.app.iml" />
     </modules>
   </component>

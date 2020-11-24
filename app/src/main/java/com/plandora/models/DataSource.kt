@@ -9,19 +9,19 @@ class DataSource {
             val list = ArrayList<Event>()
             var timestamp = 1604498694000
             for(i in 0..10) {
-                list.add(Event("Event $i", EventType.ANNIVERSARY, "Test", true, timestamp))
-                timestamp += 100000
-            }
-            for(i in 0..10) {
-                list.add(Event("Event $i", EventType.BIRTHDAY, "Test", true, timestamp))
+                list.add(Event("Event $i", EventType.ANNIVERSARY, "Event Description $i", true, timestamp))
                 timestamp += 84700000
             }
             for(i in 0..10) {
-                list.add(Event("Event $i", EventType.OTHERS, "Test", true, timestamp))
+                list.add(Event("Event $i", EventType.HOLIDAY, "Event Description $i", true, timestamp))
                 timestamp += 84700000
             }
             for(i in 0..10) {
-                list.add(Event("Event $i", EventType.HOLIDAY, "Test", true, timestamp))
+                list.add(Event("Event $i", EventType.BIRTHDAY, "Event Description $i", true, timestamp))
+                timestamp += 84700000
+            }
+            for(i in 0..10) {
+                list.add(Event("Event $i", EventType.OTHERS, "Event Description $i", true, timestamp))
                 timestamp += 84700000
             }
             return list
