@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="3dp"
-    app:cardCornerRadius="2dp"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="7dp"
     app:cardPreventCornerOverlap="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/colorBackgroundGrey">
+
 
         <ImageView
             android:layout_width="45dp"
@@ -43,14 +45,15 @@
                     android:id="@+id/event_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="19sp" />
+                    android:textSize="19sp"/>
 
                 <TextView
                     android:id="@+id/event_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textColor="@color/colorMainTextGrey"/>
             </LinearLayout>
 
             <TextView
@@ -58,6 +61,7 @@
                 android:layout_width="90dp"
                 android:layout_height="15dp"
                 android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/event_description_container"
