@@ -10,13 +10,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.controllers.Firestore
-import com.plandora.controllers.PlandoraUserManager
+import com.plandora.controllers.PlandoraUserController
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
+import com.plandora.controllers.PlandoraEventController
 import com.plandora.models.Event
 import com.plandora.models.EventType
 import com.plandora.models.GiftIdea
@@ -47,8 +47,8 @@ class CreateEventActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
 
-        attendeesList.add(Firestore().getUserFromId(PlandoraUserManager().currentUserId()))
-        event = Event(ownerId = PlandoraUserManager().currentUserId())
+        attendeesList.add(PlandoraUserController().getUserFromId(PlandoraUserController().currentUserId()))
+        event = Event(ownerId = PlandoraUserController().currentUserId())
 
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
@@ -163,7 +163,7 @@ class CreateEventActivity :
                     attendees = attendeesList
                     giftIdeas = giftIdeasList
                 }
-                Firestore().createEvent(this, event)
+                PlandoraEventController().createEvent(this, event)
                 finish()
                 true
             }

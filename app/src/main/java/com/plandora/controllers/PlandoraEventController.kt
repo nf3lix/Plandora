@@ -10,7 +10,7 @@ class PlandoraEventController {
     private val firestoreInstance = FirebaseFirestore.getInstance()
 
     fun createEvent(activity: CreateEventActivity, event: Event) {
-        firestoreInstance.collection(FirestoreConstants.EVENTS)
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document()
     }
 
 }

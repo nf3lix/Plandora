@@ -7,7 +7,6 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
-import com.plandora.controllers.Firestore
 import com.plandora.models.GiftIdea
 import kotlinx.android.synthetic.main.layout_gift_ideas_list_item.view.*
 
