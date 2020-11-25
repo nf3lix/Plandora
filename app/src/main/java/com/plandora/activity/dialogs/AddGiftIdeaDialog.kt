@@ -23,8 +23,7 @@ class AddGiftIdeaDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
                 viewInflated.add_gift_idea_description.text.toString(),
                 PlandoraUserController().currentUserId(),
                 0.0F,
-                ArrayList(),
-                false
+                ArrayList()
             )
             activity.addGiftIdea(newGiftIdea)
             dialog.dismiss()

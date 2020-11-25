@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.controllers.PlandoraUserController
@@ -157,14 +158,13 @@ class CreateEventActivity :
                 event.apply {
                     title = event_title_input.text.toString()
                     eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
-                    description = event_description_input.toString()
+                    description = event_description_input.text.toString()
                     annual = cb_annual.isSelected
                     timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
-                    attendees = attendeesList
+                    attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
                     giftIdeas = giftIdeasList
                 }
                 PlandoraEventController().createEvent(this, event)
-                finish()
                 true
             }
             R.id.close_creation -> {
@@ -185,6 +185,15 @@ class CreateEventActivity :
 
     fun addGiftIdea(giftIdea: GiftIdea) {
         giftIdeasList.add(giftIdea)
+    }
+
+    fun onSuccess() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    fun onFailure() {
+        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
     }
 
 }

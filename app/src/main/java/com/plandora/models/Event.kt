@@ -2,6 +2,7 @@ package com.plandora.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.plandora.controllers.PlandoraUserController
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -13,7 +14,7 @@ data class Event(
     var description: String = "",
     var annual: Boolean = false,
     var timestamp: Long = 0,
-    var attendees: ArrayList<PlandoraUser> = ArrayList(),
+    var attendees: ArrayList<String> = ArrayList(),
     var giftIdeas: ArrayList<GiftIdea> = ArrayList(),
     var ownerId: String = ""
 ) : Parcelable {
@@ -24,20 +25,20 @@ data class Event(
         parcel.readString()!!,
         parcel.readByte() != 0.toByte(),
         parcel.readLong(),
-        parcel.createTypedArrayList(PlandoraUser.CREATOR)!!,
+        parcel.createStringArrayList()!!,
         parcel.createTypedArrayList(GiftIdea.CREATOR)!!,
         parcel.readString()!!
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(title)
-        parcel.writeInt(eventType.ordinal)
-        parcel.writeString(description)
-        parcel.writeByte(if (annual) 1 else 0)
-        parcel.writeLong(timestamp)
-        parcel.writeTypedList(attendees)
-        parcel.writeTypedList(giftIdeas)
-        parcel.writeString(ownerId)
+    override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+        writeString(title)
+        writeInt(eventType.ordinal)
+        writeString(description)
+        writeByte(if (annual) 1 else 0)
+        writeLong(timestamp)
+        writeStringList(attendees)
+        writeTypedList(giftIdeas)
+        writeString(ownerId)
     }
 
     override fun describeContents(): Int {

@@ -2,15 +2,18 @@ package com.plandora.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.android.parcel.IgnoredOnParcel
+import kotlinx.android.parcel.Parcelize
 
 data class GiftIdea(
     val title: String = "",
     val description: String = "",
     val ownerId: String = "",
     val rating: Float = 0F,
-    val votes: ArrayList<PlandoraUser> = ArrayList(),
-    var selected: Boolean = false
+    val votes: ArrayList<PlandoraUser> = ArrayList()
 ): Parcelable {
+
+    @IgnoredOnParcel var selected: Boolean = false
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

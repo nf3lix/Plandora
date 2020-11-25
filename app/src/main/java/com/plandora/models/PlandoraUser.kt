@@ -2,12 +2,14 @@ package com.plandora.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.plandora.controllers.PlandoraUserController
 
 data class PlandoraUser(
     val id: String = "",
     val name: String = "",
     val displayName: String = "",
     val email: String = ""
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -35,6 +37,17 @@ data class PlandoraUser(
         override fun newArray(size: Int): Array<PlandoraUser?> {
             return arrayOfNulls(size)
         }
+
+        fun createFromString(id: String): PlandoraUser {
+            return PlandoraUserController().getUserFromId(id)
+        }
+
+    }
+
+    fun getIdsFromUserObjects(userList: List<PlandoraUser>) : ArrayList<String> {
+        val stringList: ArrayList<String> = ArrayList()
+        userList.forEach { stringList.add(it.id) }
+        return stringList
     }
 
 }
