@@ -1,4 +1,4 @@
-package com.plandora.account
+package com.plandora.controllers
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers.IO

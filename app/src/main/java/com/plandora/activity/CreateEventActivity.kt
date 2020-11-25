@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.account.Firestore
-import com.plandora.account.PlandoraUserManager
+import com.plandora.controllers.Firestore
+import com.plandora.controllers.PlandoraUserManager
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.ViewGroup
 import com.plandora.R
-import com.plandora.account.PlandoraUserManager
+import com.plandora.controllers.PlandoraUserManager
 import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraDialog
 import com.plandora.models.GiftIdea

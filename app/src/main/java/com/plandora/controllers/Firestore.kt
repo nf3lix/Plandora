@@ -1,4 +1,4 @@
-package com.plandora.account
+package com.plandora.controllers
 
 import com.plandora.activity.CreateEventActivity
 import com.plandora.models.Event
@@ -6,9 +6,7 @@ import com.plandora.models.PlandoraUser
 
 class Firestore {
 
-    fun createEvent(activity: CreateEventActivity, event: Event) {
-        // TODO: create event in Firebase
-    }
+
 
     fun getUserFromId(userId: String): PlandoraUser {
         // TODO: return user

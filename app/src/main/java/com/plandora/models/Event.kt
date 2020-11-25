@@ -3,8 +3,6 @@ package com.plandora.models
 import android.os.Parcel
 import android.os.Parcelable
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt

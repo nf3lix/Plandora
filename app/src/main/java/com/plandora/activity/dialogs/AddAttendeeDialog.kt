@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.ViewGroup
 import com.plandora.R
-import com.plandora.account.Firestore
+import com.plandora.controllers.Firestore
 import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraDialog
 import kotlinx.android.synthetic.main.dialog_add_attendee.view.*
