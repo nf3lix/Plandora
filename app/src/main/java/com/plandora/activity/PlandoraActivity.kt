@@ -1,16 +1,15 @@
 package com.plandora.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.plandora.R
+import kotlinx.android.synthetic.main.app_bar_main.*
 
 open class PlandoraActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_plandora)
+    open fun addActionBar() {
+        setSupportActionBar(toolbar_main_activity)
     }
 
 }
