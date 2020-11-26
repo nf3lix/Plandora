@@ -1,11 +1,14 @@
 package com.plandora.controllers
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.plandora.models.PlandoraUser
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 class PlandoraUserController {
+
+    private val firestoreInstance = FirebaseFirestore.getInstance()
 
     suspend fun signInUser(email: String, password: String, firebaseAuth: FirebaseAuth): Boolean {
         return withContext(IO) {
@@ -22,7 +25,7 @@ class PlandoraUserController {
     }
 
     fun getUserFromId(userId: String): PlandoraUser {
-        // TODO: return user
+        // not implemented yet
         return PlandoraUser(userId, "Felix", "Felix", "test@test.de")
     }
 
