@@ -41,7 +41,7 @@ class CreateEventActivity :
     private lateinit var event: Event
 
     private var year = Calendar.getInstance().get(Calendar.YEAR)
-    private var monthOfYear = Calendar.getInstance().get(Calendar.MONTH)
+    private var monthOfYear = Calendar.getInstance().get(Calendar.MONTH) + 1
     private var dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
     private var hours = 0; private var minutes = 0
 
@@ -111,11 +111,11 @@ class CreateEventActivity :
         val datePickerDialog = DatePickerDialog(this@CreateEventActivity,
             R.style.SpinnerDatePickerStyle,
             { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                Log.d("ceaD", "$selectedYear $selectedMonth + $selectedDayOfMonth")
+                year = selectedYear
                 monthOfYear = selectedMonth + 1
                 dayOfMonth = selectedDayOfMonth
                 displaySelectedDate()
-            },  year, monthOfYear, dayOfMonth)
+            },  year, monthOfYear - 1, dayOfMonth)
         datePickerDialog.show()
     }
 
