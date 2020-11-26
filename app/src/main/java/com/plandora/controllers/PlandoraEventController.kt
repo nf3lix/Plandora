@@ -1,14 +1,11 @@
 package com.plandora.controllers
 
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraActivity
-import com.plandora.activity.main.MainActivity
-import com.plandora.activity.main.dashboard.DashboardFragment
-import com.plandora.models.Event
+import com.plandora.models.events.Event
 import com.plandora.utils.constants.FirestoreConstants
 
 class PlandoraEventController {
@@ -25,6 +22,7 @@ class PlandoraEventController {
             .set(event, SetOptions.merge())
             .addOnSuccessListener {
                 activity.onSuccess()
+                eventList.add(event)
             }
             .addOnFailureListener {
                 activity.onFailure()
@@ -43,7 +41,7 @@ class PlandoraEventController {
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(activity.baseContext, "Could not load events", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show()
             }
     }
 

@@ -1,8 +1,9 @@
-package com.plandora.models
+package com.plandora.models.events
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.models.gift_ideas.GiftIdea
+import com.plandora.models.PlandoraUser
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,7 +27,7 @@ data class Event(
         parcel.readByte() != 0.toByte(),
         parcel.readLong(),
         parcel.createStringArrayList()!!,
-        parcel.createTypedArrayList(GiftIdea.CREATOR)!!,
+        parcel.createTypedArrayList(GiftIdea)!!,
         parcel.readString()!!
     )
 

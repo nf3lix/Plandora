@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
-import com.plandora.models.Event
+import com.plandora.models.events.Event
 import com.plandora.models.PlandoraUser
 import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 

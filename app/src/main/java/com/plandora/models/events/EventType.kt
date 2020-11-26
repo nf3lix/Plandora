@@ -1,4 +1,4 @@
-package com.plandora.models
+package com.plandora.models.events
 
 import com.plandora.R
 

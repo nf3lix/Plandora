@@ -1,26 +1,24 @@
-package com.plandora.models
+package com.plandora.models.gift_ideas
 
 import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import com.plandora.models.PlandoraUser
 
 data class GiftIdea(
     val title: String = "",
     val description: String = "",
     val ownerId: String = "",
     val rating: Float = 0F,
-    val votes: ArrayList<PlandoraUser> = ArrayList()
+    val votes: ArrayList<PlandoraUser> = ArrayList(),
+    var selected: Boolean = false
 ): Parcelable {
-
-    @IgnoredOnParcel var selected: Boolean = false
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readFloat(),
-        parcel.createTypedArrayList(PlandoraUser.CREATOR)!!
+        parcel.createTypedArrayList(PlandoraUser)!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

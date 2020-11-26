@@ -3,6 +3,7 @@ package com.plandora.activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,9 +19,9 @@ import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
-import com.plandora.models.Event
-import com.plandora.models.EventType
-import com.plandora.models.GiftIdea
+import com.plandora.models.events.Event
+import com.plandora.models.events.EventType
+import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.PlandoraUser
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -110,8 +111,8 @@ class CreateEventActivity :
         val datePickerDialog = DatePickerDialog(this@CreateEventActivity,
             R.style.SpinnerDatePickerStyle,
             { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                year = selectedYear
-                monthOfYear = selectedMonth
+                Log.d("ceaD", "$selectedYear $selectedMonth + $selectedDayOfMonth")
+                monthOfYear = selectedMonth + 1
                 dayOfMonth = selectedDayOfMonth
                 displaySelectedDate()
             },  year, monthOfYear, dayOfMonth)

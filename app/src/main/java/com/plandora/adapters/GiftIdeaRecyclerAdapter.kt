@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.controllers.PlandoraUserController
-import com.plandora.models.GiftIdea
+import com.plandora.models.gift_ideas.GiftIdea
 import kotlinx.android.synthetic.main.layout_gift_ideas_list_item.view.*
 
 class GiftIdeaRecyclerAdapter(

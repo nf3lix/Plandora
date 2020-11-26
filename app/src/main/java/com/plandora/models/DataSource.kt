@@ -1,5 +1,8 @@
 package com.plandora.models
 
+import com.plandora.models.events.Event
+import com.plandora.models.events.EventType
+
 class DataSource {
 
     companion object {
