@@ -3,23 +3,25 @@ package com.plandora.activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.account.Firestore
-import com.plandora.account.PlandoraUserManager
+import com.plandora.controllers.PlandoraUserController
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
-import com.plandora.models.Event
-import com.plandora.models.EventType
-import com.plandora.models.GiftIdea
+import com.plandora.controllers.PlandoraEventController
+import com.plandora.models.events.Event
+import com.plandora.models.events.EventType
+import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.PlandoraUser
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -39,7 +41,7 @@ class CreateEventActivity :
     private lateinit var event: Event
 
     private var year = Calendar.getInstance().get(Calendar.YEAR)
-    private var monthOfYear = Calendar.getInstance().get(Calendar.MONTH)
+    private var monthOfYear = Calendar.getInstance().get(Calendar.MONTH) + 1
     private var dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
     private var hours = 0; private var minutes = 0
 
@@ -47,8 +49,8 @@ class CreateEventActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
 
-        attendeesList.add(Firestore().getUserFromId(PlandoraUserManager().currentUserId()))
-        event = Event(ownerId = PlandoraUserManager().currentUserId())
+        attendeesList.add(PlandoraUserController().getUserFromId(PlandoraUserController().currentUserId()))
+        event = Event(ownerId = PlandoraUserController().currentUserId())
 
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
@@ -110,10 +112,10 @@ class CreateEventActivity :
             R.style.SpinnerDatePickerStyle,
             { _, selectedYear, selectedMonth, selectedDayOfMonth ->
                 year = selectedYear
-                monthOfYear = selectedMonth
+                monthOfYear = selectedMonth + 1
                 dayOfMonth = selectedDayOfMonth
                 displaySelectedDate()
-            },  year, monthOfYear, dayOfMonth)
+            },  year, monthOfYear - 1, dayOfMonth)
         datePickerDialog.show()
     }
 
@@ -157,14 +159,13 @@ class CreateEventActivity :
                 event.apply {
                     title = event_title_input.text.toString()
                     eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
-                    description = event_description_input.toString()
+                    description = event_description_input.text.toString()
                     annual = cb_annual.isSelected
                     timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
-                    attendees = attendeesList
+                    attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
                     giftIdeas = giftIdeasList
                 }
-                Firestore().createEvent(this, event)
-                finish()
+                PlandoraEventController().createEvent(this, event)
                 true
             }
             R.id.close_creation -> {
@@ -185,6 +186,15 @@ class CreateEventActivity :
 
     fun addGiftIdea(giftIdea: GiftIdea) {
         giftIdeasList.add(giftIdea)
+    }
+
+    fun onSuccess() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    fun onFailure() {
+        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.plandora.R
 import com.plandora.activity.CreateEventActivity
-import com.plandora.models.DataSource
-import com.plandora.models.Event
+import com.plandora.models.events.Event
 import com.plandora.adapters.EventRecyclerAdapter
+import com.plandora.controllers.PlandoraEventController
 
 class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
@@ -23,17 +23,22 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_dashboard_main, container, false)
-        items = DataSource.createDataSet()
-        addRecyclerView()
+        rootView.findViewById<RecyclerView>(R.id.recycler_view).addItemDecoration(EventItemSpacingDecoration(40))
+        //addRecyclerView()
         rootView.findViewById<FloatingActionButton>(R.id.fab_create_board)
             .setOnClickListener { startActivity(Intent(rootView.context, CreateEventActivity::class.java )) }
         return rootView
     }
 
+    override fun onStart() {
+        super.onStart()
+        addRecyclerView()
+    }
+
     private fun addRecyclerView() {
+        items = PlandoraEventController.eventList
         rootView.findViewById<RecyclerView>(R.id.recycler_view).apply {
             layoutManager = LinearLayoutManager(activity)
-            addItemDecoration(EventItemSpacingDecoration(40))
             eventAdapter = EventRecyclerAdapter(items, this@DashboardFragment)
             adapter = eventAdapter
         }

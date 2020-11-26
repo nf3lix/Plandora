@@ -1,7 +1,8 @@
-package com.plandora.models
+package com.plandora.models.gift_ideas
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.plandora.models.PlandoraUser
 
 data class GiftIdea(
     val title: String = "",
@@ -17,7 +18,7 @@ data class GiftIdea(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readFloat(),
-        parcel.createTypedArrayList(PlandoraUser.CREATOR)!!
+        parcel.createTypedArrayList(PlandoraUser)!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

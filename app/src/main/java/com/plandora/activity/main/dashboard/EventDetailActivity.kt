@@ -2,7 +2,7 @@ package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
 import com.plandora.R
-import com.plandora.models.Event
+import com.plandora.models.events.Event
 import com.plandora.activity.PlandoraActivity
 import kotlinx.android.synthetic.main.activity_event_detail.*
 

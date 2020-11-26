@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.ViewGroup
 import com.plandora.R
-import com.plandora.account.PlandoraUserManager
+import com.plandora.controllers.PlandoraUserController
 import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraDialog
-import com.plandora.models.GiftIdea
+import com.plandora.models.gift_ideas.GiftIdea
 import kotlinx.android.synthetic.main.dialog_add_gift_idea.view.*
 
 class AddGiftIdeaDialog(context: Context, view: ViewGroup?, attachToRoot: Boolean, private val activity: CreateEventActivity)
@@ -21,10 +21,9 @@ class AddGiftIdeaDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
             val newGiftIdea = GiftIdea(
                 title,
                 viewInflated.add_gift_idea_description.text.toString(),
-                PlandoraUserManager().currentUserId(),
+                PlandoraUserController().currentUserId(),
                 0.0F,
-                ArrayList(),
-                false
+                ArrayList()
             )
             activity.addGiftIdea(newGiftIdea)
             dialog.dismiss()
