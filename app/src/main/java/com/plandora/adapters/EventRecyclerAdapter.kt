@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.models.events.Event
@@ -46,6 +47,9 @@ class EventRecyclerAdapter(private var items: List<Event>, private val onClickLi
             eventIconView.setImageResource(event.eventType.iconId)
             eventRemainingDays.text = itemView.context.getString(R.string.remaining_days_template)
                 .replace("{time}", event.remainingDays().toString(), true)
+
+            //Every Event that takes place in less than 10 days should be displayed in colorAccent instead of colorPrimary
+            if (event.remainingDays() < 10) eventRemainingDays.setTextColor(R.color.colorAccent.toInt())
         }
 
         override fun onClick(v: View?) {
