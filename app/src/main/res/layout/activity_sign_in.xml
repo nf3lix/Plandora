@@ -55,8 +55,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:hint="@string/email"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/colorPreFilledText"/>
+                android:inputType="textEmailAddress" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_password_sign_in"
@@ -66,8 +65,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:hint="@string/password"
-                android:inputType="textPassword"
-                android:textColor="@color/colorPreFilledText"/>
+                android:inputType="textPassword" />
 
             <Button
                 android:id="@+id/btn_sign_in"
