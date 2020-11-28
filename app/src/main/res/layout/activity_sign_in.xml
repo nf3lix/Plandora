@@ -3,20 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.launch.SignInActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activity.launch.SignInActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_sign_up_activity"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="@string/sign_in"
-            android:textSize="30sp"/>
+            android:textSize="30sp" />
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.cardview.widget.CardView
@@ -36,42 +37,43 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_in_description_text"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"/>
+                android:layout_marginEnd="20dp"
+                android:text="@string/sign_in_description_text" />
 
             <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_email_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:inputType="textEmailAddress"
                 android:hint="@string/email"
-                android:id="@+id/et_email_sign_in"/>
+                android:inputType="textEmailAddress" />
 
             <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_password_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:inputType="textPassword"
                 android:hint="@string/password"
-                android:id="@+id/et_password_sign_in"/>
+                android:inputType="textPassword" />
 
             <Button
+                android:id="@+id/btn_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/rounded_button_white"
-                android:id="@+id/btn_sign_in"
                 android:text="@string/sign_in" />
 
             <Button
+                android:id="@+id/btn_sign_up"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -79,8 +81,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_button_primary"
-                android:text="@string/sign_up"
-                android:id="@+id/btn_sign_up"/>
+                android:text="@string/sign_up" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

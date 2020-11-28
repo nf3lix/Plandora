@@ -7,10 +7,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.plandora.R
+import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
+import com.plandora.controllers.PlandoraEventController
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
-class SignInActivity : AppCompatActivity() {
+class SignInActivity : PlandoraActivity() {
 
     private lateinit var firebaseAuth: FirebaseAuth
 
@@ -31,6 +33,7 @@ class SignInActivity : AppCompatActivity() {
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if(task.isSuccessful) {
                     Toast.makeText(this, "Successfully signed in", Toast.LENGTH_LONG).show()
+                    PlandoraEventController().getEventList(this)
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
