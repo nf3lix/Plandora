@@ -1,8 +1,10 @@
 package com.plandora.account
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.plandora.activity.CreateEventActivity
 import com.plandora.models.Event
 import com.plandora.models.PlandoraUser
+import com.plandora.utils.FirestoreConstants
 
 class Firestore {
 
@@ -16,7 +18,13 @@ class Firestore {
     }
 
     fun getUserFromName(username: String): PlandoraUser? {
-        return PlandoraUser("userId", "Felix", "Felix", "test@test.de")
+        FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
+            .whereEqualTo(FirestoreConstants.USER_NAME_FIELD, username).get()
+            .addOnSuccessListener { document ->
+                document.documents[0].toObject(PlandoraUser::class.java)
+                return@addOnSuccessListener
+            }
+        return null
     }
 
 }
