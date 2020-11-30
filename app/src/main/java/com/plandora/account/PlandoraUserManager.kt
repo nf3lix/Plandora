@@ -27,29 +27,35 @@ class PlandoraUserManager {
     }
 
     fun signUpUser(activity: SignUpActivity, uniqueName: String, displayName: String, email: String, password: String) {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
-                if(it.isSuccessful) {
-                    val firebaseUser: FirebaseUser = it.result!!.user!!
-                    val userEmail: String = firebaseUser.email!!
-                    val user = PlandoraUser(firebaseUser.uid, uniqueName, displayName, userEmail)
-                    createFireStoreUserDocument(activity, user)
-                } else {
-                    activity.onSignUpFailed(it.exception!!.message!!)
-                }
+
+        FirebaseFirestore.getInstance().collection(FirestoreConstants.USER_NAMES)
+            .document(uniqueName).set(mapOf("user" to email))
+            .addOnSuccessListener {
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            val firebaseUser: FirebaseUser = it.result!!.user!!
+                            val userEmail: String = firebaseUser.email!!
+                            val user = PlandoraUser(firebaseUser.uid, uniqueName, displayName, userEmail)
+                            createFireStoreUserDocument(activity, user)
+                        } else {
+                            activity.onSignUpFailed(it.exception!!.message!!)
+                        }
+                    }
+            }
+            .addOnFailureListener {
+                activity.onSignUpFailed("This unique name is not available!")
             }
     }
 
     private fun createFireStoreUserDocument(activity: SignUpActivity, user: PlandoraUser) {
-        FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
-            .document(currentUserId())
-            .set(user, SetOptions.merge())
-            .addOnSuccessListener {
-                activity.onSignUpSuccess()
-            }
-            .addOnFailureListener {
-                activity.onSignUpFailed(it.message!!)
-            }
+            FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
+                .document(currentUserId())
+                .set(user, SetOptions.merge())
+                .addOnSuccessListener { activity.onSignUpSuccess() }
+                .addOnFailureListener {
+                    activity.onSignUpFailed(it.message!!)
+                }
     }
 
 }
