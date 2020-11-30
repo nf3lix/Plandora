@@ -33,4 +33,8 @@
     <string name="sign_in_description_text">Please enter your login credentials</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
+    <string name="create_event_empty_title">Please specify a title</string>
+    <string name="create_event_in_the_past">This one-time event is in the past</string>
+    <string name="create_event_success">Successfully created event</string>
+
 </resources>
