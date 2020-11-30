@@ -44,6 +44,7 @@ class PlandoraEventController {
                         eventList.add(event)
                     }
                 }
+                eventList.sort()
             }
             .addOnFailureListener {
                 Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show()
