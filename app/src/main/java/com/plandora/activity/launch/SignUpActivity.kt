@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import com.plandora.R
+import com.plandora.account.PlandoraUserManager
 import com.plandora.models.SignUpValidationTypes
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
@@ -18,17 +19,18 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun signUpNewUser() {
-        val validationId = validateForm(
-            unique_name_input.text.toString(),
-            display_name_input.text.toString(),
-            email_input.text.toString(),
-            password_input.text.toString(),
-            repeat_password_input.text.toString())
+        val uniqueName = unique_name_input.text.toString()
+        val displayName = display_name_input.text.toString()
+        val email = email_input.text.toString()
+        val password = password_input.text.toString()
+        val repeatPassword = repeat_password_input.text.toString()
+        val validationId = validateForm(uniqueName, displayName, email, password, repeatPassword)
         if(validationId != SignUpValidationTypes.SUCCESS) {
             Toast.makeText(this, getString(validationId.messageId), Toast.LENGTH_SHORT).show()
         } else {
-            startActivity(Intent(this, SignInActivity::class.java))
-            finish()
+            //startActivity(Intent(this, SignInActivity::class.java))
+            //finish()
+            PlandoraUserManager().signUpUser(this, uniqueName, displayName, email, password)
         }
     }
 
@@ -42,6 +44,16 @@ class SignUpActivity : AppCompatActivity() {
             (password != repeatPassword) -> SignUpValidationTypes.PASSWORDS_DO_NOT_MATCH
             else -> SignUpValidationTypes.SUCCESS
         }
+    }
+
+    fun onSignUpSuccess() {
+        Toast.makeText(this, "Successfully signed up", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, SignInActivity::class.java))
+        finish()
+    }
+
+    fun onSignUpFailed(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 }
