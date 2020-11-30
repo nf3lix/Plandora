@@ -18,7 +18,7 @@ data class Event(
     var attendees: ArrayList<String> = ArrayList(),
     var giftIdeas: ArrayList<GiftIdea> = ArrayList(),
     var ownerId: String = ""
-) : Parcelable {
+) : Parcelable, Comparable<Event> {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -85,6 +85,10 @@ data class Event(
     fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
         return SimpleDateFormat("dd-MM-yyyy mm:HH", Locale.US)
             .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time
+    }
+
+    override fun compareTo(other: Event): Int {
+        return remainingDays() - other.remainingDays()
     }
 
 }

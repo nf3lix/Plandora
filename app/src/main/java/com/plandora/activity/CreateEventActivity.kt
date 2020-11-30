@@ -3,7 +3,6 @@ package com.plandora.activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,7 +18,7 @@ import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
-import com.plandora.models.CreateEventValidationTypes
+import com.plandora.models.validation_types.CreateEventValidationTypes
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
@@ -194,7 +193,6 @@ class CreateEventActivity :
     }
 
     fun onSuccess() {
-        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
         finish()
     }
 

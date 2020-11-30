@@ -1,4 +1,4 @@
-package com.plandora.models
+package com.plandora.models.validation_types
 
 import com.plandora.R
 
