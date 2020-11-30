@@ -33,4 +33,12 @@
     <string name="sign_in_description_text">Please enter your login credentials</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
+    <!--- sign up validation -->
+    <string name="empty_unique_name">Unique name must not be empty</string>
+    <string name="empty_display_name">Display name must not be empty</string>
+    <string name="empty_email">Email must not be empty</string>
+    <string name="empty_password">Password must not be empty</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="sign_up_valid_form">Valid input</string>
+
 </resources>
