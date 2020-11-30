@@ -1,5 +1,6 @@
 package com.plandora.account
 
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -52,7 +53,12 @@ class PlandoraUserManager {
             FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
                 .document(currentUserId())
                 .set(user, SetOptions.merge())
-                .addOnSuccessListener { activity.onSignUpSuccess() }
+                .addOnSuccessListener {
+                    FirebaseAuth.getInstance().currentUser!!.sendEmailVerification().addOnSuccessListener {
+                        Toast.makeText(activity, "Please check your mails and click the confirmation link we sent you!", Toast.LENGTH_LONG).show()
+                    }
+                    activity.onSignUpSuccess()
+                }
                 .addOnFailureListener {
                     activity.onSignUpFailed(it.message!!)
                 }
