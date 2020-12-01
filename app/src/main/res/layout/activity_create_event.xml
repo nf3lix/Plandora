@@ -36,11 +36,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginEnd="20dp">
+                        android:layout_marginEnd="20dp"
+                        app:cardCornerRadius="7dp"
+                        app:cardElevation="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:background="@color/colorBackgroundGrey"
                             android:orientation="vertical">
 
                             <TextView
@@ -59,9 +62,9 @@
                                 android:hint="Title">
 
                                 <androidx.appcompat.widget.AppCompatEditText
+                                    android:id="@+id/event_title_input"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/event_title_input"
                                     android:inputType="text" />
                             </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,9 +76,9 @@
                                 android:hint="Description">
 
                                 <androidx.appcompat.widget.AppCompatEditText
+                                    android:id="@+id/event_description_input"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/event_description_input"
                                     android:inputType="textLongMessage" />
                             </com.google.android.material.textfield.TextInputLayout>
 
@@ -138,7 +141,7 @@
                                     android:id="@+id/event_type_spinner"
                                     android:layout_width="140dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="20dp"/>
+                                    android:layout_marginStart="20dp" />
 
                                 <CheckBox
                                     android:id="@+id/cb_annual"
@@ -146,7 +149,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="5dp"
                                     android:layout_marginEnd="20dp"
-                                    android:text="Annual"/>
+                                    android:text="Annual" />
 
                             </LinearLayout>
 
@@ -160,36 +163,40 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginEnd="20dp">
+                        android:layout_marginEnd="20dp"
+                        app:cardCornerRadius="7dp"
+                        app:cardElevation="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@color/colorBackgroundGrey"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Attendees"
                                 android:layout_marginStart="10dp"
                                 android:layout_marginEnd="20dp"
-                                android:textSize="30dp"/>
+                                android:text="Attendees"
+                                android:textSize="30dp" />
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/attendees_recycler_view"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:layout_marginTop="10dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_width="match_parent"/>
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginEnd="10dp" />
 
                             <ImageView
+                                android:id="@+id/btn_add_attendee"
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
+                                android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
-                                android:layout_gravity="center_horizontal"
-                                android:src="@drawable/ic_add_icon"
-                                android:id="@+id/btn_add_attendee"/>
+                                android:src="@drawable/ic_add_icon" />
 
                         </LinearLayout>
 
@@ -200,37 +207,41 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginEnd="20dp">
+                        android:layout_marginEnd="20dp"
+                        app:cardCornerRadius="7dp"
+                        app:cardElevation="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@color/colorBackgroundGrey"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Gift Ideas"
                                 android:layout_marginStart="10dp"
                                 android:layout_marginEnd="20dp"
-                                android:textSize="30dp"/>
+                                android:text="Gift Ideas"
+                                android:textSize="30dp" />
 
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/gift_ideas_recycler_view"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:layout_marginTop="10dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_width="match_parent"/>
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginEnd="10dp" />
 
                             <ImageView
+                                android:id="@+id/btn_add_gift_idea"
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
+                                android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
-                                android:layout_gravity="center_horizontal"
-                                android:src="@drawable/ic_add_icon"
-                                android:id="@+id/btn_add_gift_idea"/>
+                                android:src="@drawable/ic_add_icon" />
 
                         </LinearLayout>
 

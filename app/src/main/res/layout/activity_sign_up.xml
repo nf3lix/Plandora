@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".activity.launch.SignUpActivity">
 
@@ -26,13 +27,16 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:layout_gravity="center_vertical">
+        android:layout_gravity="center_vertical"
+        app:cardCornerRadius="7dp"
+        app:cardElevation="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:background="@color/colorBackgroundGrey">
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="match_parent"
