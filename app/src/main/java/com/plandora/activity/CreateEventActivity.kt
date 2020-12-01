@@ -3,7 +3,6 @@ package com.plandora.activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -12,17 +11,18 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.controllers.PlandoraUserController
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.PlandoraUserController
+import com.plandora.models.validation_types.CreateEventValidationTypes
+import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
-import com.plandora.models.PlandoraUser
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.util.*
@@ -160,12 +160,16 @@ class CreateEventActivity :
                     title = event_title_input.text.toString()
                     eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
                     description = event_description_input.text.toString()
-                    annual = cb_annual.isSelected
+                    annual = cb_annual.isChecked
                     timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
                     attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
                     giftIdeas = giftIdeasList
                 }
-                PlandoraEventController().createEvent(this, event)
+                val validation = validateForm(event)
+                Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
+                if(validation == CreateEventValidationTypes.SUCCESS) {
+                    PlandoraEventController().createEvent(this, event)
+                }
                 true
             }
             R.id.close_creation -> {
@@ -189,12 +193,23 @@ class CreateEventActivity :
     }
 
     fun onSuccess() {
-        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
         finish()
     }
 
     fun onFailure() {
         Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun validateForm(event: Event): CreateEventValidationTypes {
+        return when {
+            !event.annual && event.timestamp < System.currentTimeMillis() -> {
+                CreateEventValidationTypes.EVENT_IN_THE_PAST
+            }
+            event.title.isEmpty() -> {
+                CreateEventValidationTypes.EMPTY_TITLE
+            }
+            else -> CreateEventValidationTypes.SUCCESS
+        }
     }
 
 }

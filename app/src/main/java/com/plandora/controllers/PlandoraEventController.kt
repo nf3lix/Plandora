@@ -7,6 +7,8 @@ import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraActivity
 import com.plandora.models.events.Event
 import com.plandora.utils.constants.FirestoreConstants
+import java.util.*
+import kotlin.collections.ArrayList
 
 class PlandoraEventController {
 
@@ -30,6 +32,7 @@ class PlandoraEventController {
     }
 
     fun getEventList(activity: PlandoraActivity) {
+        val currentTimestamp = System.currentTimeMillis() - 8.64e7
         firestoreInstance.collection(FirestoreConstants.EVENTS)
             .whereEqualTo(FirestoreConstants.EVENT_OWNER_ID, PlandoraUserController().currentUserId())
             .get()
@@ -37,8 +40,11 @@ class PlandoraEventController {
                 eventList.clear()
                 for(i in document.documents) {
                     val event = i.toObject(Event::class.java)!!
-                    eventList.add(event)
+                    if(event.annual || event.timestamp > currentTimestamp) {
+                        eventList.add(event)
+                    }
                 }
+                eventList.sort()
             }
             .addOnFailureListener {
                 Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show()

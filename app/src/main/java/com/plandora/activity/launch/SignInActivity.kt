@@ -32,10 +32,14 @@ class SignInActivity : PlandoraActivity() {
         } else {
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if(task.isSuccessful) {
-                    Toast.makeText(this, "Successfully signed in", Toast.LENGTH_LONG).show()
-                    PlandoraEventController().getEventList(this)
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    if(firebaseAuth.currentUser!!.isEmailVerified) {
+                        Toast.makeText(this, "Successfully signed in", Toast.LENGTH_LONG).show()
+                        PlandoraEventController().getEventList(this)
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this, "You must first confirm your email address", Toast.LENGTH_LONG).show()
+                    }
                 } else {
                     Toast.makeText(this, "Authentication failed. Please try again", Toast.LENGTH_LONG).show()
                 }
