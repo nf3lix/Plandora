@@ -82,6 +82,14 @@ data class Event(
         return (millis / 864e5).roundToInt()
     }
 
+    fun getDateAsString(): String {
+        return "06-20-2020"
+    }
+
+    fun getTimeAsString(): String {
+        return "18 : 00"
+    }
+
     fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
         return SimpleDateFormat("dd-MM-yyyy mm:HH", Locale.US)
             .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time

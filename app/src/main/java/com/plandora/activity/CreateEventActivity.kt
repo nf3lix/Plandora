@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CreateEventActivity :
+open class CreateEventActivity :
     PlandoraActivity(),
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener {
