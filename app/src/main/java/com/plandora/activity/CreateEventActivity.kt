@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
@@ -30,6 +31,7 @@ import kotlin.collections.ArrayList
 
 open class CreateEventActivity :
     PlandoraActivity(),
+    GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener {
 
@@ -89,7 +91,7 @@ open class CreateEventActivity :
         }
     }
 
-    fun addGiftIdeasRecyclerView() {
+    override fun addGiftIdeasRecyclerView() {
         gift_ideas_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@CreateEventActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
@@ -188,7 +190,7 @@ open class CreateEventActivity :
         attendeesList.add(attendee)
     }
 
-    fun addGiftIdea(giftIdea: GiftIdea) {
+    override fun addGiftIdea(giftIdea: GiftIdea) {
         giftIdeasList.add(giftIdea)
     }
 

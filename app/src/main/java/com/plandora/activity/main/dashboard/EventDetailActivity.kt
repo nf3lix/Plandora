@@ -1,10 +1,16 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
+import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraUserController
@@ -16,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class EventDetailActivity : PlandoraActivity(),
+    GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener {
 
@@ -29,6 +36,12 @@ class EventDetailActivity : PlandoraActivity(),
         setContentView(R.layout.activity_create_event)
         addActionBar()
         val event = intent.getParcelableExtra<Event>("event_object")!!
+        btn_add_gift_idea.setOnClickListener {
+            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+        }
+        btn_delete_items.setOnClickListener {
+            deleteAttendee()
+        }
         addEventInformation(event)
         addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
@@ -59,7 +72,11 @@ class EventDetailActivity : PlandoraActivity(),
         }
     }
 
-    private fun addGiftIdeasRecyclerView() {
+    override fun addGiftIdea(giftIdea: GiftIdea) {
+        giftIdeasList.add(giftIdea)
+    }
+
+    override fun addGiftIdeasRecyclerView() {
         gift_ideas_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
@@ -69,15 +86,23 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun onGiftItemClicked(activated: Boolean) {
-        TODO("Not yet implemented")
+        btn_delete_items.visibility = if(activated) View.VISIBLE else View.GONE
     }
 
     override fun addActionBar() {
         setSupportActionBar(toolbar_main_activity)
+    }
+
+    private fun deleteAttendee() {
+        val selectedItems = giftIdeaAdapter.getSelectedItems()
+        for(i in 0 until selectedItems.size) {
+            giftIdeasList.remove(selectedItems[i])
+        }
+        btn_delete_items.visibility = View.GONE
+        addGiftIdeasRecyclerView()
     }
 
 }
