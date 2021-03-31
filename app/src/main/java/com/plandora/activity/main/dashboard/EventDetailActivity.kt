@@ -13,6 +13,7 @@ import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
+import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
@@ -31,11 +32,15 @@ class EventDetailActivity : PlandoraActivity(),
     private var attendeesList: ArrayList<PlandoraUser> = ArrayList()
     private var giftIdeasList: ArrayList<GiftIdea> = ArrayList()
 
+    private var eventId: String = "";
+    private lateinit var oldEvent: Event;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         addActionBar()
         val event = intent.getParcelableExtra<Event>("event_object")!!
+        oldEvent = event
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }
@@ -74,6 +79,7 @@ class EventDetailActivity : PlandoraActivity(),
 
     override fun addGiftIdea(giftIdea: GiftIdea) {
         giftIdeasList.add(giftIdea)
+        PlandoraEventController().addEventGiftIdeas(oldEvent, giftIdea)
     }
 
     override fun addGiftIdeasRecyclerView() {
