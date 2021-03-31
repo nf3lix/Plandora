@@ -1,6 +1,5 @@
 package com.plandora.controllers
 
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,8 +10,6 @@ import com.plandora.activity.main.dashboard.EventDetailActivity
 import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.utils.constants.FirestoreConstants
-import java.util.*
-import java.util.Map
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -62,13 +59,16 @@ class PlandoraEventController {
     fun addEventGiftIdeas(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
-            if(entry.value == oldEvent) id = entry.key
+            if(entry.value == oldEvent) {
+                id = entry.key
+            }
         }
         if(id != "") {
             firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
                 .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
                 .addOnSuccessListener {
                     activity.giftIdeasList.add(giftIdea)
+                    getEventList(activity)
                 }
                 .addOnFailureListener {
                     Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show();
