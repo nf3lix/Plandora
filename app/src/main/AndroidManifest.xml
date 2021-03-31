@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round_v1"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.main.dashboard.EventDetailActivity"></activity>
+        <activity android:name=".activity.main.dashboard.EventDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.CreateEventActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
