@@ -1,5 +1,6 @@
 package com.plandora.controllers
 
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,8 +62,13 @@ class PlandoraEventController {
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == oldEvent) {
                 id = entry.key
+                if(entry.value.giftIdeas.contains(giftIdea)) {
+                    Toast.makeText(activity.baseContext, "Diese Idee existiert bereits", Toast.LENGTH_SHORT).show();
+                    return
+                }
             }
         }
+
         if(id != "") {
             firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
                 .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
