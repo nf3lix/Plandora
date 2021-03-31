@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.plandora.activity.CreateEventActivity
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.main.dashboard.EventDetailActivity
 import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.utils.constants.FirestoreConstants
@@ -40,7 +41,7 @@ class PlandoraEventController {
     fun getEventList(activity: PlandoraActivity) {
         val currentTimestamp = System.currentTimeMillis() - 8.64e7
         firestoreInstance.collection(FirestoreConstants.EVENTS)
-            .whereEqualTo(FirestoreConstants.EVENT_OWNER_ID, PlandoraUserController().currentUserId())
+            .whereArrayContains(FirestoreConstants.ATTENDEES, PlandoraUserController().currentUserId())
             .get()
             .addOnSuccessListener { document ->
                 eventList.clear()
@@ -58,19 +59,23 @@ class PlandoraEventController {
             }
     }
 
-    fun addEventGiftIdeas(oldEvent: Event, giftIdea: GiftIdea) {
+    fun addEventGiftIdeas(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == oldEvent) id = entry.key
         }
-        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
-            .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
-            .addOnSuccessListener {
-                Log.d("gi", "success fdsafdsfds")
-            }
-            .addOnFailureListener {
-                Log.d("gi", "failure fdsafdsfds")
-            }
+        if(id != "") {
+            firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
+                .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
+                .addOnSuccessListener {
+                    activity.giftIdeasList.add(giftIdea)
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show();
+                }
+        } else {
+            Toast.makeText(activity.baseContext, "Fehler: Event konnte nicht mehr gefunden werden", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

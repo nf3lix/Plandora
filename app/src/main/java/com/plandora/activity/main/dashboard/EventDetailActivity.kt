@@ -29,10 +29,9 @@ class EventDetailActivity : PlandoraActivity(),
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
-    private var attendeesList: ArrayList<PlandoraUser> = ArrayList()
-    private var giftIdeasList: ArrayList<GiftIdea> = ArrayList()
+    private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
+    val giftIdeasList: ArrayList<GiftIdea> = ArrayList()
 
-    private var eventId: String = "";
     private lateinit var oldEvent: Event;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,8 +77,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun addGiftIdea(giftIdea: GiftIdea) {
-        giftIdeasList.add(giftIdea)
-        PlandoraEventController().addEventGiftIdeas(oldEvent, giftIdea)
+        PlandoraEventController().addEventGiftIdeas(this, oldEvent, giftIdea)
     }
 
     override fun addGiftIdeasRecyclerView() {
