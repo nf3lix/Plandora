@@ -24,6 +24,7 @@ import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
+import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.util.*
@@ -38,7 +39,7 @@ open class CreateEventActivity :
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
     private var attendeesList: ArrayList<PlandoraUser> = ArrayList()
-    private var giftIdeasList: ArrayList<GiftIdea> = ArrayList()
+    private var giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
 
     private lateinit var event: Event
 
@@ -102,9 +103,7 @@ open class CreateEventActivity :
 
     private fun deleteAttendee() {
         val selectedItems = giftIdeaAdapter.getSelectedItems()
-        for(i in 0 until selectedItems.size) {
-            giftIdeasList.remove(selectedItems[i])
-        }
+        giftIdeasList.removeAll(selectedItems)
         btn_delete_items.visibility = View.GONE
         addGiftIdeasRecyclerView()
     }
@@ -158,6 +157,10 @@ open class CreateEventActivity :
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
+                val list = ArrayList<GiftIdea>()
+                giftIdeasList.forEach {
+                    list.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it))
+                }
                 event.apply {
                     title = event_title_input.text.toString()
                     eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
@@ -165,7 +168,7 @@ open class CreateEventActivity :
                     annual = cb_annual.isChecked
                     timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
                     attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
-                    giftIdeas = giftIdeasList
+                    giftIdeas = list
                 }
                 val validation = validateForm(event)
                 Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
@@ -190,7 +193,7 @@ open class CreateEventActivity :
         attendeesList.add(attendee)
     }
 
-    override fun addGiftIdea(giftIdea: GiftIdea) {
+    override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
         giftIdeasList.add(giftIdea)
     }
 

@@ -10,6 +10,7 @@ import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.dashboard.EventDetailActivity
 import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdea
+import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import com.plandora.utils.constants.FirestoreConstants
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -58,6 +59,8 @@ class PlandoraEventController {
     }
 
     fun addEventGiftIdeas(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
+        Log.d("gi-1", events.toString())
+        Log.d("gi-2", oldEvent.toString())
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == oldEvent) {
@@ -73,13 +76,41 @@ class PlandoraEventController {
             firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
                 .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
                 .addOnSuccessListener {
-                    activity.giftIdeasList.add(giftIdea)
+                    activity.giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
+                    events[id]?.giftIdeas?.remove(giftIdea)
+                    activity.addGiftIdeaToEventModel(giftIdea)
                     getEventList(activity)
                 }
                 .addOnFailureListener {
                     Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show();
                 }
         } else {
+            Toast.makeText(activity.baseContext, "Fehler: Event konnte nicht mehr gefunden werden", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    fun removeEventGiftIdea(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
+        var id = ""
+        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
+            if(entry.value == oldEvent) {
+                id = entry.key
+            }
+        }
+
+        if(id != "") {
+            firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
+                    .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayRemove(giftIdea))
+                    .addOnSuccessListener {
+                        activity.giftIdeasList.remove(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea, selected = true))
+                        events[id]?.giftIdeas?.remove(giftIdea)
+                        activity.removeGiftIdeaFromEventModel(giftIdea)
+                        activity.addGiftIdeasRecyclerView()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.d("gi", "not found")
             Toast.makeText(activity.baseContext, "Fehler: Event konnte nicht mehr gefunden werden", Toast.LENGTH_SHORT).show();
         }
     }
