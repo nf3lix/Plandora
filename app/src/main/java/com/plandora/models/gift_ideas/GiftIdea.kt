@@ -9,8 +9,7 @@ data class GiftIdea(
     val description: String = "",
     val ownerId: String = "",
     val rating: Float = 0F,
-    val votes: ArrayList<PlandoraUser> = ArrayList(),
-    var selected: Boolean = false
+    val votes: ArrayList<PlandoraUser> = ArrayList()
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
