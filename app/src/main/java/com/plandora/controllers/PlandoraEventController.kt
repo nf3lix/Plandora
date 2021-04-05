@@ -58,7 +58,7 @@ class PlandoraEventController {
             }
     }
 
-    fun addEventGiftIdeas(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
+    fun addEventGiftIdea(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
         Log.d("gi-1", events.toString())
         Log.d("gi-2", oldEvent.toString())
         var id = ""
@@ -77,7 +77,7 @@ class PlandoraEventController {
                 .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
                 .addOnSuccessListener {
                     activity.giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
-                    events[id]?.giftIdeas?.remove(giftIdea)
+                    events[id]?.giftIdeas?.add(giftIdea)
                     activity.addGiftIdeaToEventModel(giftIdea)
                     getEventList(activity)
                 }

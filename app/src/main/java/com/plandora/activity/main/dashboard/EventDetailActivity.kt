@@ -76,7 +76,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
-        PlandoraEventController().addEventGiftIdeas(this, oldEvent, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdea))
+        PlandoraEventController().addEventGiftIdea(this, oldEvent, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdea))
     }
 
     override fun addGiftIdeasRecyclerView() {
