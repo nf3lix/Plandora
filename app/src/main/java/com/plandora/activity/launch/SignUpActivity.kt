@@ -36,9 +36,9 @@ class SignUpActivity : AppCompatActivity() {
                              password: String, repeatPassword: String): SignUpValidationTypes {
         return when {
             TextUtils.isEmpty(uniqueName) -> SignUpValidationTypes.EMPTY_UNIQUE_NAME
-            TextUtils.isEmpty(displayName) -> SignUpValidationTypes.EMPTY_UNIQUE_NAME
-            TextUtils.isEmpty(email) -> SignUpValidationTypes.EMPTY_UNIQUE_NAME
-            TextUtils.isEmpty(password) -> SignUpValidationTypes.EMPTY_UNIQUE_NAME
+            TextUtils.isEmpty(displayName) -> SignUpValidationTypes.EMPTY_DISPLAY_NAME
+            TextUtils.isEmpty(email) -> SignUpValidationTypes.EMPTY_EMAIL
+            TextUtils.isEmpty(password) -> SignUpValidationTypes.EMPTY_PASSWORD
             (password != repeatPassword) -> SignUpValidationTypes.PASSWORDS_DO_NOT_MATCH
             else -> SignUpValidationTypes.SUCCESS
         }
