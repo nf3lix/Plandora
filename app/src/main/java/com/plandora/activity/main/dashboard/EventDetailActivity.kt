@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
@@ -13,6 +14,7 @@ import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
+import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
@@ -24,7 +26,9 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener {
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    CRUDActivity.GiftIdeaCRUDActivity
+{
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -116,6 +120,29 @@ class EventDetailActivity : PlandoraActivity(),
 
     fun addGiftIdeaToEventModel(giftIdea: GiftIdea) {
         oldEvent.giftIdeas.add(giftIdea)
+    }
+
+    override fun onCreateSuccess(giftIdea: GiftIdea) {
+        giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
+        addGiftIdeaToEventModel(giftIdea)
+    }
+
+    override fun onCreateFailure() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRemoveSuccess(giftIdea: GiftIdea) {
+        giftIdeasList.remove(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea, selected = true))
+        removeGiftIdeaFromEventModel(giftIdea)
+        addGiftIdeasRecyclerView()
+    }
+
+    override fun onRemoveFailure(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    override fun onInternalFailure(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 }
