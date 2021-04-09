@@ -5,7 +5,7 @@
     <color name="colorPrimaryLight">#8FA1BC</color>
     <color name="colorAccent">#Eb6B4D</color>
     <color name="colorAccentDark">#E63F19</color>
-    <color name="colorBackgroundGrey">#C8C8C8</color>
+    <color name="colorBackgroundGrey">#D8D7D7</color>
     <color name="colorPreFilledText">#B0B0B0</color>
-    <color name="colorMainTextGrey">#808080</color>
+    <color name="colorMainTextGrey">#24354E</color>
 </resources>

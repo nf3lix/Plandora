@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.PlandoraUser
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -83,11 +84,11 @@ data class Event(
     }
 
     fun getDateAsString(): String {
-        return "06-20-2020"
+        return SimpleDateFormat("MM-dd-yyyy").format(Timestamp(timestamp))
     }
 
     fun getTimeAsString(): String {
-        return "18 : 00"
+        return SimpleDateFormat("HH:mm").format(Timestamp(timestamp))
     }
 
     fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
