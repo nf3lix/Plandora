@@ -10,9 +10,10 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.crud_workflows.CRUDActivity
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
-class SignInActivity : PlandoraActivity() {
+class SignInActivity : PlandoraActivity(), CRUDActivity {
 
     private lateinit var firebaseAuth: FirebaseAuth
 
@@ -53,6 +54,10 @@ class SignInActivity : PlandoraActivity() {
 
     private fun signInFormIsValid(email: String, password: String): Boolean {
         return !(TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
+    }
+
+    override fun onInternalFailure(message: String) {
+
     }
 
 }
