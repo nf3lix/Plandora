@@ -199,14 +199,6 @@ open class CreateEventActivity :
         giftIdeasList.add(giftIdea)
     }
 
-    fun onSuccess() {
-        finish()
-    }
-
-    fun onFailure() {
-        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
-    }
-
     private fun validateForm(event: Event): CreateEventValidationTypes {
         return when {
             !event.annual && event.timestamp < System.currentTimeMillis() -> {
@@ -219,7 +211,7 @@ open class CreateEventActivity :
         }
     }
 
-    override fun onCreateSuccess(giftIdea: GiftIdea) {
+    override fun onCreateSuccess(event: Event) {
         finish()
     }
 
@@ -227,7 +219,7 @@ open class CreateEventActivity :
         Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onRemoveSuccess(giftIdea: GiftIdea) {
+    override fun onRemoveSuccess(event: Event) {
     }
 
     override fun onRemoveFailure(message: String) {

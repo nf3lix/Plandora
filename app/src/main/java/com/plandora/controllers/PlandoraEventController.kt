@@ -3,7 +3,6 @@ package com.plandora.controllers
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.plandora.activity.CreateEventActivity
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdea
