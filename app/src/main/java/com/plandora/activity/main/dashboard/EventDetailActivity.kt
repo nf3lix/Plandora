@@ -1,6 +1,7 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -98,6 +99,11 @@ class EventDetailActivity : PlandoraActivity(),
 
     override fun onGiftItemClicked(activated: Boolean) {
         btn_delete_items.visibility = if(giftIdeaAdapter.getSelectedItems().size > 0) View.VISIBLE else View.GONE
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.event_detail_menu, menu)
+        return true
     }
 
     override fun addActionBar() {
