@@ -19,6 +19,7 @@ import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
+import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.validation_types.CreateEventValidationTypes
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
@@ -34,7 +35,8 @@ open class CreateEventActivity :
     PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener {
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    CRUDActivity.EventCRUDActivity {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -197,14 +199,6 @@ open class CreateEventActivity :
         giftIdeasList.add(giftIdea)
     }
 
-    fun onSuccess() {
-        finish()
-    }
-
-    fun onFailure() {
-        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
-    }
-
     private fun validateForm(event: Event): CreateEventValidationTypes {
         return when {
             !event.annual && event.timestamp < System.currentTimeMillis() -> {
@@ -215,6 +209,24 @@ open class CreateEventActivity :
             }
             else -> CreateEventValidationTypes.SUCCESS
         }
+    }
+
+    override fun onCreateSuccess(event: Event) {
+        finish()
+    }
+
+    override fun onCreateFailure() {
+        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRemoveSuccess(event: Event) {
+    }
+
+    override fun onRemoveFailure(message: String) {
+    }
+
+    override fun onInternalFailure(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 }

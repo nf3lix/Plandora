@@ -1,16 +1,11 @@
 package com.plandora.controllers
 
-import android.util.Log
-import android.widget.Toast
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.plandora.activity.CreateEventActivity
-import com.plandora.activity.PlandoraActivity
-import com.plandora.activity.main.dashboard.EventDetailActivity
+import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdea
-import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import com.plandora.utils.constants.FirestoreConstants
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -24,20 +19,20 @@ class PlandoraEventController {
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
 
-    fun createEvent(activity: CreateEventActivity, event: Event) {
+    fun createEvent(activity: CRUDActivity.EventCRUDActivity, event: Event) {
         firestoreInstance.collection(FirestoreConstants.EVENTS)
             .document()
             .set(event, SetOptions.merge())
             .addOnSuccessListener {
-                activity.onSuccess()
+                activity.onCreateSuccess(event)
                 eventList.add(event)
             }
             .addOnFailureListener {
-                activity.onFailure()
+                activity.onCreateFailure()
             }
     }
 
-    fun getEventList(activity: PlandoraActivity) {
+    fun getEventList(activity: CRUDActivity) {
         val currentTimestamp = System.currentTimeMillis() - 8.64e7
         firestoreInstance.collection(FirestoreConstants.EVENTS)
             .whereArrayContains(FirestoreConstants.ATTENDEES, PlandoraUserController().currentUserId())
@@ -54,19 +49,17 @@ class PlandoraEventController {
                 eventList.sort()
             }
             .addOnFailureListener {
-                Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show()
+                activity.onInternalFailure(it.message!!)
             }
     }
 
-    fun addEventGiftIdea(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
-        Log.d("gi-1", events.toString())
-        Log.d("gi-2", oldEvent.toString())
+    fun addEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == oldEvent) {
                 id = entry.key
                 if(entry.value.giftIdeas.contains(giftIdea)) {
-                    Toast.makeText(activity.baseContext, "Diese Idee existiert bereits", Toast.LENGTH_SHORT).show();
+                    activity.onInternalFailure("Diese Idee existiert bereits")
                     return
                 }
             }
@@ -76,20 +69,17 @@ class PlandoraEventController {
             firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
                 .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
                 .addOnSuccessListener {
-                    activity.giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
                     events[id]?.giftIdeas?.add(giftIdea)
-                    activity.addGiftIdeaToEventModel(giftIdea)
+                    activity.onCreateSuccess(giftIdea)
                     getEventList(activity)
                 }
-                .addOnFailureListener {
-                    Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show();
-                }
+                .addOnFailureListener { activity.onCreateFailure() }
         } else {
-            Toast.makeText(activity.baseContext, "Fehler: Event konnte nicht mehr gefunden werden", Toast.LENGTH_SHORT).show();
+            activity.onInternalFailure("Fehler: Event konnte nicht mehr gefunden werden")
         }
     }
 
-    fun removeEventGiftIdea(activity: EventDetailActivity, oldEvent: Event, giftIdea: GiftIdea) {
+    fun removeEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == oldEvent) {
@@ -101,17 +91,14 @@ class PlandoraEventController {
             firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
                     .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayRemove(giftIdea))
                     .addOnSuccessListener {
-                        activity.giftIdeasList.remove(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea, selected = true))
                         events[id]?.giftIdeas?.remove(giftIdea)
-                        activity.removeGiftIdeaFromEventModel(giftIdea)
-                        activity.addGiftIdeasRecyclerView()
+                        activity.onRemoveSuccess(giftIdea)
                     }
                     .addOnFailureListener {
-                        Toast.makeText(activity.baseContext, it.message, Toast.LENGTH_SHORT).show();
+                        activity.onRemoveFailure(it.message!!)
             }
         } else {
-            Log.d("gi", "not found")
-            Toast.makeText(activity.baseContext, "Fehler: Event konnte nicht mehr gefunden werden", Toast.LENGTH_SHORT).show();
+            activity.onInternalFailure("Fehler: Event konnte nicht mehr gefunden werden")
         }
     }
 
