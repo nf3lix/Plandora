@@ -53,22 +53,22 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
     private fun updateFragmentViewById(menuItemId: Int): Boolean {
         when(menuItemId) {
             R.id.bottom_nav_dashboard -> {
-                loadFragment(DashboardFragment())
-                toolbar_main_activity.title = resources.getString(R.string.dashboard_toolbar_title)
-                return true
+                return updateFragment(DashboardFragment(), resources.getString(R.string.dashboard_toolbar_title))
             }
             R.id.bottom_nav_notifications -> {
-                loadFragment(NotificationsFragment())
-                toolbar_main_activity.title = resources.getString(R.string.notifications_toolbar_title)
-                return true
+                return updateFragment(NotificationsFragment(), resources.getString(R.string.dashboard_toolbar_title))
             }
             R.id.bottom_nav_profile -> {
-                loadFragment(ProfileFragment())
-                toolbar_main_activity.title = resources.getString(R.string.profile_toolbar_title)
-                return true
+                return updateFragment(ProfileFragment(), resources.getString(R.string.profile_toolbar_title))
             }
         }
         return false
+    }
+
+    private fun updateFragment(fragment: Fragment, title: String): Boolean {
+        loadFragment(fragment)
+        toolbar_main_activity.title = title;
+        return true
     }
 
 }
