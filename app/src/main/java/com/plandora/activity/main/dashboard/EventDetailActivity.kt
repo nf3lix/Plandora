@@ -27,13 +27,12 @@ class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    CRUDActivity.GiftIdeaCRUDActivity
-{
+    CRUDActivity.GiftIdeaCRUDActivity {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
     private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
-    val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
+    private val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
 
     private lateinit var oldEvent: Event;
 
@@ -43,12 +42,8 @@ class EventDetailActivity : PlandoraActivity(),
         addActionBar()
         val event = intent.getParcelableExtra<Event>("event_object")!!
         oldEvent = event
-        btn_add_gift_idea.setOnClickListener {
-            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
-        }
-        btn_delete_items.setOnClickListener {
-            deleteSelectedEvents()
-        }
+        btn_add_gift_idea.setOnClickListener { AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog() }
+        btn_delete_items.setOnClickListener { deleteSelectedEvents() }
         addEventInformation(event)
         addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
@@ -62,12 +57,16 @@ class EventDetailActivity : PlandoraActivity(),
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
         event_type_spinner.setSelection(event.eventType.ordinal)
         cb_annual.isChecked = event.annual
-        for(userId in event.attendees) {
-            attendeesList.add(PlandoraUserController().getUserFromId(userId))
-        }
-        for(giftIdea in event.giftIdeas) {
-            giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
-        }
+        addAllAttendeesFormUserIds(event.attendees);
+        addAllGiftIdeas(event.giftIdeas);
+    }
+
+    private fun addAllAttendeesFormUserIds(attendeeIds: ArrayList<String>) {
+        attendeeIds.forEach { userId -> attendeesList.add(PlandoraUserController().getUserFromId(userId)) }
+    }
+
+    private fun addAllGiftIdeas(giftIdeas: ArrayList<GiftIdea>) {
+        giftIdeas.forEach { giftIdea -> giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea)) }
     }
 
     private fun addAttendeesRecyclerView(event: Event) {
@@ -107,18 +106,16 @@ class EventDetailActivity : PlandoraActivity(),
     private fun deleteSelectedEvents() {
         val selectedItems = giftIdeaAdapter.getSelectedItems()
         val giftIdeas = ArrayList<GiftIdea>()
-        selectedItems.forEach {
-            giftIdeas.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it))
-        }
+        selectedItems.forEach { giftIdeas.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it)) }
         PlandoraEventController().removeEventGiftIdea(this, oldEvent, giftIdeas[0])
         btn_delete_items.visibility = View.GONE
     }
 
-    fun removeGiftIdeaFromEventModel(giftIdea: GiftIdea) {
+    private fun removeGiftIdeaFromEventModel(giftIdea: GiftIdea) {
         oldEvent.giftIdeas.remove(giftIdea)
     }
 
-    fun addGiftIdeaToEventModel(giftIdea: GiftIdea) {
+    private fun addGiftIdeaToEventModel(giftIdea: GiftIdea) {
         oldEvent.giftIdeas.add(giftIdea)
     }
 
@@ -128,7 +125,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onCreateFailure() {
-        TODO("Not yet implemented")
+        onInternalFailure("Could not create Event")
     }
 
     override fun onRemoveSuccess(giftIdea: GiftIdea) {
