@@ -1,7 +1,9 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -21,6 +23,7 @@ import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
+import com.plandora.models.validation_types.CreateEventValidationTypes
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -28,6 +31,7 @@ class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    CRUDActivity.EventCRUDActivity,
     CRUDActivity.GiftIdeaCRUDActivity
 {
 
@@ -50,6 +54,7 @@ class EventDetailActivity : PlandoraActivity(),
         btn_delete_items.setOnClickListener {
             deleteSelectedEvents()
         }
+
         addEventInformation(event)
         addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
@@ -78,6 +83,21 @@ class EventDetailActivity : PlandoraActivity(),
             attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventDetailActivity)
             adapter = attendeesAdapter
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.save_entry -> {
+                saveEntry()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun saveEntry() {
+        // irgendwas geändert?
+        PlandoraEventController().updateEvent(this, oldEvent)
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
@@ -133,7 +153,23 @@ class EventDetailActivity : PlandoraActivity(),
         addGiftIdeaToEventModel(giftIdea)
     }
 
+    override fun onCreateSuccess(event: Event) {
+        TODO("Not yet implemented")
+    }
+
     override fun onCreateFailure() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onUpdateSuccess(event: Event) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onUpdateFailure(message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRemoveSuccess(event: Event) {
         TODO("Not yet implemented")
     }
 
