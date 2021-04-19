@@ -24,8 +24,11 @@ import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import com.plandora.models.validation_types.CreateEventValidationTypes
+import com.plandora.models.validation_types.EditEventValidationTypes
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
@@ -40,6 +43,7 @@ class EventDetailActivity : PlandoraActivity(),
     private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
     val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
 
+    private lateinit var newEvent: Event
     private lateinit var oldEvent: Event;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +92,20 @@ class EventDetailActivity : PlandoraActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
-                saveEntry()
+                newEvent = Event(
+                    event_title_input.text.toString(),
+                    EventType.valueOf(event_type_spinner.selectedItem.toString()),
+                    event_description_input.text.toString(),
+                    cb_annual.isChecked,
+                    oldEvent.timestamp,
+                    oldEvent.attendees,
+                    oldEvent.giftIdeas
+                )
+                val validation = validateForm(newEvent)
+                Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
+                if(validation == EditEventValidationTypes.SUCCESS) {
+                    saveEntry()
+                }
                 true
             }
             else -> false
@@ -96,8 +113,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private fun saveEntry() {
-        // irgendwas geändert?
-        PlandoraEventController().updateEvent(this, oldEvent)
+        PlandoraEventController().updateEvent(this, oldEvent, newEvent)
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
@@ -128,6 +144,18 @@ class EventDetailActivity : PlandoraActivity(),
 
     override fun addActionBar() {
         setSupportActionBar(toolbar_main_activity)
+    }
+
+    private fun validateForm(event: Event): EditEventValidationTypes {
+        return when {
+            !event.annual && event.timestamp < System.currentTimeMillis() -> {
+                EditEventValidationTypes.EVENT_IN_THE_PAST
+            }
+            event.title.isEmpty() -> {
+                EditEventValidationTypes.EMPTY_TITLE
+            }
+            else -> EditEventValidationTypes.SUCCESS
+        }
     }
 
     private fun deleteSelectedEvents() {
@@ -166,7 +194,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onUpdateFailure(message: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onRemoveSuccess(event: Event) {

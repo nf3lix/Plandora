@@ -54,10 +54,10 @@ class PlandoraEventController {
             }
     }
 
-    fun updateEvent(activity: CRUDActivity.EventCRUDActivity, event: Event) {
+    fun updateEvent(activity: CRUDActivity.EventCRUDActivity, oldEvent: Event, event: Event) {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
-            if(entry.value == event) {
+            if(entry.value == oldEvent) {
                 id = entry.key
             }
         }
