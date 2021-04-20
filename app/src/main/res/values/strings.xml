@@ -37,6 +37,8 @@
     <string name="create_event_in_the_past">This one-time event is in the past</string>
     <string name="create_event_success">Successfully created event</string>
 
+    <string name="update_event_success">Successfully updated event</string>
+
     <string name="empty_unique_name">Unique name must not be empty</string>
     <string name="empty_display_name">Display name must not be empty</string>
     <string name="empty_email">Email must not be empty</string>

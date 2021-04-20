@@ -217,6 +217,14 @@ open class CreateEventActivity :
         onInternalFailure("Could not create event")
     }
 
+    override fun onUpdateSuccess(event: Event) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onUpdateFailure(message: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun onRemoveSuccess(event: Event) {
     }
 
