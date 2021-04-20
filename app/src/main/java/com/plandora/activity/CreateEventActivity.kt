@@ -158,33 +158,35 @@ open class CreateEventActivity :
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
-            R.id.save_entry -> {
-                val list = ArrayList<GiftIdea>()
-                giftIdeasList.forEach {
-                    list.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it))
-                }
-                event.apply {
-                    title = event_title_input.text.toString()
-                    eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
-                    description = event_description_input.text.toString()
-                    annual = cb_annual.isChecked
-                    timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
-                    attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
-                    giftIdeas = list
-                }
-                val validation = validateForm(event)
-                Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
-                if(validation == CreateEventValidationTypes.SUCCESS) {
-                    PlandoraEventController().createEvent(this, event)
-                }
-                true
-            }
+            R.id.save_entry -> { saveNewEntry() }
             R.id.close_creation -> {
                 finish()
                 true
             }
             else -> false
         }
+    }
+
+    private fun saveNewEntry(): Boolean {
+        val list = ArrayList<GiftIdea>()
+        giftIdeasList.forEach {
+            list.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it))
+        }
+        event.apply {
+            title = event_title_input.text.toString()
+            eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
+            description = event_description_input.text.toString()
+            annual = cb_annual.isChecked
+            timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
+            attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
+            giftIdeas = list
+        }
+        val validation = validateForm(event)
+        Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
+        if(validation == CreateEventValidationTypes.SUCCESS) {
+            PlandoraEventController().createEvent(this, event)
+        }
+        return true
     }
 
     override fun addActionBar() {
@@ -201,12 +203,8 @@ open class CreateEventActivity :
 
     private fun validateForm(event: Event): CreateEventValidationTypes {
         return when {
-            !event.annual && event.timestamp < System.currentTimeMillis() -> {
-                CreateEventValidationTypes.EVENT_IN_THE_PAST
-            }
-            event.title.isEmpty() -> {
-                CreateEventValidationTypes.EMPTY_TITLE
-            }
+            !event.annual && event.timestamp < System.currentTimeMillis() -> { CreateEventValidationTypes.EVENT_IN_THE_PAST }
+            event.title.isEmpty() -> { CreateEventValidationTypes.EMPTY_TITLE }
             else -> CreateEventValidationTypes.SUCCESS
         }
     }
@@ -216,7 +214,7 @@ open class CreateEventActivity :
     }
 
     override fun onCreateFailure() {
-        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show()
+        onInternalFailure("Could not create event")
     }
 
     override fun onUpdateSuccess(event: Event) {
@@ -231,6 +229,7 @@ open class CreateEventActivity :
     }
 
     override fun onRemoveFailure(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onInternalFailure(message: String) {

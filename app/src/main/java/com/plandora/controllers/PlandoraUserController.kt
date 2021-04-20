@@ -40,7 +40,6 @@ class PlandoraUserController {
     }
 
     fun signUpUser(activity: SignUpActivity, uniqueName: String, displayName: String, email: String, password: String) {
-
         firestoreInstance.collection(FirestoreConstants.USER_NAMES)
             .document(uniqueName).set(mapOf("user" to email))
             .addOnSuccessListener {
