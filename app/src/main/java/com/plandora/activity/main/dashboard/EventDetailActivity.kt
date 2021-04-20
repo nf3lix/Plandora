@@ -40,7 +40,7 @@ class EventDetailActivity : PlandoraActivity(),
     private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
     val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
 
-    private lateinit var oldEvent: Event;
+    private lateinit var oldEvent: Event
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
