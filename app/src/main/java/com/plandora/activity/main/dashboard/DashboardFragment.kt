@@ -19,35 +19,46 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
-    private lateinit var items: ArrayList<Event>
+    private lateinit var eventList: ArrayList<Event>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.fragment_dashboard_main, container, false)
-        rootView.findViewById<RecyclerView>(R.id.recycler_view).addItemDecoration(EventItemSpacingDecoration(40))
-        //addRecyclerView()
-        rootView.findViewById<FloatingActionButton>(R.id.fab_create_board)
-            .setOnClickListener { startActivity(Intent(rootView.context, CreateEventActivity::class.java )) }
+        displayDashboardFragment(inflater, container)
+        addFabButtonListener()
         return rootView
     }
 
     override fun onStart() {
         super.onStart()
-        addRecyclerView()
+        addEventRecyclerView()
     }
 
-    private fun addRecyclerView() {
-        items = PlandoraEventController.eventList
+    override fun onClickListener(index: Int) {
+        startEventDetailActivity(eventList[index])
+    }
+
+    private fun addEventRecyclerView() {
+        eventList = PlandoraEventController.eventList
         rootView.findViewById<RecyclerView>(R.id.recycler_view).apply {
             layoutManager = LinearLayoutManager(activity)
-            eventAdapter = EventRecyclerAdapter(items, this@DashboardFragment)
+            eventAdapter = EventRecyclerAdapter(eventList, this@DashboardFragment)
             adapter = eventAdapter
         }
     }
 
-    override fun onClickListener(index: Int) {
+    private fun startEventDetailActivity(event: Event) {
         val intent = Intent(rootView.context, EventDetailActivity::class.java)
-        intent.putExtra("event_object", items[index])
+        intent.putExtra("event_object", event)
         startActivity(intent)
+    }
+
+    private fun displayDashboardFragment(inflater: LayoutInflater, container: ViewGroup?) {
+        rootView = inflater.inflate(R.layout.fragment_dashboard_main, container, false)
+        rootView.findViewById<RecyclerView>(R.id.recycler_view).addItemDecoration(EventItemSpacingDecoration(40))
+    }
+
+    private fun addFabButtonListener() {
+        rootView.findViewById<FloatingActionButton>(R.id.fab_create_board)
+                .setOnClickListener { startActivity(Intent(rootView.context, CreateEventActivity::class.java )) }
     }
 
 }
