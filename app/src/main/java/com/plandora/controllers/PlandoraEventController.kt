@@ -1,5 +1,6 @@
 package com.plandora.controllers
 
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -51,6 +52,38 @@ class PlandoraEventController {
             .addOnFailureListener {
                 activity.onInternalFailure(it.message!!)
             }
+    }
+
+    fun updateEvent(activity: CRUDActivity.EventCRUDActivity, oldEvent: Event, event: Event) {
+        var id = ""
+        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
+            if(entry.value == oldEvent) {
+                id = entry.key
+            }
+        }
+
+        if(id != "") {
+            firestoreInstance.collection(FirestoreConstants.EVENTS)
+                .document(id)
+                .update(
+                    FirestoreConstants.EVENT_TITLE, event.title,
+                    FirestoreConstants.EVENT_DESCRIPTION, event.description,
+                    FirestoreConstants.EVENT_ANNUAL, event.annual,
+                    FirestoreConstants.EVENT_DATE_AS_STRING, event.getDateAsString(),
+                    FirestoreConstants.EVENT_TYPE, event.eventType,
+                    FirestoreConstants.EVENT_TIME_AS_STRING, event.getTimeAsString(),
+                    FirestoreConstants.EVENT_TIMESTAMP, event.timestamp
+                )
+                .addOnSuccessListener {
+                    Log.d("edit_event", "successfully edited event")
+                }
+                .addOnFailureListener {
+                    Log.d("edit_event", "could not edit event")
+                }
+        } else {
+            activity.onUpdateFailure("Error: Event could not be found")
+        }
+
     }
 
     fun addEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {

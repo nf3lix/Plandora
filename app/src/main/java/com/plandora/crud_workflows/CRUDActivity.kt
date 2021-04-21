@@ -17,6 +17,8 @@ interface CRUDActivity {
     interface EventCRUDActivity : CRUDActivity {
         fun onCreateSuccess(event: Event)
         fun onCreateFailure()
+        fun onUpdateSuccess(event: Event)
+        fun onUpdateFailure(message: String)
         fun onRemoveSuccess(event: Event)
         fun onRemoveFailure(message: String)
     }

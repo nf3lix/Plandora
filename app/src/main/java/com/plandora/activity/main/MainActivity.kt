@@ -1,12 +1,15 @@
 package com.plandora.activity.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.launch.SignInActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -41,7 +44,9 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
     }
 
     override fun onNavigationItemSelected(item: MenuItem) : Boolean {
-        // TODO
+        when(item.itemId) {
+            R.id.nav_sign_out -> signOut()
+        }
         return true
     }
 
@@ -53,22 +58,28 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
     private fun updateFragmentViewById(menuItemId: Int): Boolean {
         when(menuItemId) {
             R.id.bottom_nav_dashboard -> {
-                loadFragment(DashboardFragment())
-                toolbar_main_activity.title = resources.getString(R.string.dashboard_toolbar_title)
-                return true
+                return updateFragment(DashboardFragment(), resources.getString(R.string.dashboard_toolbar_title))
             }
             R.id.bottom_nav_notifications -> {
-                loadFragment(NotificationsFragment())
-                toolbar_main_activity.title = resources.getString(R.string.notifications_toolbar_title)
-                return true
+                return updateFragment(NotificationsFragment(), resources.getString(R.string.dashboard_toolbar_title))
             }
             R.id.bottom_nav_profile -> {
-                loadFragment(ProfileFragment())
-                toolbar_main_activity.title = resources.getString(R.string.profile_toolbar_title)
-                return true
+                return updateFragment(ProfileFragment(), resources.getString(R.string.profile_toolbar_title))
             }
         }
         return false
+    }
+
+    private fun updateFragment(fragment: Fragment, title: String): Boolean {
+        loadFragment(fragment)
+        toolbar_main_activity.title = title;
+        return true
+    }
+
+    private fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        startActivity(Intent(this, SignInActivity::class.java))
+        finish()
     }
 
 }
