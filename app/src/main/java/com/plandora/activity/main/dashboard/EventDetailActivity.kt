@@ -47,20 +47,19 @@ class EventDetailActivity : PlandoraActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         addActionBar()
+        setupButtonListeners()
         val event = intent.getParcelableExtra<Event>("event_object")!!
+        setupBasedOnEvent(event)
+    }
+
+    private fun setupBasedOnEvent(event: Event) {
         oldEvent = event
-        btn_add_gift_idea.setOnClickListener {
-            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
-        }
-        btn_delete_items.setOnClickListener {
-            deleteSelectedEvents()
-        }
-        addEventInformation(event)
+        addBasicEventInformation(event)
         addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
     }
 
-    private fun addEventInformation(event: Event) {
+    private fun addBasicEventInformation(event: Event) {
         event_title_input.setText(event.title)
         event_description_input.setText(event.description)
         event_date_input.setText(event.getDateAsString())
@@ -68,8 +67,8 @@ class EventDetailActivity : PlandoraActivity(),
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
         event_type_spinner.setSelection(event.eventType.ordinal)
         cb_annual.isChecked = event.annual
-        addAllAttendeesFormUserIds(event.attendees);
-        addAllGiftIdeas(event.giftIdeas);
+        addAllAttendeesFormUserIds(event.attendees)
+        addAllGiftIdeas(event.giftIdeas)
     }
 
     private fun addAllAttendeesFormUserIds(attendeeIds: ArrayList<String>) {
@@ -92,23 +91,27 @@ class EventDetailActivity : PlandoraActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
-                newEvent = Event(
-                    event_title_input.text.toString(),
-                    EventType.valueOf(event_type_spinner.selectedItem.toString()),
-                    event_description_input.text.toString(),
-                    cb_annual.isChecked,
-                    oldEvent.timestamp,
-                    oldEvent.attendees,
-                    oldEvent.giftIdeas
-                )
-                val validation = validateForm(newEvent)
-                Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
-                if(validation == EditEventValidationTypes.SUCCESS) {
-                    saveEntry()
-                }
+                onSaveButtonClicked()
                 true
             }
             else -> false
+        }
+    }
+
+    private fun onSaveButtonClicked() {
+        newEvent = Event(
+                event_title_input.text.toString(),
+                EventType.valueOf(event_type_spinner.selectedItem.toString()),
+                event_description_input.text.toString(),
+                cb_annual.isChecked,
+                oldEvent.timestamp,
+                oldEvent.attendees,
+                oldEvent.giftIdeas
+        )
+        val validation = validateForm(newEvent)
+        Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
+        if(validation == EditEventValidationTypes.SUCCESS) {
+            saveEntry()
         }
     }
 
@@ -211,6 +214,15 @@ class EventDetailActivity : PlandoraActivity(),
 
     override fun onInternalFailure(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupButtonListeners() {
+        btn_add_gift_idea.setOnClickListener {
+            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+        }
+        btn_delete_items.setOnClickListener {
+            deleteSelectedEvents()
+        }
     }
 
 }
