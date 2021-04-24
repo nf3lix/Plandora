@@ -36,7 +36,9 @@ open class CreateEventActivity :
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    CRUDActivity.EventCRUDActivity {
+    CRUDActivity.EventCRUDActivity,
+    CRUDActivity.InvitationCRUDActivity
+{
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -85,7 +87,7 @@ open class CreateEventActivity :
 
     }
 
-    fun addAttendeesRecyclerView() {
+    private fun addAttendeesRecyclerView() {
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@CreateEventActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
@@ -193,8 +195,9 @@ open class CreateEventActivity :
         setSupportActionBar(toolbar_main_activity)
     }
 
-    fun addAttendee(attendee: PlandoraUser) {
+    override fun addAttendee(attendee: PlandoraUser) {
         attendeesList.add(attendee)
+        addAttendeesRecyclerView()
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {

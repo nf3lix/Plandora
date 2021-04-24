@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
@@ -33,7 +34,9 @@ class EventDetailActivity : PlandoraActivity(),
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
     CRUDActivity.EventCRUDActivity,
-    CRUDActivity.GiftIdeaCRUDActivity {
+    CRUDActivity.GiftIdeaCRUDActivity,
+    CRUDActivity.InvitationCRUDActivity
+{
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -49,12 +52,7 @@ class EventDetailActivity : PlandoraActivity(),
         addActionBar()
         val event = intent.getParcelableExtra<Event>("event_object")!!
         oldEvent = event
-        btn_add_gift_idea.setOnClickListener {
-            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
-        }
-        btn_delete_items.setOnClickListener {
-            deleteSelectedEvents()
-        }
+        setupClickListeners()
         addEventInformation(event)
         addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
@@ -209,8 +207,25 @@ class EventDetailActivity : PlandoraActivity(),
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    override fun addAttendee(attendee: PlandoraUser) {
+        attendeesList.add(attendee)
+        addAttendeesRecyclerView(oldEvent)
+    }
+
     override fun onInternalFailure(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupClickListeners() {
+        btn_add_attendee.setOnClickListener {
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+        }
+        btn_add_gift_idea.setOnClickListener {
+            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+        }
+        btn_delete_items.setOnClickListener {
+            deleteSelectedEvents()
+        }
     }
 
 }

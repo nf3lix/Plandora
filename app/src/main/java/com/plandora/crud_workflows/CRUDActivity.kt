@@ -1,5 +1,6 @@
 package com.plandora.crud_workflows
 
+import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdea
 
@@ -21,6 +22,10 @@ interface CRUDActivity {
         fun onUpdateFailure(message: String)
         fun onRemoveSuccess(event: Event)
         fun onRemoveFailure(message: String)
+    }
+
+    interface InvitationCRUDActivity : CRUDActivity {
+        fun addAttendee(attendee: PlandoraUser)
     }
 
 }
