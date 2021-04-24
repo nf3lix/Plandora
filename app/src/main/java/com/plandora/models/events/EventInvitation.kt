@@ -2,7 +2,6 @@ package com.plandora.models.events
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.gms.common.internal.safeparcel.SafeParcelWriter.writeInt
 import kotlin.math.roundToInt
 
 data class EventInvitation(

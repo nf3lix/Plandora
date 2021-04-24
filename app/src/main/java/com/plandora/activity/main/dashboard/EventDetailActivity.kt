@@ -207,9 +207,14 @@ class EventDetailActivity : PlandoraActivity(),
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    override fun addAttendee(attendee: PlandoraUser) {
+    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
+        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
         attendeesList.add(attendee)
         addAttendeesRecyclerView(oldEvent)
+    }
+
+    override fun onInvitationCreateFailure() {
+        onInternalFailure("Could not invite user")
     }
 
     override fun onInternalFailure(message: String) {

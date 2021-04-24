@@ -16,7 +16,7 @@ class AddAttendeeDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
     : PlandoraDialog(context, view, attachToRoot, resource = R.layout.dialog_add_attendee, title = "Add Attendee") {
 
     override fun onPositiveButtonClick(dialog: DialogInterface, which: Int) {
-        PlandoraUserController().inviteUserToEvent(viewInflated.add_attendee_input.text.toString(), this)
+        PlandoraUserController().inviteUserToEvent(viewInflated.add_attendee_input.text.toString(), this, activity)
         dialog.dismiss()
     }
 
@@ -25,7 +25,7 @@ class AddAttendeeDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
     }
 
     fun onUserFetched(newAttendee: PlandoraUser) {
-        PlandoraEventController().createEventInvitation(event, newAttendee)
+        PlandoraEventController().createEventInvitation(event, newAttendee, activity)
     }
 
 }

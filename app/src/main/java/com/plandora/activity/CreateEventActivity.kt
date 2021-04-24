@@ -195,9 +195,14 @@ open class CreateEventActivity :
         setSupportActionBar(toolbar_main_activity)
     }
 
-    override fun addAttendee(attendee: PlandoraUser) {
+    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
+        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
         attendeesList.add(attendee)
         addAttendeesRecyclerView()
+    }
+
+    override fun onInvitationCreateFailure() {
+        onInternalFailure("Could not invite user")
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {

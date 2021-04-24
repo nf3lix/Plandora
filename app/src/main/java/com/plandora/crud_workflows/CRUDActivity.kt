@@ -25,7 +25,8 @@ interface CRUDActivity {
     }
 
     interface InvitationCRUDActivity : CRUDActivity {
-        fun addAttendee(attendee: PlandoraUser)
+        fun onInvitationCreateSuccess(attendee: PlandoraUser)
+        fun onInvitationCreateFailure()
     }
 
 }

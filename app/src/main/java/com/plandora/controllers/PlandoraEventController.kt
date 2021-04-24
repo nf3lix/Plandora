@@ -110,7 +110,7 @@ class PlandoraEventController {
                 }
                 .addOnFailureListener { activity.onCreateFailure() }
         } else {
-            activity.onInternalFailure("Fehler: Event konnte nicht mehr gefunden werden")
+            activity.onInternalFailure("Failure: Event could not be found")
         }
     }
 
@@ -133,11 +133,11 @@ class PlandoraEventController {
                         activity.onRemoveFailure(it.message!!)
             }
         } else {
-            activity.onInternalFailure("Fehler: Event konnte nicht mehr gefunden werden")
+            activity.onInternalFailure("Failure: Event could not be found")
         }
     }
 
-    fun createEventInvitation(event: Event, invitedUser: PlandoraUser) {
+    fun createEventInvitation(event: Event, invitedUser: PlandoraUser, activity: CRUDActivity.InvitationCRUDActivity) {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == event) {
@@ -151,12 +151,13 @@ class PlandoraEventController {
                 .document()
                 .set(invitation, SetOptions.merge())
                 .addOnSuccessListener {
-                    //activity.onCreateSuccess(event)
-                    // eventList.add(event)
+                    activity.onInvitationCreateSuccess(invitedUser)
                 }
                 .addOnFailureListener {
-                    // activity.onCreateFailure()
+                    activity.onInvitationCreateFailure()
                 }
+        } else {
+            activity.onInternalFailure("Failure: Event could not be found")
         }
     }
 

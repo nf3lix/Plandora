@@ -1,5 +1,6 @@
 package com.plandora.controllers
 
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -7,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.launch.SignUpActivity
+import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.utils.constants.FirestoreConstants
 
@@ -28,15 +30,15 @@ class PlandoraUserController {
         return PlandoraUser(userId, "Felix", "Felix", "test@test.de")
     }
 
-    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog) {
+    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog, activity: CRUDActivity.InvitationCRUDActivity) {
         FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
             .whereEqualTo(FirestoreConstants.USER_NAME_FIELD, username).get()
             .addOnSuccessListener { document ->
-                if(document.documents.size == 0) {
-
-                } else {
+                if(document.documents.size > 0) {
                     val attendee = document.documents[0].toObject(PlandoraUser::class.java)!!
                     dialog.onUserFetched(attendee)
+                } else {
+                    activity.onInternalFailure("User could not be found")
                 }
             }
     }
