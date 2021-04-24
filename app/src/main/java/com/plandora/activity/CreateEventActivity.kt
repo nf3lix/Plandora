@@ -74,7 +74,7 @@ open class CreateEventActivity :
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
 
         btn_add_attendee.setOnClickListener {
-            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
         }
 
         btn_add_gift_idea.setOnClickListener {

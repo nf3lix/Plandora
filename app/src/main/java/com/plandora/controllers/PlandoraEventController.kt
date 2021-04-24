@@ -5,7 +5,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.plandora.crud_workflows.CRUDActivity
+import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
+import com.plandora.models.events.EventInvitation
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.utils.constants.FirestoreConstants
 import kotlin.collections.ArrayList
@@ -132,6 +134,29 @@ class PlandoraEventController {
             }
         } else {
             activity.onInternalFailure("Fehler: Event konnte nicht mehr gefunden werden")
+        }
+    }
+
+    fun createEventInvitation(event: Event, invitedUser: PlandoraUser) {
+        var id = ""
+        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
+            if(entry.value == event) {
+                id = entry.key
+            }
+        }
+
+        if(id != "") {
+            val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, id, System.currentTimeMillis())
+            firestoreInstance.collection(FirestoreConstants.INVITATIONS)
+                .document()
+                .set(invitation, SetOptions.merge())
+                .addOnSuccessListener {
+                    //activity.onCreateSuccess(event)
+                    // eventList.add(event)
+                }
+                .addOnFailureListener {
+                    // activity.onCreateFailure()
+                }
         }
     }
 

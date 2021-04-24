@@ -218,7 +218,7 @@ class EventDetailActivity : PlandoraActivity(),
 
     private fun setupClickListeners() {
         btn_add_attendee.setOnClickListener {
-            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, oldEvent, this).showDialog()
         }
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
