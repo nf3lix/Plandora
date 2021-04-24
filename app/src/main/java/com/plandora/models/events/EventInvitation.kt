@@ -2,27 +2,31 @@ package com.plandora.models.events
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.android.gms.common.internal.safeparcel.SafeParcelWriter.writeInt
 import kotlin.math.roundToInt
 
 data class EventInvitation(
     val invitedUserId: String,
     val invitationOwnerId: String,
     val eventId: String,
-    val creationTimestamp: Long
+    val creationTimestamp: Long,
+    val status: EventInvitationStatus = EventInvitationStatus.PENDING
 ) : Parcelable, Comparable<EventInvitation> {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readLong()
+        parcel.readLong(),
+        EventInvitationStatus.values()[parcel.readInt()]
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
         parcel.writeString(invitedUserId)
         parcel.writeString(invitationOwnerId)
         parcel.writeString(eventId)
         parcel.writeLong(creationTimestamp)
+        writeInt(status.ordinal)
     }
 
     override fun describeContents(): Int {
