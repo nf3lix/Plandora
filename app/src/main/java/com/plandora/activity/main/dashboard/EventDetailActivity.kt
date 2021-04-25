@@ -217,6 +217,10 @@ class EventDetailActivity : PlandoraActivity(),
         onInternalFailure("Could not invite user")
     }
 
+    override fun onInvitationExists() {
+        onInternalFailure("This invitation already exists")
+    }
+
     override fun onInternalFailure(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

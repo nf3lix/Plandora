@@ -146,15 +146,25 @@ class PlandoraEventController {
         }
 
         if(id != "") {
-            val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, id, System.currentTimeMillis())
-            firestoreInstance.collection(FirestoreConstants.INVITATIONS)
-                .document()
-                .set(invitation, SetOptions.merge())
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id).get()
                 .addOnSuccessListener {
-                    activity.onInvitationCreateSuccess(invitedUser)
-                }
-                .addOnFailureListener {
-                    activity.onInvitationCreateFailure()
+                    val resolvedEvent = it.toObject(Event::class.java)!!
+                    if(!resolvedEvent.invitedUserIds.contains(invitedUser.id)) {
+                        val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, id, System.currentTimeMillis())
+                        firestoreInstance.collection(FirestoreConstants.INVITATIONS)
+                                .document()
+                                .set(invitation, SetOptions.merge())
+                                .addOnSuccessListener {
+                                    firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
+                                            .update("invitedUserIds", FieldValue.arrayUnion(invitedUser.id))
+                                    activity.onInvitationCreateSuccess(invitedUser)
+                                }
+                                .addOnFailureListener {
+                                    activity.onInvitationCreateFailure()
+                                }
+                    } else {
+                        activity.onInvitationExists()
+                    }
                 }
         } else {
             activity.onInternalFailure("Failure: Event could not be found")

@@ -205,6 +205,10 @@ open class CreateEventActivity :
         onInternalFailure("Could not invite user")
     }
 
+    override fun onInvitationExists() {
+        onInternalFailure("This invitation already exists")
+    }
+
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
         giftIdeasList.add(giftIdea)
     }
