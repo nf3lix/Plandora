@@ -57,13 +57,7 @@ class PlandoraEventController {
     }
 
     fun updateEvent(activity: CRUDActivity.EventCRUDActivity, oldEvent: Event, event: Event) {
-        var id = ""
-        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
-            if(entry.value == oldEvent) {
-                id = entry.key
-            }
-        }
-
+        val id = getEventId(oldEvent)
         if(id != "") {
             firestoreInstance.collection(FirestoreConstants.EVENTS)
                 .document(id)
@@ -115,13 +109,7 @@ class PlandoraEventController {
     }
 
     fun removeEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
-        var id = ""
-        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
-            if(entry.value == oldEvent) {
-                id = entry.key
-            }
-        }
-
+        val id = getEventId(oldEvent)
         if(id != "") {
             firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
                     .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayRemove(giftIdea))
@@ -138,37 +126,48 @@ class PlandoraEventController {
     }
 
     fun createEventInvitation(event: Event, invitedUser: PlandoraUser, activity: CRUDActivity.InvitationCRUDActivity) {
+        val id = getEventId(event)
+        if(id != "") {
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id).get()
+                .addOnSuccessListener {
+                    initInvitation(it.toObject(Event::class.java)!!, invitedUser, id, activity)
+                }
+        } else {
+            activity.onInternalFailure("Failure: Event could not be found")
+        }
+    }
+
+    private fun initInvitation(event: Event, invitedUser: PlandoraUser, eventId: String, activity: CRUDActivity.InvitationCRUDActivity) {
+        if(!event.invitedUserIds.contains(invitedUser.id)) {
+            val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, eventId, System.currentTimeMillis())
+            addInvitationToEvent(invitation, eventId, invitedUser, activity)
+        } else {
+            activity.onInvitationExists()
+        }
+    }
+
+    private fun addInvitationToEvent(invitation: EventInvitation, eventId: String, invitedUser: PlandoraUser, activity: CRUDActivity.InvitationCRUDActivity) {
+        firestoreInstance.collection(FirestoreConstants.INVITATIONS)
+                .document()
+                .set(invitation, SetOptions.merge())
+                .addOnSuccessListener {
+                    firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
+                            .update("invitedUserIds", FieldValue.arrayUnion(invitedUser.id))
+                    activity.onInvitationCreateSuccess(invitedUser)
+                }
+                .addOnFailureListener {
+                    activity.onInvitationCreateFailure()
+                }
+    }
+
+    private fun getEventId(event: Event): String {
         var id = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == event) {
                 id = entry.key
             }
         }
-
-        if(id != "") {
-        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id).get()
-                .addOnSuccessListener {
-                    val resolvedEvent = it.toObject(Event::class.java)!!
-                    if(!resolvedEvent.invitedUserIds.contains(invitedUser.id)) {
-                        val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, id, System.currentTimeMillis())
-                        firestoreInstance.collection(FirestoreConstants.INVITATIONS)
-                                .document()
-                                .set(invitation, SetOptions.merge())
-                                .addOnSuccessListener {
-                                    firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
-                                            .update("invitedUserIds", FieldValue.arrayUnion(invitedUser.id))
-                                    activity.onInvitationCreateSuccess(invitedUser)
-                                }
-                                .addOnFailureListener {
-                                    activity.onInvitationCreateFailure()
-                                }
-                    } else {
-                        activity.onInvitationExists()
-                    }
-                }
-        } else {
-            activity.onInternalFailure("Failure: Event could not be found")
-        }
+        return id
     }
 
 }
