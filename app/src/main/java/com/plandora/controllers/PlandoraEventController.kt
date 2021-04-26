@@ -50,6 +50,7 @@ class PlandoraEventController {
                     }
                 }
                 eventList.sort()
+                activity.onSuccess()
             }
             .addOnFailureListener {
                 activity.onInternalFailure(it.message!!)

@@ -7,6 +7,7 @@ import com.plandora.models.gift_ideas.GiftIdea
 interface CRUDActivity {
 
     fun onInternalFailure(message: String)
+    fun onSuccess() { }
 
     interface GiftIdeaCRUDActivity : CRUDActivity {
         fun onCreateSuccess(giftIdea: GiftIdea)
