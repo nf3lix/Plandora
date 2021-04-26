@@ -55,7 +55,7 @@ open class CreateEventActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
-
+        attendees_linear_layout.visibility = View.GONE
         attendeesList.add(PlandoraUserController().getUserFromId(PlandoraUserController().currentUserId()))
         event = Event(ownerId = PlandoraUserController().currentUserId())
 
