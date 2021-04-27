@@ -72,7 +72,7 @@ class PlandoraEventController {
                     FirestoreConstants.EVENT_TIMESTAMP, event.timestamp
                 )
                 .addOnSuccessListener {
-                    Log.d("edit_event", "successfully edited event")
+                    activity.onUpdateSuccess(event)
                 }
                 .addOnFailureListener {
                     Log.d("edit_event", "could not edit event")

@@ -186,7 +186,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onUpdateSuccess(event: Event) {
-        TODO("Not yet implemented")
+        finish()
     }
 
     override fun onUpdateFailure(message: String) {
