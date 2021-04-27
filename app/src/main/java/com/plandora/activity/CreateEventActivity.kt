@@ -36,7 +36,9 @@ open class CreateEventActivity :
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    CRUDActivity.EventCRUDActivity {
+    CRUDActivity.EventCRUDActivity,
+    CRUDActivity.InvitationCRUDActivity
+{
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -53,39 +55,19 @@ open class CreateEventActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
-
+        attendees_linear_layout.visibility = View.GONE
         attendeesList.add(PlandoraUserController().getUserFromId(PlandoraUserController().currentUserId()))
         event = Event(ownerId = PlandoraUserController().currentUserId())
-
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
         addActionBar()
-
         displaySelectedDate()
         displaySelectedTime()
-
-        btn_date_picker.setOnClickListener { selectDate() }
-        btn_time_picker.setOnClickListener { selectTime() }
-        event_date_input.setOnClickListener { selectDate() }
-        event_time_input.setOnClickListener { selectTime() }
-
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
-
-        btn_add_attendee.setOnClickListener {
-            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
-        }
-
-        btn_add_gift_idea.setOnClickListener {
-            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
-        }
-
-        btn_delete_items.setOnClickListener {
-            deleteAttendee()
-        }
-
+        setupButtonListeners()
     }
 
-    fun addAttendeesRecyclerView() {
+    private fun addAttendeesRecyclerView() {
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@CreateEventActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
@@ -193,8 +175,18 @@ open class CreateEventActivity :
         setSupportActionBar(toolbar_main_activity)
     }
 
-    fun addAttendee(attendee: PlandoraUser) {
+    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
+        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
         attendeesList.add(attendee)
+        addAttendeesRecyclerView()
+    }
+
+    override fun onInvitationCreateFailure() {
+        onInternalFailure("Could not invite user")
+    }
+
+    override fun onInvitationExists() {
+        onInternalFailure("This invitation already exists")
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
@@ -234,6 +226,22 @@ open class CreateEventActivity :
 
     override fun onInternalFailure(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupButtonListeners() {
+        btn_date_picker.setOnClickListener { selectDate() }
+        btn_time_picker.setOnClickListener { selectTime() }
+        event_date_input.setOnClickListener { selectDate() }
+        event_time_input.setOnClickListener { selectTime() }
+        btn_add_attendee.setOnClickListener {
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
+        }
+        btn_add_gift_idea.setOnClickListener {
+            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+        }
+        btn_delete_items.setOnClickListener {
+            deleteAttendee()
+        }
     }
 
 }

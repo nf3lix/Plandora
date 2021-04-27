@@ -46,7 +46,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation "com.android.support.test.espresso:espresso-intents:3.3.0"
     androidTestImplementation 'info.cukes:cucumber-android:1.2.5'
     androidTestImplementation 'info.cukes:cucumber-picocontainer:1.2.5'
-
+    testImplementation "androidx.test.ext:junit-ktx:1.1.2"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
 }

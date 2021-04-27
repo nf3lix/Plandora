@@ -18,4 +18,6 @@ object FirestoreConstants {
     const val USER_NAMES: String = "usernames"
     const val USER_NAME_FIELD = "name"
 
+    const val INVITATIONS: String = "invitations"
+
 }
