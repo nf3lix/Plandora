@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
@@ -33,7 +34,9 @@ class EventDetailActivity : PlandoraActivity(),
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
     CRUDActivity.EventCRUDActivity,
-    CRUDActivity.GiftIdeaCRUDActivity {
+    CRUDActivity.GiftIdeaCRUDActivity,
+    CRUDActivity.InvitationCRUDActivity
+{
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -47,7 +50,7 @@ class EventDetailActivity : PlandoraActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         addActionBar()
-        setupButtonListeners()
+        setupClickListeners()
         val event = intent.getParcelableExtra<Event>("event_object")!!
         setupBasedOnEvent(event)
     }
@@ -191,7 +194,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onUpdateSuccess(event: Event) {
-        TODO("Not yet implemented")
+        finish()
     }
 
     override fun onUpdateFailure(message: String) {
@@ -212,11 +215,28 @@ class EventDetailActivity : PlandoraActivity(),
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
+        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
+        attendeesList.add(attendee)
+        addAttendeesRecyclerView(oldEvent)
+    }
+
+    override fun onInvitationCreateFailure() {
+        onInternalFailure("Could not invite user")
+    }
+
+    override fun onInvitationExists() {
+        onInternalFailure("This invitation already exists")
+    }
+
     override fun onInternalFailure(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setupButtonListeners() {
+    private fun setupClickListeners() {
+        btn_add_attendee.setOnClickListener {
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, oldEvent, this).showDialog()
+        }
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }

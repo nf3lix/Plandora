@@ -2,6 +2,7 @@ package com.plandora.activity.main.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.plandora.R
 import com.plandora.activity.CreateEventActivity
-import com.plandora.models.events.Event
 import com.plandora.adapters.EventRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.crud_workflows.CRUDActivity
+import com.plandora.models.events.Event
 
-class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
+class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUDActivity {
 
     private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
@@ -34,6 +36,12 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     override fun onClickListener(index: Int) {
         startEventDetailActivity(eventList[index])
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("dashboard", "onResume")
+        PlandoraEventController().getEventList(this)
     }
 
     private fun addEventRecyclerView() {
@@ -58,7 +66,16 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     private fun addFabButtonListener() {
         rootView.findViewById<FloatingActionButton>(R.id.fab_create_board)
-                .setOnClickListener { startActivity(Intent(rootView.context, CreateEventActivity::class.java )) }
+            .setOnClickListener {
+                startActivity(Intent(rootView.context, CreateEventActivity::class.java))
+            }
+    }
+
+    override fun onSuccess() {
+        addEventRecyclerView()
+    }
+
+    override fun onInternalFailure(message: String) {
     }
 
 }

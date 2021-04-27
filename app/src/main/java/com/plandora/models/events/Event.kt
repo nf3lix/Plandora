@@ -18,7 +18,8 @@ data class Event(
     var timestamp: Long = 0,
     var attendees: ArrayList<String> = ArrayList(),
     var giftIdeas: ArrayList<GiftIdea> = ArrayList(),
-    var ownerId: String = ""
+    var ownerId: String = "",
+    var invitedUserIds: ArrayList<String> = ArrayList()
 ) : Parcelable, Comparable<Event> {
 
     constructor(parcel: Parcel) : this(
@@ -29,7 +30,8 @@ data class Event(
         parcel.readLong(),
         parcel.createStringArrayList()!!,
         parcel.createTypedArrayList(GiftIdea)!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
@@ -41,6 +43,7 @@ data class Event(
         writeStringList(attendees)
         writeTypedList(giftIdeas)
         writeString(ownerId)
+        writeStringList(invitedUserIds)
     }
 
     override fun describeContents(): Int {
