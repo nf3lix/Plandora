@@ -253,7 +253,7 @@ open class CreateEventActivity :
         event_date_input.setOnClickListener { selectDate() }
         event_time_input.setOnClickListener { selectTime() }
         btn_add_attendee.setOnClickListener {
-            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
+            // AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
         }
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()

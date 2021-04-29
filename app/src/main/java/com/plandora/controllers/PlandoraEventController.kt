@@ -1,11 +1,9 @@
 package com.plandora.controllers
 
-import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
-import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
@@ -16,8 +14,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class PlandoraEventController {
 
@@ -63,31 +59,6 @@ class PlandoraEventController {
                 eventList.add(event)
                 events[document.id] = event
             }
-        }
-    }
-
-    fun updateEvent(activity: CRUDActivity.EventCRUDActivity, oldEvent: Event, event: Event) {
-        val id = getEventId(oldEvent)
-        if(id != "") {
-            firestoreInstance.collection(FirestoreConstants.EVENTS)
-                .document(id)
-                .update(
-                    FirestoreConstants.EVENT_TITLE, event.title,
-                    FirestoreConstants.EVENT_DESCRIPTION, event.description,
-                    FirestoreConstants.EVENT_ANNUAL, event.annual,
-                    FirestoreConstants.EVENT_DATE_AS_STRING, event.getDateAsString(),
-                    FirestoreConstants.EVENT_TYPE, event.eventType,
-                    FirestoreConstants.EVENT_TIME_AS_STRING, event.getTimeAsString(),
-                    FirestoreConstants.EVENT_TIMESTAMP, event.timestamp
-                )
-                .addOnSuccessListener {
-                    activity.onUpdateSuccess(event)
-                }
-                .addOnFailureListener {
-                    Log.d("edit_event", "could not edit event")
-                }
-        } else {
-            activity.onUpdateFailure("Error: Event could not be found")
         }
     }
 
@@ -153,40 +124,30 @@ class PlandoraEventController {
         emit(State.failed(it.message.toString()))
     }.flowOn(Dispatchers.IO)
 
-    fun createEventInvitation(event: Event, invitedUser: PlandoraUser, activity: CRUDActivity.InvitationCRUDActivity) {
+    fun sendEventInvitation(event: Event, invitedUser: PlandoraUser) = flow<State<String>> {
+        emit(State.loading())
         val id = getEventId(event)
-        if(id != "") {
-        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id).get()
-                .addOnSuccessListener {
-                    initInvitation(it.toObject(Event::class.java)!!, invitedUser, id, activity)
-                }
-        } else {
-            activity.onInternalFailure("Failure: Event could not be found")
+        if(id.isEmpty()) {
+            emit(State.failed("Failure: Event could not be found"))
+            return@flow
         }
-    }
-
-    private fun initInvitation(event: Event, invitedUser: PlandoraUser, eventId: String, activity: CRUDActivity.InvitationCRUDActivity) {
-        if(!event.invitedUserIds.contains(invitedUser.id)) {
-            val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, eventId, System.currentTimeMillis())
-            addInvitationToEvent(invitation, eventId, invitedUser, activity)
+        val document = firestoreInstance.collection(FirestoreConstants.EVENTS)
+                                        .document(id).get().await()
+        val fetchedEvent = document.toObject(Event::class.java)!!
+        if(!fetchedEvent.invitedUserIds.contains(invitedUser.id)) {
+            val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, id, System.currentTimeMillis())
+            firestoreInstance.collection(FirestoreConstants.INVITATIONS)
+                    .document()
+                    .set(invitation, SetOptions.merge()).await()
+            firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
+                    .update("invitedUserIds", FieldValue.arrayUnion(invitedUser.id)).await()
+            emit(State.success(""))
         } else {
-            activity.onInvitationExists()
+            emit(State.failed(""))
         }
-    }
-
-    private fun addInvitationToEvent(invitation: EventInvitation, eventId: String, invitedUser: PlandoraUser, activity: CRUDActivity.InvitationCRUDActivity) {
-        firestoreInstance.collection(FirestoreConstants.INVITATIONS)
-                .document()
-                .set(invitation, SetOptions.merge())
-                .addOnSuccessListener {
-                    firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
-                            .update("invitedUserIds", FieldValue.arrayUnion(invitedUser.id))
-                    activity.onInvitationCreateSuccess(invitedUser)
-                }
-                .addOnFailureListener {
-                    activity.onInvitationCreateFailure()
-                }
-    }
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
     private fun getEventId(event: Event): String {
         var id = ""

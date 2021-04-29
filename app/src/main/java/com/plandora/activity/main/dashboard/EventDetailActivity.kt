@@ -18,7 +18,6 @@ import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
 import com.plandora.controllers.State
-import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
@@ -37,9 +36,7 @@ import kotlin.collections.ArrayList
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    CRUDActivity.EventCRUDActivity,
-    CRUDActivity.InvitationCRUDActivity
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener
 {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
@@ -88,7 +85,7 @@ class EventDetailActivity : PlandoraActivity(),
         giftIdeas.forEach { giftIdea -> giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea)) }
     }
 
-    private fun addAttendeesRecyclerView(event: Event) {
+    fun addAttendeesRecyclerView(event: Event) {
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
@@ -233,46 +230,8 @@ class EventDetailActivity : PlandoraActivity(),
         oldEvent.giftIdeas.add(giftIdea)
     }
 
-    override fun onCreateSuccess(event: Event) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onCreateFailure() {
-        onInternalFailure("Could not create Event")
-    }
-
-    override fun onUpdateSuccess(event: Event) {
-        finish()
-    }
-
-    override fun onUpdateFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onRemoveSuccess(event: Event) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRemoveFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
-        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
+    fun addAttendeeToList(attendee: PlandoraUser) {
         attendeesList.add(attendee)
-        addAttendeesRecyclerView(oldEvent)
-    }
-
-    override fun onInvitationCreateFailure() {
-        onInternalFailure("Could not invite user")
-    }
-
-    override fun onInvitationExists() {
-        onInternalFailure("This invitation already exists")
-    }
-
-    override fun onInternalFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setupClickListeners() {
