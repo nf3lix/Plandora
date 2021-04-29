@@ -41,28 +41,6 @@ class PlandoraEventController {
             }
     }
 
-    fun getEventList(activity: CRUDActivity) {
-        val currentTimestamp = System.currentTimeMillis() - 8.64e7
-        firestoreInstance.collection(FirestoreConstants.EVENTS)
-            .whereArrayContains(FirestoreConstants.ATTENDEES, PlandoraUserController().currentUserId())
-            .get()
-            .addOnSuccessListener { document ->
-                eventList.clear()
-                for(i in document.documents) {
-                    val event = i.toObject(Event::class.java)!!
-                    if(event.annual || event.timestamp > currentTimestamp) {
-                        eventList.add(event)
-                        events[i.id] = event
-                    }
-                }
-                eventList.sort()
-                activity.onSuccess()
-            }
-            .addOnFailureListener {
-                activity.onInternalFailure(it.message!!)
-            }
-    }
-
     fun updateEventList() = flow<State<String>> {
         emit(State.loading())
         val document = firestoreInstance.collection(FirestoreConstants.EVENTS)
@@ -134,7 +112,6 @@ class PlandoraEventController {
                 .addOnSuccessListener {
                     events[id]?.giftIdeas?.add(giftIdea)
                     activity.onCreateSuccess(giftIdea)
-                    getEventList(activity)
                 }
                 .addOnFailureListener { activity.onCreateFailure() }
         } else {
