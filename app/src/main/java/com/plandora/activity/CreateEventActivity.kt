@@ -19,6 +19,7 @@ import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.validation_types.CreateEventValidationTypes
 import com.plandora.models.PlandoraUser
@@ -28,6 +29,10 @@ import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -39,6 +44,8 @@ open class CreateEventActivity :
     CRUDActivity.EventCRUDActivity,
     CRUDActivity.InvitationCRUDActivity
 {
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -166,9 +173,21 @@ open class CreateEventActivity :
         val validation = validateForm(event)
         Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
         if(validation == CreateEventValidationTypes.SUCCESS) {
-            PlandoraEventController().createEvent(this, event)
+            uiScope.launch {
+                createEvent(event)
+            }
         }
         return true
+    }
+
+    private suspend fun createEvent(event: Event) {
+        PlandoraEventController().createEvent(event).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { finish() }
+                is State.Failed -> { onInternalFailure("Could not create event") }
+            }
+        }
     }
 
     override fun addActionBar() {

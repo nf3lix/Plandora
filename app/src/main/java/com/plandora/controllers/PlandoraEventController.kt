@@ -28,17 +28,15 @@ class PlandoraEventController {
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
 
-    fun createEvent(activity: CRUDActivity.EventCRUDActivity, event: Event) {
+    fun createEvent(event: Event) = flow<State<String>> {
+        emit(State.loading())
         firestoreInstance.collection(FirestoreConstants.EVENTS)
             .document()
-            .set(event, SetOptions.merge())
-            .addOnSuccessListener {
-                activity.onCreateSuccess(event)
-                eventList.add(event)
-            }
-            .addOnFailureListener {
-                activity.onCreateFailure()
-            }
+            .set(event, SetOptions.merge()).await()
+        eventList.add(event)
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
     }
 
     fun updateEventList() = flow<State<String>> {
