@@ -9,10 +9,15 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class SignInActivity : PlandoraActivity(), CRUDActivity {
+class SignInActivity : PlandoraActivity() {
 
     companion object {
         private const val SIGN_IN_SUCCESS_MESSAGE = "Successfully signed in"
@@ -22,6 +27,7 @@ class SignInActivity : PlandoraActivity(), CRUDActivity {
     }
 
     private lateinit var firebaseAuth: FirebaseAuth
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +66,9 @@ class SignInActivity : PlandoraActivity(), CRUDActivity {
 
     private fun nextActivityAfterSignIn() {
         Toast.makeText(this, SIGN_IN_SUCCESS_MESSAGE, Toast.LENGTH_LONG).show()
-        PlandoraEventController().getEventList(this)
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        uiScope.launch {
+            loadEvents()
+        }
     }
 
     private fun showAuthenticationErrorMessage() {
@@ -94,8 +100,22 @@ class SignInActivity : PlandoraActivity(), CRUDActivity {
         return !(TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
     }
 
-    override fun onInternalFailure(message: String) {
-
+    private suspend fun loadEvents() {
+        PlandoraEventController().updateEventList().collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    Toast.makeText(this, "Successfully loaded events", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+                is State.Failed -> {
+                    Toast.makeText(this, "Could not load events", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+            }
+        }
     }
 
 }
