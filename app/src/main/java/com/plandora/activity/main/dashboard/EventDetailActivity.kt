@@ -17,6 +17,7 @@ import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
@@ -26,6 +27,10 @@ import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import com.plandora.models.validation_types.EditEventValidationTypes
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -45,6 +50,8 @@ class EventDetailActivity : PlandoraActivity(),
 
     private lateinit var oldEvent: Event
     private lateinit var newEvent: Event
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,7 +126,19 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private fun saveEntry() {
-        PlandoraEventController().updateEvent(this, oldEvent, newEvent)
+        uiScope.launch {
+            updateEvent(oldEvent, newEvent)
+        }
+    }
+
+    private suspend fun updateEvent(oldEvent: Event, newEvent: Event) {
+        PlandoraEventController().updateEvent(oldEvent, newEvent).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { finish() }
+                is State.Failed -> { Toast.makeText(this, "Could not update event", Toast.LENGTH_SHORT).show() }
+            }
+        }
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {

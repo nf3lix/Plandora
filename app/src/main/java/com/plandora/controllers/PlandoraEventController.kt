@@ -89,8 +89,30 @@ class PlandoraEventController {
         } else {
             activity.onUpdateFailure("Error: Event could not be found")
         }
-
     }
+
+    fun updateEvent(oldEvent: Event, newEvent: Event) = flow<State<String>> {
+        emit(State.loading())
+        val id = getEventId(oldEvent)
+        if(id.isEmpty()) {
+            emit(State.failed("Error: Event could not be found"))
+            return@flow
+        }
+        firestoreInstance.collection(FirestoreConstants.EVENTS)
+                .document(id)
+                .update(
+                    FirestoreConstants.EVENT_TITLE, newEvent.title,
+                    FirestoreConstants.EVENT_DESCRIPTION, newEvent.description,
+                    FirestoreConstants.EVENT_ANNUAL, newEvent.annual,
+                    FirestoreConstants.EVENT_DATE_AS_STRING, newEvent.getDateAsString(),
+                    FirestoreConstants.EVENT_TYPE, newEvent.eventType,
+                    FirestoreConstants.EVENT_TIME_AS_STRING, newEvent.getTimeAsString(),
+                    FirestoreConstants.EVENT_TIMESTAMP, newEvent.timestamp
+                ).await()
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
     fun addEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
         var id = ""
@@ -115,6 +137,11 @@ class PlandoraEventController {
         } else {
             activity.onInternalFailure("Failure: Event could not be found")
         }
+    }
+
+    fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) = flow<State<String>>{
+        emit(State.loading())
+
     }
 
     fun removeEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
