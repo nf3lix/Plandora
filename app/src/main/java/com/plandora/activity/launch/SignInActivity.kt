@@ -10,7 +10,6 @@ import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.State
-import com.plandora.crud_workflows.CRUDActivity
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +23,7 @@ class SignInActivity : PlandoraActivity() {
         private const val AUTHENTICATION_ERROR_MESSAGE = "Authentication failed. Please try again"
         private const val EMAIL_NOT_CONFIRMED_MESSAGE = "You must first confirm your email address"
         private const val INVALID_LOGIN_FORM_MESSAGE = "Please enter your login credentials"
+        private const val SUCCESSFULLY_LOADED_EVENTS_MESSAGE = "Successfully loaded events"
     }
 
     private lateinit var firebaseAuth: FirebaseAuth
@@ -105,17 +105,19 @@ class SignInActivity : PlandoraActivity() {
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
-                    Toast.makeText(this, "Successfully loaded events", Toast.LENGTH_LONG).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    handleUpdateResult(SUCCESSFULLY_LOADED_EVENTS_MESSAGE)
                 }
                 is State.Failed -> {
-                    Toast.makeText(this, "Could not load events", Toast.LENGTH_LONG).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    handleUpdateResult(state.message)
                 }
             }
         }
+    }
+
+    private fun handleUpdateResult(toastMessage: String) {
+        Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }
