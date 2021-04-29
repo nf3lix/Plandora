@@ -152,7 +152,7 @@ class EventDetailActivity : PlandoraActivity(),
                     addGiftIdeaToEventModel(giftIdea)
                 }
                 is State.Failed -> {
-                    Toast.makeText(this, "Could not add gift idea", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -216,7 +216,7 @@ class EventDetailActivity : PlandoraActivity(),
                     addGiftIdeasRecyclerView()
                 }
                 is State.Failed -> {
-                    Toast.makeText(this, "Idea could not be removed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show();
                 }
             }
         }
