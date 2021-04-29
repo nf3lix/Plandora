@@ -3,6 +3,7 @@ package com.plandora.controllers
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
@@ -10,6 +11,11 @@ import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.utils.constants.FirestoreConstants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -55,6 +61,33 @@ class PlandoraEventController {
             .addOnFailureListener {
                 activity.onInternalFailure(it.message!!)
             }
+    }
+
+    fun updateEventList() = flow<State<String>> {
+        emit(State.loading())
+        val document = firestoreInstance.collection(FirestoreConstants.EVENTS)
+            .whereArrayContains(FirestoreConstants.ATTENDEES, PlandoraUserController().currentUserId())
+            .get().await()
+        transformEventListDocument(document)
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private fun transformEventListDocument(querySnapshot: QuerySnapshot) {
+        eventList.clear()
+        addEventsFromQuerySnapshot(querySnapshot)
+        eventList.sort()
+    }
+
+    private fun addEventsFromQuerySnapshot(querySnapshot: QuerySnapshot) {
+        querySnapshot.forEach { document ->
+            val event = document.toObject(Event::class.java)
+            if(event.relevantForDashboard()) {
+                eventList.add(event)
+                events[document.id] = event
+            }
+        }
     }
 
     fun updateEvent(activity: CRUDActivity.EventCRUDActivity, oldEvent: Event, event: Event) {
