@@ -114,52 +114,44 @@ class PlandoraEventController {
         emit(State.failed(it.message.toString()))
     }.flowOn(Dispatchers.IO)
 
-    fun addEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
-        var id = ""
-        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
-            if(entry.value == oldEvent) {
-                id = entry.key
-                if(entry.value.giftIdeas.contains(giftIdea)) {
-                    activity.onInternalFailure("Diese Idee existiert bereits")
-                    return
-                }
-            }
-        }
-
-        if(id != "") {
-            firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
-                .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea))
-                .addOnSuccessListener {
-                    events[id]?.giftIdeas?.add(giftIdea)
-                    activity.onCreateSuccess(giftIdea)
-                }
-                .addOnFailureListener { activity.onCreateFailure() }
-        } else {
-            activity.onInternalFailure("Failure: Event could not be found")
-        }
-    }
-
     fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) = flow<State<String>>{
         emit(State.loading())
-
-    }
-
-    fun removeEventGiftIdea(activity: CRUDActivity.GiftIdeaCRUDActivity, oldEvent: Event, giftIdea: GiftIdea) {
-        val id = getEventId(oldEvent)
-        if(id != "") {
-            firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
-                    .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayRemove(giftIdea))
-                    .addOnSuccessListener {
-                        events[id]?.giftIdeas?.remove(giftIdea)
-                        activity.onRemoveSuccess(giftIdea)
-                    }
-                    .addOnFailureListener {
-                        activity.onRemoveFailure(it.message!!)
+        var id = ""
+        for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
+            if(entry.value == event) {
+                id = entry.key
+                if(entry.value.giftIdeas.contains(giftIdea)) {
+                    emit(State.failed("This idea already exists"))
+                    return@flow
+                }
             }
-        } else {
-            activity.onInternalFailure("Failure: Event could not be found")
         }
-    }
+        if(id.isEmpty()) {
+            emit(State.failed("Event could not be found"))
+            return@flow
+        }
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
+                .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayUnion(giftIdea)).await()
+        emit(State.success(""))
+        events[id]?.giftIdeas?.add(giftIdea)
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    fun removeGiftIdeaFromEvent(event: Event, giftIdea: GiftIdea) = flow<State<String>> {
+        emit(State.loading())
+        val id = getEventId(event)
+        if(id.isEmpty()) {
+            emit(State.failed("Failure: Event could not be found"))
+            return@flow
+        }
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(id)
+                .update(FirestoreConstants.GIFT_IDEAS, FieldValue.arrayRemove(giftIdea)).await()
+        events[id]?.giftIdeas?.remove(giftIdea)
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
     fun createEventInvitation(event: Event, invitedUser: PlandoraUser, activity: CRUDActivity.InvitationCRUDActivity) {
         val id = getEventId(event)

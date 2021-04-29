@@ -39,7 +39,6 @@ class EventDetailActivity : PlandoraActivity(),
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
     CRUDActivity.EventCRUDActivity,
-    CRUDActivity.GiftIdeaCRUDActivity,
     CRUDActivity.InvitationCRUDActivity
 {
 
@@ -142,7 +141,24 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
-        PlandoraEventController().addEventGiftIdea(this, oldEvent, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdea))
+        uiScope.launch {
+            addGiftIdeaToEvent(oldEvent, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdea))
+        }
+    }
+
+    private suspend fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) {
+        PlandoraEventController().addGiftIdeaToEvent(event, giftIdea).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
+                    addGiftIdeaToEventModel(giftIdea)
+                }
+                is State.Failed -> {
+                    Toast.makeText(this, "Could not add gift idea", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     override fun addGiftIdeasRecyclerView() {
@@ -187,8 +203,26 @@ class EventDetailActivity : PlandoraActivity(),
         val selectedItems = giftIdeaAdapter.getSelectedItems()
         val giftIdeas = ArrayList<GiftIdea>()
         selectedItems.forEach { giftIdeas.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it)) }
-        PlandoraEventController().removeEventGiftIdea(this, oldEvent, giftIdeas[0])
+        uiScope.launch {
+            removeGiftIdeaFromEvent(oldEvent, giftIdeas[0])
+        }
         btn_delete_items.visibility = View.GONE
+    }
+
+    private suspend fun removeGiftIdeaFromEvent(event: Event, giftIdea: GiftIdea) {
+        PlandoraEventController().removeGiftIdeaFromEvent(event, giftIdea).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    giftIdeasList.remove(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea, selected = true))
+                    removeGiftIdeaFromEventModel(giftIdea)
+                    addGiftIdeasRecyclerView()
+                }
+                is State.Failed -> {
+                    Toast.makeText(this, "Idea could not be removed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private fun removeGiftIdeaFromEventModel(giftIdea: GiftIdea) {
@@ -197,11 +231,6 @@ class EventDetailActivity : PlandoraActivity(),
 
     private fun addGiftIdeaToEventModel(giftIdea: GiftIdea) {
         oldEvent.giftIdeas.add(giftIdea)
-    }
-
-    override fun onCreateSuccess(giftIdea: GiftIdea) {
-        giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
-        addGiftIdeaToEventModel(giftIdea)
     }
 
     override fun onCreateSuccess(event: Event) {
@@ -222,12 +251,6 @@ class EventDetailActivity : PlandoraActivity(),
 
     override fun onRemoveSuccess(event: Event) {
         TODO("Not yet implemented")
-    }
-
-    override fun onRemoveSuccess(giftIdea: GiftIdea) {
-        giftIdeasList.remove(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea, selected = true))
-        removeGiftIdeaFromEventModel(giftIdea)
-        addGiftIdeasRecyclerView()
     }
 
     override fun onRemoveFailure(message: String) {
