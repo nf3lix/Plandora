@@ -99,6 +99,15 @@ data class Event(
             .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time
     }
 
+    fun relevantForDashboard(): Boolean {
+        return !isInPast() || annual
+    }
+
+    fun isInPast(): Boolean {
+        val currentTimestamp = System.currentTimeMillis() - 8.64e7
+        return timestamp < currentTimestamp
+    }
+
     override fun compareTo(other: Event): Int {
         return remainingDays() - other.remainingDays()
     }

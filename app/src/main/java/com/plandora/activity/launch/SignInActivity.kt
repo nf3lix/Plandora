@@ -9,19 +9,25 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
 import com.plandora.controllers.PlandoraEventController
-import com.plandora.crud_workflows.CRUDActivity
+import com.plandora.controllers.State
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class SignInActivity : PlandoraActivity(), CRUDActivity {
+class SignInActivity : PlandoraActivity() {
 
     companion object {
         private const val SIGN_IN_SUCCESS_MESSAGE = "Successfully signed in"
         private const val AUTHENTICATION_ERROR_MESSAGE = "Authentication failed. Please try again"
         private const val EMAIL_NOT_CONFIRMED_MESSAGE = "You must first confirm your email address"
         private const val INVALID_LOGIN_FORM_MESSAGE = "Please enter your login credentials"
+        private const val SUCCESSFULLY_LOADED_EVENTS_MESSAGE = "Successfully loaded events"
     }
 
     private lateinit var firebaseAuth: FirebaseAuth
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +66,9 @@ class SignInActivity : PlandoraActivity(), CRUDActivity {
 
     private fun nextActivityAfterSignIn() {
         Toast.makeText(this, SIGN_IN_SUCCESS_MESSAGE, Toast.LENGTH_LONG).show()
-        PlandoraEventController().getEventList(this)
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        uiScope.launch {
+            loadEvents()
+        }
     }
 
     private fun showAuthenticationErrorMessage() {
@@ -94,8 +100,24 @@ class SignInActivity : PlandoraActivity(), CRUDActivity {
         return !(TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
     }
 
-    override fun onInternalFailure(message: String) {
+    private suspend fun loadEvents() {
+        PlandoraEventController().updateEventList().collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    handleUpdateResult(SUCCESSFULLY_LOADED_EVENTS_MESSAGE)
+                }
+                is State.Failed -> {
+                    handleUpdateResult(state.message)
+                }
+            }
+        }
+    }
 
+    private fun handleUpdateResult(toastMessage: String) {
+        Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }
