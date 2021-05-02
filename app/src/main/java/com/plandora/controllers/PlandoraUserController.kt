@@ -30,15 +30,13 @@ class PlandoraUserController {
         return PlandoraUser(userId, "Felix", "Felix", "test@test.de")
     }
 
-    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog, activity: CRUDActivity.InvitationCRUDActivity) {
+    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog) {
         FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
             .whereEqualTo(FirestoreConstants.USER_NAME_FIELD, username).get()
             .addOnSuccessListener { document ->
                 if(document.documents.size > 0) {
                     val attendee = document.documents[0].toObject(PlandoraUser::class.java)!!
                     dialog.onUserFetched(attendee)
-                } else {
-                    activity.onInternalFailure("User could not be found")
                 }
             }
     }

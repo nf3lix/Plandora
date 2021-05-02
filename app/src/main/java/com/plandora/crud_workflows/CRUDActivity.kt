@@ -9,13 +9,6 @@ interface CRUDActivity {
     fun onInternalFailure(message: String)
     fun onSuccess() { }
 
-    interface GiftIdeaCRUDActivity : CRUDActivity {
-        fun onCreateSuccess(giftIdea: GiftIdea)
-        fun onCreateFailure()
-        fun onRemoveSuccess(giftIdea: GiftIdea)
-        fun onRemoveFailure(message: String)
-
-    }
     interface EventCRUDActivity : CRUDActivity {
         fun onCreateSuccess(event: Event)
         fun onCreateFailure()

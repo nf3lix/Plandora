@@ -5,6 +5,7 @@ object FirestoreConstants {
     const val EVENT_DATE_AS_STRING: String = "dateAsString"
     const val EVENT_ANNUAL: String = "annual"
     const val EVENT_TIME_AS_STRING: String = "timeAsString"
+    const val EVENT_INVITED_USER_IDS: String = "invitedUserIds"
     const val EVENT_TYPE: String = "eventType"
     const val EVENT_TITLE: String = "title"
     const val EVENTS: String = "events"
