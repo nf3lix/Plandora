@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
@@ -63,7 +62,7 @@ open class CreateEventActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
-        attendeesList.add(PlandoraUserController().getUserFromId(PlandoraUserController().currentUserId()))
+        // attendeesList.add(PlandoraUserController().fetchUser(PlandoraUserController().currentUserId()))
         event = Event(ownerId = PlandoraUserController().currentUserId())
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
