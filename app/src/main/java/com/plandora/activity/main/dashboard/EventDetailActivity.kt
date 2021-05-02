@@ -61,7 +61,6 @@ class EventDetailActivity : PlandoraActivity(),
     private fun setupBasedOnEvent(event: Event) {
         oldEvent = event
         addBasicEventInformation(event)
-        addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
     }
 
@@ -78,7 +77,6 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private fun addAllAttendeesToList() {
-        // attendeeIds.forEach { userId -> attendeesList.add(PlandoraUserController().fetchUser(userId)) }
         uiScope.launch {
             for(userId in oldEvent.attendees) {
                 addUserByIdToAttendeesList(userId)
@@ -86,6 +84,7 @@ class EventDetailActivity : PlandoraActivity(),
             for(userId in oldEvent.invitedUserIds) {
                 addUserByIdToAttendeesList(userId)
             }
+            addAttendeesRecyclerView()
         }
     }
 
@@ -93,7 +92,9 @@ class EventDetailActivity : PlandoraActivity(),
         PlandoraUserController().getUserById(userId).collect { state ->
             when(state) {
                 is State.Loading -> { }
-                is State.Success -> { attendeesList.add(state.data) }
+                is State.Success -> {
+                    attendeesList.add(state.data)
+                }
                 is State.Failed -> { }
             }
         }
@@ -103,11 +104,11 @@ class EventDetailActivity : PlandoraActivity(),
         giftIdeas.forEach { giftIdea -> giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea)) }
     }
 
-    fun addAttendeesRecyclerView(event: Event) {
+    fun addAttendeesRecyclerView() {
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
-            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventDetailActivity)
+            attendeesAdapter = AttendeeRecyclerAdapter(oldEvent, attendeesList, this@EventDetailActivity)
             adapter = attendeesAdapter
         }
     }

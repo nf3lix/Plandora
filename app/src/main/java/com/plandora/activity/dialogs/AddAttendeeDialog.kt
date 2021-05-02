@@ -45,7 +45,7 @@ class AddAttendeeDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
                 is State.Success -> {
                     Toast.makeText(context, "User successfully invited", Toast.LENGTH_LONG).show()
                     activity.addAttendeeToList(invitedUser)
-                    activity.addAttendeesRecyclerView(event)
+                    activity.addAttendeesRecyclerView()
                 }
                 is State.Failed -> { Toast.makeText(context, "Could not invite user", Toast.LENGTH_LONG).show() }
             }

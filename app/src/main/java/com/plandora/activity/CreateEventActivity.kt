@@ -62,8 +62,7 @@ open class CreateEventActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
-        // attendeesList.add(PlandoraUserController().fetchUser(PlandoraUserController().currentUserId()))
-        event = Event(ownerId = PlandoraUserController().currentUserId())
+        event = Event(ownerId = PlandoraUserController().currentUserId(), attendees = arrayListOf())
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
         addActionBar()
@@ -167,6 +166,7 @@ open class CreateEventActivity :
             annual = cb_annual.isChecked
             timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
             attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
+            attendees.add(PlandoraUserController().currentUserId())
             giftIdeas = list
         }
         val validation = validateForm(event)
