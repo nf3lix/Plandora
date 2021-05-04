@@ -61,7 +61,6 @@ class EventDetailActivity : PlandoraActivity(),
     private fun setupBasedOnEvent(event: Event) {
         oldEvent = event
         addBasicEventInformation(event)
-        addAttendeesRecyclerView(event)
         addGiftIdeasRecyclerView()
     }
 
@@ -73,23 +72,43 @@ class EventDetailActivity : PlandoraActivity(),
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
         event_type_spinner.setSelection(event.eventType.ordinal)
         cb_annual.isChecked = event.annual
-        addAllAttendeesFormUserIds(event.attendees)
+        addAllAttendeesToList()
         addAllGiftIdeas(event.giftIdeas)
     }
 
-    private fun addAllAttendeesFormUserIds(attendeeIds: ArrayList<String>) {
-        attendeeIds.forEach { userId -> attendeesList.add(PlandoraUserController().getUserFromId(userId)) }
+    private fun addAllAttendeesToList() {
+        uiScope.launch {
+            for(userId in oldEvent.attendees) {
+                addUserByIdToAttendeesList(userId)
+            }
+            for(userId in oldEvent.invitedUserIds) {
+                addUserByIdToAttendeesList(userId)
+            }
+            addAttendeesRecyclerView()
+        }
+    }
+
+    private suspend fun addUserByIdToAttendeesList(userId: String) {
+        PlandoraUserController().getUserById(userId).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    attendeesList.add(state.data)
+                }
+                is State.Failed -> { }
+            }
+        }
     }
 
     private fun addAllGiftIdeas(giftIdeas: ArrayList<GiftIdea>) {
         giftIdeas.forEach { giftIdea -> giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea)) }
     }
 
-    fun addAttendeesRecyclerView(event: Event) {
+    fun addAttendeesRecyclerView() {
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
-            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventDetailActivity)
+            attendeesAdapter = AttendeeRecyclerAdapter(oldEvent, attendeesList, this@EventDetailActivity)
             adapter = attendeesAdapter
         }
     }

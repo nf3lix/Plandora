@@ -72,6 +72,10 @@ data class Event(
         return user.id.contentEquals(this.ownerId)
     }
 
+    fun isInvitedUser(user: PlandoraUser): Boolean {
+        return invitedUserIds.contains(user.id)
+    }
+
     private fun getNextEvent(timestamp: Long): Long {
         val date = Date(timestamp)
         val calendar = GregorianCalendar()

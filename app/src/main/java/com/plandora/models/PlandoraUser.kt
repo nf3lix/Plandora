@@ -38,10 +38,6 @@ data class PlandoraUser(
             return arrayOfNulls(size)
         }
 
-        fun createFromString(id: String): PlandoraUser {
-            return PlandoraUserController().getUserFromId(id)
-        }
-
     }
 
     fun getIdsFromUserObjects(userList: List<PlandoraUser>) : ArrayList<String> {
