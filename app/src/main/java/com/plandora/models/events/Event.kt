@@ -72,6 +72,10 @@ data class Event(
         return user.id.contentEquals(this.ownerId)
     }
 
+    fun isInvitedUser(user: PlandoraUser): Boolean {
+        return invitedUserIds.contains(user.id)
+    }
+
     private fun getNextEvent(timestamp: Long): Long {
         val date = Date(timestamp)
         val calendar = GregorianCalendar()
@@ -97,6 +101,15 @@ data class Event(
     fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
         return SimpleDateFormat("dd-MM-yyyy mm:HH", Locale.US)
             .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time
+    }
+
+    fun relevantForDashboard(): Boolean {
+        return !isInPast() || annual
+    }
+
+    fun isInPast(): Boolean {
+        val currentTimestamp = System.currentTimeMillis() - 8.64e7
+        return timestamp < currentTimestamp
     }
 
     override fun compareTo(other: Event): Int {

@@ -10,7 +10,13 @@ import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.launch.SignUpActivity
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
+import com.plandora.models.events.Event
 import com.plandora.utils.constants.FirestoreConstants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 
 class PlandoraUserController {
 
@@ -25,20 +31,26 @@ class PlandoraUserController {
         }
     }
 
-    fun getUserFromId(userId: String): PlandoraUser {
-        // not implemented yet
-        return PlandoraUser(userId, "Felix", "Felix", "test@test.de")
+    fun getUserById(userId: String) = flow<State<PlandoraUser>> {
+        emit(State.loading())
+        val user = fetchUser(userId)
+        emit(State.success(user))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun fetchUser(userId: String): PlandoraUser {
+        val document = firestoreInstance.collection(FirestoreConstants.USERS).document(userId).get().await()
+        return document.toObject(PlandoraUser::class.java)!!
     }
 
-    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog, activity: CRUDActivity.InvitationCRUDActivity) {
+    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog) {
         FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
             .whereEqualTo(FirestoreConstants.USER_NAME_FIELD, username).get()
             .addOnSuccessListener { document ->
                 if(document.documents.size > 0) {
                     val attendee = document.documents[0].toObject(PlandoraUser::class.java)!!
                     dialog.onUserFetched(attendee)
-                } else {
-                    activity.onInternalFailure("User could not be found")
                 }
             }
     }

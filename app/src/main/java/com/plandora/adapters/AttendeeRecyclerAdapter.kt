@@ -43,6 +43,8 @@ class AttendeeRecyclerAdapter(private var event: Event, private var items: List<
             if(event.isOwner(user)) {
                 eventOwnerIcon.setImageResource(R.drawable.ic_event_owner_icon)
                 eventDeleteButton.visibility
+            } else if(event.isInvitedUser(user)) {
+                eventDeleteButton.setImageResource(R.drawable.ic_event_attendee_pending)
             } else {
                 eventDeleteButton.setImageResource(R.drawable.ic_remove_attendee_icon)
                 eventDeleteButton.setOnClickListener{ onDeleteAttendeeButtonClicked(adapterPosition) }

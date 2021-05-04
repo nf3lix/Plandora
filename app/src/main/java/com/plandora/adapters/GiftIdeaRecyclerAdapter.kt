@@ -1,6 +1,5 @@
 package com.plandora.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.State
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import kotlinx.android.synthetic.main.layout_gift_ideas_list_item.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class GiftIdeaRecyclerAdapter(
     private var items: List<GiftIdeaUIWrapper>,
@@ -19,6 +23,8 @@ class GiftIdeaRecyclerAdapter(
 
     var selectedItemPos = -1
     var lastItemSelectedPos = -1
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(!multiSelect) {
@@ -66,7 +72,10 @@ class GiftIdeaRecyclerAdapter(
 
         fun bind(giftIdea: GiftIdeaUIWrapper) {
             title.text = giftIdea.title
-            creator.text = PlandoraUserController().getUserFromId(giftIdea.ownerId).displayName
+            // creator.text = PlandoraUserController().getUserById(giftIdea.ownerId).displayName
+            uiScope.launch {
+                setCreatorName(giftIdea)
+            }
             ratingBar.rating = giftIdea.rating
 
             when(giftIdea.selected) {
@@ -78,6 +87,16 @@ class GiftIdeaRecyclerAdapter(
                 when(giftIdea.selected) {
                     true -> deselect(giftIdea)
                     false -> select(giftIdea)
+                }
+            }
+        }
+
+        private suspend fun setCreatorName(giftIdea: GiftIdeaUIWrapper) {
+            PlandoraUserController().getUserById(giftIdea.ownerId).collect { state ->
+                when(state) {
+                    is State.Loading -> {}
+                    is State.Success -> { creator.text = state.data.displayName }
+                    is State.Failed -> {}
                 }
             }
         }
@@ -104,7 +123,10 @@ class GiftIdeaRecyclerAdapter(
 
         fun bind(giftIdea: GiftIdeaUIWrapper) {
             title.text = giftIdea.title
-            creator.text = PlandoraUserController().getUserFromId(giftIdea.ownerId).displayName
+            // creator.text = PlandoraUserController().fetchUser(giftIdea.ownerId).displayName
+            uiScope.launch {
+                setCreatorName(giftIdea)
+            }
             ratingBar.rating = giftIdea.rating
 
             itemView.gift_idea_card_view.setOnClickListener {
@@ -121,6 +143,16 @@ class GiftIdeaRecyclerAdapter(
                     items[adapterPosition].selected = true
                 }
                 notifyItemChanged(selectedItemPos)
+            }
+        }
+
+        private suspend fun setCreatorName(giftIdea: GiftIdeaUIWrapper) {
+            PlandoraUserController().getUserById(giftIdea.ownerId).collect { state ->
+                when(state) {
+                    is State.Loading -> {}
+                    is State.Success -> { creator.text = state.data.displayName }
+                    is State.Failed -> {}
+                }
             }
         }
 

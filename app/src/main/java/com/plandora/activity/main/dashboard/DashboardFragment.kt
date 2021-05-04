@@ -2,7 +2,6 @@ package com.plandora.activity.main.dashboard
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +13,21 @@ import com.plandora.R
 import com.plandora.activity.CreateEventActivity
 import com.plandora.adapters.EventRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.events.Event
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUDActivity {
 
     private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
     private lateinit var eventList: ArrayList<Event>
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         displayDashboardFragment(inflater, container)
@@ -40,8 +46,9 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUD
 
     override fun onResume() {
         super.onResume()
-        Log.d("dashboard", "onResume")
-        PlandoraEventController().getEventList(this)
+        uiScope.launch {
+            loadEvents()
+        }
     }
 
     private fun addEventRecyclerView() {
@@ -76,6 +83,21 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUD
     }
 
     override fun onInternalFailure(message: String) {
+    }
+
+    private suspend fun loadEvents() {
+        PlandoraEventController().updateEventList().collect { state ->
+            when(state) {
+                is State.Loading -> {
+                }
+                is State.Success -> {
+                    addEventRecyclerView()
+                }
+                is State.Failed -> {
+                    //
+                }
+            }
+        }
     }
 
 }
