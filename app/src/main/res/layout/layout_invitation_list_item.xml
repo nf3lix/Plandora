@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -44,15 +45,15 @@
                     android:id="@+id/invitation_event_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="19sp"/>
+                    android:textSize="19sp" />
 
                 <TextView
                     android:id="@+id/invitation_event_owner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/colorMainTextGrey"/>
+                    android:textColor="@color/colorMainTextGrey"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -65,6 +66,24 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/invitation_event_description_container"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/btn_accept_invitation"
+                android:src="@drawable/ic_check"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintEnd_toEndOf="@+id/invitation_event_remaining_days"
+                app:layout_constraintTop_toBottomOf="@+id/invitation_event_remaining_days" />
+
+            <ImageView
+                android:src="@drawable/ic_cancel"
+                android:id="@+id/btn_decline_invitation"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="48dp"
+                app:layout_constraintEnd_toEndOf="@+id/invitation_event_remaining_days"
+                app:layout_constraintTop_toBottomOf="@+id/invitation_event_remaining_days" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
