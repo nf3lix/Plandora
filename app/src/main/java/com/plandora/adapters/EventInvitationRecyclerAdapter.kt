@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
+import com.plandora.controllers.PlandoraEventController
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import kotlinx.android.synthetic.main.layout_invitation_list_item.view.*
@@ -37,9 +38,9 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
         private val remainingDays: TextView = itemView.invitation_event_remaining_days
 
         fun bind(eventInvitation: EventInvitation, event: Event) {
-            eventTitle.text = event.title
+            eventTitle.text = PlandoraEventController.events[eventInvitation.eventId]?.title
             ownerName.text = eventInvitation.invitationOwnerId
-            remainingDays.text = event.remainingDays().toString()
+            remainingDays.text = PlandoraEventController.events[eventInvitation.eventId]?.remainingDays().toString()
         }
 
         override fun onAcceptListener(position: Int) {
