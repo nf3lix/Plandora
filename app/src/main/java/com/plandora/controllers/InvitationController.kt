@@ -14,7 +14,16 @@ import kotlinx.coroutines.tasks.await
 class InvitationController {
 
     companion object {
-        val invitations: HashMap<String, EventInvitation> = HashMap()
+        private val invitations: HashMap<String, EventInvitation> = HashMap()
+
+        fun getAllInvitations(): ArrayList<EventInvitation> {
+            return ArrayList(invitations.values)
+        }
+
+        fun getInvitationById(key: String): EventInvitation? {
+            return invitations[key]
+        }
+
     }
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
