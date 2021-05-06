@@ -7,9 +7,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.State
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import kotlinx.android.synthetic.main.layout_invitation_list_item.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvitation>,
                                       private val onHandleListener: OnHandleInvitationListener)
@@ -33,14 +39,18 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
 
     class InvitationViewHolder(itemView: View, private val onHandleListener: OnHandleInvitationListener) : RecyclerView.ViewHolder(itemView), OnHandleInvitationListener {
 
+        private val uiScope = CoroutineScope(Dispatchers.Main)
+
         private val eventTitle: TextView = itemView.invitation_event_title
         private val ownerName: TextView = itemView.invitation_event_owner
         private val remainingDays: TextView = itemView.invitation_event_remaining_days
 
         fun bind(eventInvitation: EventInvitation, event: Event) {
             eventTitle.text = PlandoraEventController.events[eventInvitation.eventId]?.title
-            ownerName.text = eventInvitation.invitationOwnerId
             remainingDays.text = PlandoraEventController.events[eventInvitation.eventId]?.remainingDays().toString()
+            uiScope.launch {
+                loadUsername(eventInvitation.invitationOwnerId)
+            }
         }
 
         override fun onAcceptListener(position: Int) {
@@ -49,6 +59,18 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
 
         override fun onDeclineListener(position: Int) {
             onHandleListener.onDeclineListener(position)
+        }
+
+        suspend fun loadUsername(userId: String) {
+            PlandoraUserController().getUserById(userId).collect { state ->
+                when(state) {
+                    is State.Loading -> { }
+                    is State.Success -> {
+                        ownerName.text = state.data.displayName
+                    }
+                    is State.Failed -> { }
+                }
+            }
         }
 
     }
