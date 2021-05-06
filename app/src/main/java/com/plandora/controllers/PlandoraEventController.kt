@@ -19,7 +19,7 @@ class PlandoraEventController {
 
     companion object {
         val eventList: ArrayList<Event> = ArrayList()
-        val events: HashMap<String, Event> = HashMap();
+        val events: HashMap<String, Event> = HashMap()
     }
 
     private val firestoreInstance = FirebaseFirestore.getInstance()

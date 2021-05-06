@@ -20,5 +20,6 @@ object FirestoreConstants {
     const val USER_NAME_FIELD = "name"
 
     const val INVITATIONS: String = "invitations"
+    const val INVITED_USER_ID: String = "invitedUserId"
 
 }
