@@ -1,7 +1,6 @@
 package com.plandora.activity.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +13,7 @@ import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.EventInvitationRecyclerAdapter
 import com.plandora.controllers.InvitationController
 import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
 import com.plandora.controllers.State
-import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.events.EventInvitationStatus
 import kotlinx.coroutines.CoroutineScope
@@ -73,11 +70,18 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
         }
     }
 
-    private suspend fun loadEvent(eventId: String) {
+    private suspend fun loadEvent(eventId: String, status: EventInvitationStatus) {
         PlandoraEventController().getEventById(eventId).collect { state ->
             when(state) {
                 is State.Loading -> {}
-                is State.Success -> { acceptInvitation(eventId) }
+                is State.Success -> {
+                    if(status == EventInvitationStatus.ACCEPTED) {
+                        acceptInvitation(eventId)
+                    } else {
+                        Toast.makeText(activity, "Invitation declined", Toast.LENGTH_LONG).show()
+                        updateInvitationStatus(eventInvitationList[currentPosition], EventInvitationStatus.DECLINED)
+                    }
+                }
                 is State.Failed -> {}
             }
         }
@@ -102,8 +106,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
-                    eventInvitationList.removeAt(currentPosition)
-                    eventInvitationAdapter.notifyDataSetChanged()
+                    removeInvitationItem(currentPosition)
                     Toast.makeText(activity, "Invitation accepted", Toast.LENGTH_LONG).show()
                 }
                 is State.Failed -> { }
@@ -111,14 +114,23 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
         }
     }
 
+    private fun removeInvitationItem(position: Int) {
+        eventInvitationList.removeAt(position)
+        eventInvitationAdapter.notifyDataSetChanged()
+    }
+
     override fun onAcceptListener(position: Int) {
         currentPosition = position
         uiScope.launch {
-            loadEvent(eventInvitationList[position].eventId)
+            loadEvent(eventInvitationList[position].eventId, EventInvitationStatus.ACCEPTED)
         }
     }
 
     override fun onDeclineListener(position: Int) {
+        currentPosition = position
+        uiScope.launch {
+            loadEvent(eventInvitationList[position].eventId, EventInvitationStatus.DECLINED)
+        }
     }
 
 }
