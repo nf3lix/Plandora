@@ -1,6 +1,7 @@
 package com.plandora.activity.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,6 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         displayInvitationsFragment(inflater, container)
-        //return inflater.inflate(R.layout.fragment_notifications_main, container, false)
         return rootView
     }
 
@@ -69,11 +69,11 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     }
 
     override fun onAcceptListener(position: Int) {
-        TODO("Not yet implemented")
+        Log.d("notifications", eventInvitationList[position].toString())
     }
 
     override fun onDeclineListener(position: Int) {
-        TODO("Not yet implemented")
+        Log.d("notifications", eventInvitationList[position].toString())
     }
 
 }

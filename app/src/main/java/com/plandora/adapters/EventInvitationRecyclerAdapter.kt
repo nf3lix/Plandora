@@ -3,6 +3,7 @@ package com.plandora.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
@@ -28,7 +29,7 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
             is InvitationViewHolder -> {
-                holder.bind(invitationList[position], Event())
+                holder.bind(invitationList[position])
             }
         }
     }
@@ -44,8 +45,12 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
         private val eventTitle: TextView = itemView.invitation_event_title
         private val ownerName: TextView = itemView.invitation_event_owner
         private val remainingDays: TextView = itemView.invitation_event_remaining_days
+        private val acceptButton: ImageView = itemView.btn_accept_invitation
+        private val declineButton: ImageView = itemView.btn_decline_invitation
 
-        fun bind(eventInvitation: EventInvitation, event: Event) {
+        fun bind(eventInvitation: EventInvitation) {
+            acceptButton.setOnClickListener{ onAcceptListener(adapterPosition) }
+            declineButton.setOnClickListener{ onDeclineListener(adapterPosition) }
             eventTitle.text = PlandoraEventController.events[eventInvitation.eventId]?.title
             remainingDays.text = PlandoraEventController.events[eventInvitation.eventId]?.remainingDays().toString()
             uiScope.launch {

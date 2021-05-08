@@ -163,6 +163,14 @@ class PlandoraEventController {
         firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).update(FirestoreConstants.EVENT_INVITED_USER_IDS, FieldValue.arrayUnion(invitedUser.id)).await()
     }
 
+    fun getEventById(eventId: String) = flow<State<Event>> {
+        emit(State.loading())
+        val event = getEventFromId(eventId)
+        emit(State.success(event))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
     private suspend fun getEventFromId(eventId: String): Event {
         val document = firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).get().await()
         return document.toObject(Event::class.java)!!
