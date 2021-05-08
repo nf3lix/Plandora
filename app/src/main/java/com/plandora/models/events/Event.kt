@@ -73,7 +73,7 @@ data class Event(
     }
 
     fun isInvitedUser(user: PlandoraUser): Boolean {
-        return invitedUserIds.contains(user.id)
+        return invitedUserIds.contains(user.id) && !attendees.contains(user.id)
     }
 
     private fun getNextEvent(timestamp: Long): Long {
