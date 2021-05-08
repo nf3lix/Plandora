@@ -1,6 +1,5 @@
 package com.plandora.controllers
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.plandora.models.events.EventInvitation
@@ -32,7 +31,6 @@ class InvitationController {
         emit(State.loading())
         invitations.clear()
         addInvitationsFromQuerySnapshot(fetchEventListQuerySnapshot())
-        Log.d("InvitationController", invitations.toString())
         emit(State.success(""))
     }.catch {
         emit(State.failed("Invitations couldn't be loaded."))

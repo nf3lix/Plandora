@@ -13,7 +13,10 @@ import com.plandora.R
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.EventInvitationRecyclerAdapter
 import com.plandora.controllers.InvitationController
+import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.PlandoraUserController
 import com.plandora.controllers.State
+import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,8 +71,38 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
         }
     }
 
+    private suspend fun loadEvent(eventId: String) {
+        PlandoraEventController().getEventById(eventId).collect { state ->
+            when(state) {
+                is State.Loading -> {}
+                is State.Success -> {
+                    Log.d("n", state.data.toString())
+                    // uiScope.launch {
+                        PlandoraEventController().acceptInvitation(eventId).collect { state2 ->
+                            when(state2) {
+                                is State.Loading -> {
+                                    Log.d("notify", "loading")
+                                }
+                                is State.Success -> {
+                                    Log.d("notify", "success")
+                                }
+                                is State.Failed -> {
+                                    Log.d("notify", state2.message)
+                                }
+                            }
+                        }
+                    // }
+                }
+                is State.Failed -> {}
+            }
+        }
+    }
+
     override fun onAcceptListener(position: Int) {
         Log.d("notifications", eventInvitationList[position].toString())
+        uiScope.launch {
+            loadEvent(eventInvitationList[position].eventId)
+        }
     }
 
     override fun onDeclineListener(position: Int) {
