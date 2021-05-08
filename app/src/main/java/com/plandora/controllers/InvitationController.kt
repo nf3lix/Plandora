@@ -2,7 +2,9 @@ package com.plandora.controllers
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
+import com.plandora.models.events.EventInvitationStatus
 import com.plandora.utils.constants.FirestoreConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -36,6 +38,19 @@ class InvitationController {
         emit(State.failed("Invitations couldn't be loaded."))
     }.flowOn(Dispatchers.IO)
 
+    fun updateInvitationStatus(invitation: EventInvitation, newStatus: EventInvitationStatus) = flow<State<String>> {
+        emit(State.loading())
+        setInvitationStatus(invitation, newStatus)
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun setInvitationStatus(invitation: EventInvitation, newStatus: EventInvitationStatus) {
+        firestoreInstance.collection(FirestoreConstants.INVITATIONS).document(getInvitationId(invitation))
+                .update(FirestoreConstants.INVITATION_STATUS, newStatus).await()
+    }
+
     private suspend fun fetchEventListQuerySnapshot(): QuerySnapshot {
         return firestoreInstance
             .collection(FirestoreConstants.INVITATIONS)
@@ -46,8 +61,19 @@ class InvitationController {
     private fun addInvitationsFromQuerySnapshot(querySnapshot: QuerySnapshot) {
         querySnapshot.forEach { document ->
             val invitation = document.toObject(EventInvitation::class.java)
-            invitations[document.id] = invitation
+            if(invitation.status == EventInvitationStatus.PENDING)
+                invitations[document.id] = invitation
         }
+    }
+
+    private fun getInvitationId(invitation: EventInvitation): String {
+        var invitationId = ""
+        for (entry: MutableMap.MutableEntry<String, EventInvitation> in InvitationController.invitations.entries) {
+            if(entry.value == invitation) {
+                invitationId = entry.key
+            }
+        }
+        return invitationId
     }
 
 }

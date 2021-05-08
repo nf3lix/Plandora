@@ -18,6 +18,7 @@ import com.plandora.controllers.PlandoraUserController
 import com.plandora.controllers.State
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
+import com.plandora.models.events.EventInvitationStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -29,6 +30,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     private lateinit var eventInvitationAdapter: EventInvitationRecyclerAdapter
     private var eventInvitationList: ArrayList<EventInvitation> = ArrayList()
     private val uiScope = CoroutineScope(Dispatchers.Main)
+    private var currentPosition = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         displayInvitationsFragment(inflater, container)
@@ -75,38 +77,48 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
         PlandoraEventController().getEventById(eventId).collect { state ->
             when(state) {
                 is State.Loading -> {}
-                is State.Success -> {
-                    Log.d("n", state.data.toString())
-                    // uiScope.launch {
-                        PlandoraEventController().acceptInvitation(eventId).collect { state2 ->
-                            when(state2) {
-                                is State.Loading -> {
-                                    Log.d("notify", "loading")
-                                }
-                                is State.Success -> {
-                                    Log.d("notify", "success")
-                                }
-                                is State.Failed -> {
-                                    Log.d("notify", state2.message)
-                                }
-                            }
-                        }
-                    // }
-                }
+                is State.Success -> { acceptInvitation(eventId) }
                 is State.Failed -> {}
             }
         }
     }
 
+    private suspend fun acceptInvitation(eventId: String) {
+        PlandoraEventController().acceptInvitation(eventId).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    updateInvitationStatus(eventInvitationList[currentPosition], EventInvitationStatus.ACCEPTED)
+                }
+                is State.Failed -> {
+                    Toast.makeText(activity, "Could not accept invitation", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private suspend fun updateInvitationStatus(invitation: EventInvitation, status: EventInvitationStatus) {
+        InvitationController().updateInvitationStatus(invitation, status).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    eventInvitationList.removeAt(currentPosition)
+                    eventInvitationAdapter.notifyDataSetChanged()
+                    Toast.makeText(activity, "Invitation accepted", Toast.LENGTH_LONG).show()
+                }
+                is State.Failed -> { }
+            }
+        }
+    }
+
     override fun onAcceptListener(position: Int) {
-        Log.d("notifications", eventInvitationList[position].toString())
+        currentPosition = position
         uiScope.launch {
             loadEvent(eventInvitationList[position].eventId)
         }
     }
 
     override fun onDeclineListener(position: Int) {
-        Log.d("notifications", eventInvitationList[position].toString())
     }
 
 }
