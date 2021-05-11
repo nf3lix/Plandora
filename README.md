@@ -16,6 +16,8 @@ There won’t be any missed birthdays, any disappointment or guilty feelings!
 
 [YouTrack Dashboard](https://dhbw-karlsruhe.myjetbrains.com/youtrack/agiles/108-76/109-278)
 
+[Our Documantation](https://github.com/Honrix/PlandoraDocumentation)
+
 ## Branches
 - feature/fix/...
 - develop (branch must be tested on a physical device before being pushed to master branch)

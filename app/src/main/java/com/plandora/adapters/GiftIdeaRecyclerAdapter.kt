@@ -72,11 +72,10 @@ class GiftIdeaRecyclerAdapter(
 
         fun bind(giftIdea: GiftIdeaUIWrapper) {
             title.text = giftIdea.title
-            // creator.text = PlandoraUserController().getUserById(giftIdea.ownerId).displayName
+            ratingBar.rating = giftIdea.rating
             uiScope.launch {
                 setCreatorName(giftIdea)
             }
-            ratingBar.rating = giftIdea.rating
 
             when(giftIdea.selected) {
                 true -> itemView.gift_idea_background.setBackgroundResource(R.drawable.gift_idea_background_selected)
@@ -123,11 +122,10 @@ class GiftIdeaRecyclerAdapter(
 
         fun bind(giftIdea: GiftIdeaUIWrapper) {
             title.text = giftIdea.title
-            // creator.text = PlandoraUserController().fetchUser(giftIdea.ownerId).displayName
+            ratingBar.rating = giftIdea.rating
             uiScope.launch {
                 setCreatorName(giftIdea)
             }
-            ratingBar.rating = giftIdea.rating
 
             itemView.gift_idea_card_view.setOnClickListener {
                 selectedItemPos = adapterPosition
