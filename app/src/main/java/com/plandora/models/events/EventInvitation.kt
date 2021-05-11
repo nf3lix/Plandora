@@ -5,10 +5,10 @@ import android.os.Parcelable
 import kotlin.math.roundToInt
 
 data class EventInvitation(
-    val invitedUserId: String,
-    val invitationOwnerId: String,
-    val eventId: String,
-    val creationTimestamp: Long,
+    val invitedUserId: String = "",
+    val invitationOwnerId: String = "",
+    val eventId: String = "",
+    val creationTimestamp: Long = 0,
     val status: EventInvitationStatus = EventInvitationStatus.PENDING
 ) : Parcelable, Comparable<EventInvitation> {
 

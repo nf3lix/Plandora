@@ -3,11 +3,13 @@ package com.plandora.activity.launch
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
+import com.plandora.controllers.InvitationController
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.State
 import kotlinx.android.synthetic.main.activity_sign_in.*

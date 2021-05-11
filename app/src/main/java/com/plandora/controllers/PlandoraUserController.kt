@@ -1,6 +1,5 @@
 package com.plandora.controllers
 
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -8,9 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.launch.SignUpActivity
-import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
-import com.plandora.models.events.Event
 import com.plandora.utils.constants.FirestoreConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
