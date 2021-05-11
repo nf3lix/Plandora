@@ -26,7 +26,8 @@ jobs:
       run : ./gradlew  test
       
     - name: Run Unit-Tests
-      run: chmod +x ./app/src/test/java/com/plandora/models/*
+      #run: chmod +x ./app/src/test/java/com/plandora/models/*
+      run: chmod +x ./app/src/test/java/com/plandora/*
 
     - name: Build Project
       run: ./gradlew assemble
