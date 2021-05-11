@@ -1,9 +1,9 @@
 language: generic
 jobs:
   include:
-      - stage: "Tests"                # naming the Tests stage
-      name: "Unit Tests"            # names the first Tests stage job
-      script: chmod +x ./app/src/test/java/com/plandora/*
+#      - stage: "Tests"                # naming the Tests stage
+#      name: "Unit Tests"            # names the first Tests stage job
+#      script: chmod +x ./app/src/test/java/com/plandora/*
 #    - script: ./integration-tests
 #      name: "Integration Tests"     # names the second Tests stage job
 #    - stage: deploy
