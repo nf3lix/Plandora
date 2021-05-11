@@ -3,7 +3,7 @@ jobs:
   include:
       - stage: "Tests"                # naming the Tests stage
       name: "Unit Tests"            # names the first Tests stage job
-      script: ./app/src/test/java/com/plandora/models
+      script: ./app/src/test/java/com/plandora/models/*
 #    - script: ./integration-tests
 #      name: "Integration Tests"     # names the second Tests stage job
 #    - stage: deploy
