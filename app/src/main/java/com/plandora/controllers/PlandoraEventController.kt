@@ -1,5 +1,6 @@
 package com.plandora.controllers
 
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -19,7 +20,7 @@ class PlandoraEventController {
 
     companion object {
         val eventList: ArrayList<Event> = ArrayList()
-        val events: HashMap<String, Event> = HashMap();
+        val events: HashMap<String, Event> = HashMap()
     }
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
@@ -90,6 +91,19 @@ class PlandoraEventController {
         ).await()
     }
 
+    fun acceptInvitation(eventId: String) = flow<State<String>>{
+        emit(State.loading())
+        addCurrentUserIdToEvent(eventId)
+        emit(State.success(eventId))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun addCurrentUserIdToEvent(eventId: String) {
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
+                .update(FirestoreConstants.ATTENDEES, FieldValue.arrayUnion(PlandoraUserController().currentUserId())).await()
+    }
+
     fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) = flow<State<String>>{
         emit(State.loading())
         val eventId = getEventId(event)
@@ -151,7 +165,7 @@ class PlandoraEventController {
 
     private suspend fun createInvitation(eventId: String, event: Event, invitedUser: PlandoraUser): Boolean {
         if(!event.invitedUserIds.contains(invitedUser.id)) {
-            val invitation = EventInvitation(PlandoraUserController().currentUserId(), invitedUser.id, eventId, System.currentTimeMillis())
+            val invitation = EventInvitation(invitedUser.id, PlandoraUserController().currentUserId(), eventId, System.currentTimeMillis())
             addInvitationToFirestoreCollections(eventId, invitation, invitedUser)
             return true
         }
@@ -162,6 +176,14 @@ class PlandoraEventController {
         firestoreInstance.collection(FirestoreConstants.INVITATIONS).document().set(invitation, SetOptions.merge()).await()
         firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).update(FirestoreConstants.EVENT_INVITED_USER_IDS, FieldValue.arrayUnion(invitedUser.id)).await()
     }
+
+    fun getEventById(eventId: String) = flow<State<Event>> {
+        emit(State.loading())
+        val event = getEventFromId(eventId)
+        emit(State.success(event))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
     private suspend fun getEventFromId(eventId: String): Event {
         val document = firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).get().await()
