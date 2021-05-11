@@ -24,6 +24,9 @@ jobs:
     
     - name: Run Tests
       run : ./gradlew  test
+      
+    - name: Run Unit-Tests
+      run: ./app/src/test/java/com/plandora/models
 
     - name: Build Project
       run: ./gradlew assemble
