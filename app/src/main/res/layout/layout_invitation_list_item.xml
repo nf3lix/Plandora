@@ -16,21 +16,15 @@
         android:background="@color/colorBackgroundGrey">
 
 
-        <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_margin="14dp"
-            android:layout_gravity="center_vertical"
-            android:visibility="invisible"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical">
 
             <LinearLayout
                 android:id="@+id/invitation_event_description_container"
-                android:layout_width="240dp"
+                android:layout_width="285dp"
                 android:layout_height="70dp"
                 android:orientation="vertical"
                 android:padding="10dp"
@@ -60,28 +54,32 @@
                 android:id="@+id/invitation_event_remaining_days"
                 android:layout_width="90dp"
                 android:layout_height="15dp"
-                android:textSize="12sp"
                 android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.625"
                 app:layout_constraintStart_toEndOf="@+id/invitation_event_description_container"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.275" />
 
             <ImageView
-                android:id="@+id/btn_accept_invitation"
-                android:src="@drawable/ic_check"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/btn_decline_invitation"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="52dp"
+                android:src="@drawable/ic_cancel"
                 app:layout_constraintEnd_toEndOf="@+id/invitation_event_remaining_days"
                 app:layout_constraintTop_toBottomOf="@+id/invitation_event_remaining_days" />
 
             <ImageView
-                android:src="@drawable/ic_cancel"
-                android:id="@+id/btn_decline_invitation"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="48dp"
+                android:id="@+id/btn_accept_invitation"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_check"
                 app:layout_constraintEnd_toEndOf="@+id/invitation_event_remaining_days"
                 app:layout_constraintTop_toBottomOf="@+id/invitation_event_remaining_days" />
 
