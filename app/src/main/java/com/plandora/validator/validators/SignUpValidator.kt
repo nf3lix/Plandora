@@ -7,7 +7,7 @@ import com.plandora.models.SignUpForm
 import com.plandora.validator.ValidationResult
 import com.plandora.validator.Validator
 
-class SignUpValidator(val activity: SignUpActivity) : Validator {
+class SignUpValidator(private val activity: SignUpActivity) : Validator {
 
     override fun <T> getValidationState(data: T): ValidationResult {
         if(data !is SignUpForm) {
