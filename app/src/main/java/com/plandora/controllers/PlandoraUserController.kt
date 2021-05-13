@@ -8,6 +8,7 @@ import com.google.firebase.firestore.SetOptions
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.launch.SignUpActivity
 import com.plandora.models.PlandoraUser
+import com.plandora.models.SignUpForm
 import com.plandora.utils.constants.FirestoreConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -52,16 +53,16 @@ class PlandoraUserController {
             }
     }
 
-    fun signUpUser(activity: SignUpActivity, uniqueName: String, displayName: String, email: String, password: String) {
+    fun signUpUser(activity: SignUpActivity, model: SignUpForm) {
         firestoreInstance.collection(FirestoreConstants.USER_NAMES)
-            .document(uniqueName).set(mapOf("user" to email))
+            .document(model.uniqueName).set(mapOf("user" to model.email))
             .addOnSuccessListener {
-                firebaseAuth.createUserWithEmailAndPassword(email, password)
+                firebaseAuth.createUserWithEmailAndPassword(model.email, model.password)
                     .addOnCompleteListener {
                         if(it.isSuccessful) {
                             val firebaseUser: FirebaseUser = it.result!!.user!!
                             val userEmail: String = firebaseUser.email!!
-                            val user = PlandoraUser(firebaseUser.uid, uniqueName, displayName, userEmail)
+                            val user = PlandoraUser(firebaseUser.uid, model.uniqueName, model.displayName, userEmail)
                             createFireStoreUserDocument(activity, user)
                         } else {
                             activity.onSignUpFailed(it.exception!!.message!!)

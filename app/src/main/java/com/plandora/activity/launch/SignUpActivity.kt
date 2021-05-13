@@ -35,7 +35,7 @@ class SignUpActivity : AppCompatActivity() {
             Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
             return
         }
-        PlandoraUserController().signUpUser(this, signUpForm.uniqueName, signUpForm.displayName, signUpForm.email, signUpForm.password)
+        PlandoraUserController().signUpUser(this, signUpForm)
     }
 
     fun onSignUpSuccess() {
