@@ -6,6 +6,6 @@ interface Validator {
         VALID, INVALID, UNKNOWN
     }
 
-    fun getValidationState(): ValidationState
+    fun <T> getValidationState(data: T): ValidationResult
 
 }
