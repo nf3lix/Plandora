@@ -1,28 +1,25 @@
 package com.plandora.validator.validators
 
-import com.plandora.R
-import com.plandora.activity.main.dashboard.EventDetailActivity
 import com.plandora.models.events.Event
 import com.plandora.validator.ValidationResult
 import com.plandora.validator.Validator
 
-class EditEventValidator(private val activity: EventDetailActivity) : Validator {
+class EditEventValidator : Validator<Event, EditEventValidator.EditEventValidationResult> {
 
-    override fun <T> getValidationState(data: T): ValidationResult {
-        if(data !is Event) {
-            throw Exception()
-        }
+    override fun getValidationState(data: Event): EditEventValidationResult {
         return when {
-            !data.relevantForDashboard() -> ValidationResults.EventInPastResult(activity)
-            data.title.isEmpty() -> ValidationResults.EmptyTitleResult(activity)
-            else -> ValidationResults.ValidEventResult(activity)
+            !data.relevantForDashboard() -> ValidationResults.EventInPastResult()
+            data.title.isEmpty() -> ValidationResults.EmptyTitleResult()
+            else -> ValidationResults.ValidEventResult()
         }
     }
 
     sealed class ValidationResults {
-        class EmptyTitleResult(activity: EventDetailActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.create_event_empty_title)))
-        class EventInPastResult(activity: EventDetailActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.create_event_in_the_past)))
-        class ValidEventResult(activity: EventDetailActivity) : ValidationResult(Validator.ValidationState.VALID, activity.getString((R.string.update_event_success)))
+        class EmptyTitleResult : EditEventValidationResult(Validator.ValidationState.INVALID, "Please specify a title")
+        class EventInPastResult : EditEventValidationResult(Validator.ValidationState.INVALID, "This one-time event is in the past")
+        class ValidEventResult : EditEventValidationResult(Validator.ValidationState.VALID, "Successfully created event")
     }
+
+    abstract class EditEventValidationResult(val state: Validator.ValidationState, val message: String) : ValidationResult(state, message)
 
 }

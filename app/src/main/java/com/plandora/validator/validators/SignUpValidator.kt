@@ -1,35 +1,31 @@
 package com.plandora.validator.validators
 
-import android.text.TextUtils
-import com.plandora.R
-import com.plandora.activity.launch.SignUpActivity
 import com.plandora.models.SignUpForm
 import com.plandora.validator.ValidationResult
 import com.plandora.validator.Validator
 
-class SignUpValidator(private val activity: SignUpActivity) : Validator {
+class SignUpValidator : Validator<SignUpForm, SignUpValidator.SignUpValidationResult> {
 
-    override fun <T> getValidationState(data: T): ValidationResult {
-        if(data !is SignUpForm) {
-            throw Exception()
-        }
+    override fun getValidationState(data: SignUpForm): SignUpValidationResult {
         return when {
-            TextUtils.isEmpty(data.uniqueName) -> ValidationResults.EmptyUniqueNameResult(activity)
-            TextUtils.isEmpty(data.displayName) -> ValidationResults.EmptyDisplayNameResult(activity)
-            TextUtils.isEmpty(data.email) -> ValidationResults.EmptyEmailResult(activity)
-            TextUtils.isEmpty(data.password) -> ValidationResults.EmptyPasswordResult(activity)
-            (data.password != data.repeatPassword) -> ValidationResults.PasswordDoNotMatchResult(activity)
-            else -> ValidationResults.ValidDataResult(activity)
+            data.uniqueName.isEmpty() -> ValidationResults.EmptyUniqueNameResult()
+            data.displayName.isEmpty() -> ValidationResults.EmptyDisplayNameResult()
+            data.email.isEmpty() -> ValidationResults.EmptyEmailResult()
+            data.password.isEmpty() -> ValidationResults.EmptyPasswordResult()
+            (data.password != data.repeatPassword) -> ValidationResults.PasswordDoNotMatchResult()
+            else -> ValidationResults.ValidDataResult()
         }
     }
 
     sealed class ValidationResults {
-        class EmptyUniqueNameResult(activity: SignUpActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.empty_unique_name)))
-        class EmptyDisplayNameResult(activity: SignUpActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.empty_display_name)))
-        class EmptyEmailResult(activity: SignUpActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.empty_email)))
-        class EmptyPasswordResult(activity: SignUpActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.empty_password)))
-        class PasswordDoNotMatchResult(activity: SignUpActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.passwords_do_not_match)))
-        class ValidDataResult(activity: SignUpActivity) : ValidationResult(Validator.ValidationState.VALID, activity.getString((R.string.sign_up_valid_form)))
+        class EmptyUniqueNameResult : SignUpValidationResult(Validator.ValidationState.INVALID, "Unique name must not be empty")
+        class EmptyDisplayNameResult : SignUpValidationResult(Validator.ValidationState.INVALID, "Display name must not be empty")
+        class EmptyEmailResult : SignUpValidationResult(Validator.ValidationState.INVALID, "Email must not be empty")
+        class EmptyPasswordResult : SignUpValidationResult(Validator.ValidationState.INVALID, "Password must not be empty")
+        class PasswordDoNotMatchResult : SignUpValidationResult(Validator.ValidationState.INVALID, "Passwords do not match")
+        class ValidDataResult : SignUpValidationResult(Validator.ValidationState.VALID, "Valid input")
     }
+
+    abstract class SignUpValidationResult(val state: Validator.ValidationState, val message: String) : ValidationResult(state, message)
 
 }
