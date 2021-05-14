@@ -107,7 +107,7 @@ data class Event(
         return !isInPast() || annual
     }
 
-    fun isInPast(): Boolean {
+    private fun isInPast(): Boolean {
         val currentTimestamp = System.currentTimeMillis() - 8.64e7
         return timestamp < currentTimestamp
     }

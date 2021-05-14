@@ -68,7 +68,7 @@ class InvitationController {
 
     private fun getInvitationId(invitation: EventInvitation): String {
         var invitationId = ""
-        for (entry: MutableMap.MutableEntry<String, EventInvitation> in InvitationController.invitations.entries) {
+        for (entry: MutableMap.MutableEntry<String, EventInvitation> in invitations.entries) {
             if(entry.value == invitation) {
                 invitationId = entry.key
             }

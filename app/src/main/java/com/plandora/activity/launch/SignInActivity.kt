@@ -12,6 +12,9 @@ import com.plandora.activity.main.MainActivity
 import com.plandora.controllers.InvitationController
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.State
+import com.plandora.models.SignInForm
+import com.plandora.validator.Validator
+import com.plandora.validator.validators.SignInValidator
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +44,7 @@ class SignInActivity : PlandoraActivity() {
     private fun signIn() {
         val email = et_email_sign_in.text.toString()
         val password = et_password_sign_in.text.toString()
-        if(!signInFormIsValid(email, password)) {
+        if(!signInFormIsValid(SignInForm(email, password))) {
             showInvalidLoginFormMessage()
             return
         }
@@ -98,8 +101,8 @@ class SignInActivity : PlandoraActivity() {
         btn_sign_up.setOnClickListener { startSignUp() }
     }
 
-    private fun signInFormIsValid(email: String, password: String): Boolean {
-        return !(TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
+    private fun signInFormIsValid(form: SignInForm): Boolean {
+        return SignInValidator(this).getValidationState(form).validationState == Validator.ValidationState.VALID
     }
 
     private suspend fun loadEvents() {
