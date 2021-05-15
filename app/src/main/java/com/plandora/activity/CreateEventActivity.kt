@@ -20,7 +20,6 @@ import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
 import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
-import com.plandora.models.validation_types.CreateEventValidationTypes
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
