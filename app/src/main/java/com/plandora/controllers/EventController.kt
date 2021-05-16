@@ -188,7 +188,6 @@ class EventController {
         val document = firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).get().await()
         return document.toObject(Event::class.java)!!
     }
-
     private fun getEventId(event: Event): String {
         var eventId = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {

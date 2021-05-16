@@ -17,9 +17,8 @@ import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.EventController
-import com.plandora.controllers.UserController
 import com.plandora.controllers.State
-import com.plandora.crud_workflows.CRUDActivity
+import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
@@ -34,15 +33,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 open class CreateEventActivity :
     PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    CRUDActivity.EventCRUDActivity,
-    CRUDActivity.InvitationCRUDActivity
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener
 {
 
     private val uiScope = CoroutineScope(Dispatchers.Main)
@@ -179,27 +175,13 @@ open class CreateEventActivity :
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> { finish() }
-                is State.Failed -> { onInternalFailure("Could not create event") }
+                is State.Failed -> { Toast.makeText(this, "Could not create event", Toast.LENGTH_LONG).show() }
             }
         }
     }
 
     override fun addActionBar() {
         setSupportActionBar(toolbar_main_activity)
-    }
-
-    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
-        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
-        attendeesList.add(attendee)
-        addAttendeesRecyclerView()
-    }
-
-    override fun onInvitationCreateFailure() {
-        onInternalFailure("Could not invite user")
-    }
-
-    override fun onInvitationExists() {
-        onInternalFailure("This invitation already exists")
     }
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
@@ -214,33 +196,6 @@ open class CreateEventActivity :
                 createEvent(event)
             }
         }
-    }
-
-    override fun onCreateSuccess(event: Event) {
-        finish()
-    }
-
-    override fun onCreateFailure() {
-        onInternalFailure("Could not create event")
-    }
-
-    override fun onUpdateSuccess(event: Event) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onUpdateFailure(message: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRemoveSuccess(event: Event) {
-    }
-
-    override fun onRemoveFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onInternalFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setupButtonListeners() {

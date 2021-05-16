@@ -14,14 +14,13 @@ import com.plandora.activity.CreateEventActivity
 import com.plandora.adapters.EventRecyclerAdapter
 import com.plandora.controllers.EventController
 import com.plandora.controllers.State
-import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.events.Event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUDActivity {
+class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
@@ -76,13 +75,6 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUD
             .setOnClickListener {
                 startActivity(Intent(rootView.context, CreateEventActivity::class.java))
             }
-    }
-
-    override fun onSuccess() {
-        addEventRecyclerView()
-    }
-
-    override fun onInternalFailure(message: String) {
     }
 
     private suspend fun loadEvents() {
