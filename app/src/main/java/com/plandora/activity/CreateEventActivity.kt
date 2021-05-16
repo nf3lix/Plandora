@@ -1,6 +1,5 @@
 package com.plandora.activity
 
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,11 +10,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.activity.components.DatePickerObserver
-import com.plandora.activity.components.PlandoraDatePicker
-import com.plandora.activity.components.PlandoraTimePicker
-import com.plandora.activity.components.TimePickerObserver
-import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.date_time_picker.DatePickerObserver
+import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
+import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
+import com.plandora.activity.components.date_time_picker.TimePickerObserver
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter

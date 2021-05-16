@@ -1,4 +1,4 @@
-package com.plandora.activity.components
+package com.plandora.activity.components.date_time_picker
 
 import android.app.TimePickerDialog
 import android.content.Context
@@ -16,7 +16,8 @@ class PlandoraTimePicker(
         val datePickerDialog = TimePickerDialog(context,
             { _, hour, minute ->
                 observer.updateSelectedTime(hour, minute)
-            }, 0, 0, TIME_FORMAT_24HOUR)
+            }, 0, 0, TIME_FORMAT_24HOUR
+        )
         datePickerDialog.show()
     }
 

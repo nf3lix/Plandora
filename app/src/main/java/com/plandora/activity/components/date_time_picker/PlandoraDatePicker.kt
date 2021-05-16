@@ -1,4 +1,4 @@
-package com.plandora.activity.components
+package com.plandora.activity.components.date_time_picker
 
 import android.app.DatePickerDialog
 import android.content.Context

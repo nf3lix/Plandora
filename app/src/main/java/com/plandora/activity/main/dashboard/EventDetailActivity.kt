@@ -11,9 +11,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
-import com.plandora.activity.components.DatePickerObserver
-import com.plandora.activity.dialogs.AddAttendeeDialog
-import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.AddAttendeeDialog
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter

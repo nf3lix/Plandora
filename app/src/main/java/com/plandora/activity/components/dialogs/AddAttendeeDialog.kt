@@ -1,4 +1,4 @@
-package com.plandora.activity.dialogs
+package com.plandora.activity.components.dialogs
 
 import android.content.Context
 import android.content.DialogInterface
