@@ -1,6 +1,7 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.components.DatePickerObserver
 import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
@@ -67,6 +69,7 @@ class EventDetailActivity : PlandoraActivity(),
         event_title_input.setText(event.title)
         event_description_input.setText(event.description)
         event_date_input.setText(event.getDateAsString())
+        Log.d("dt", event.getTimeAsString())
         event_time_input.setText(event.getTimeAsString())
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
         event_type_spinner.setSelection(event.eventType.ordinal)

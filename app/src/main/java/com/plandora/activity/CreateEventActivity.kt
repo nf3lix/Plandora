@@ -1,8 +1,8 @@
 package com.plandora.activity
 
-import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,6 +11,10 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
+import com.plandora.activity.components.DatePickerObserver
+import com.plandora.activity.components.PlandoraDatePicker
+import com.plandora.activity.components.PlandoraTimePicker
+import com.plandora.activity.components.TimePickerObserver
 import com.plandora.activity.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
@@ -38,7 +42,9 @@ open class CreateEventActivity :
     PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    DatePickerObserver,
+    TimePickerObserver
 {
 
     private val uiScope = CoroutineScope(Dispatchers.Main)
@@ -95,25 +101,25 @@ open class CreateEventActivity :
     }
 
     private fun selectDate() {
-        val datePickerDialog = DatePickerDialog(this@CreateEventActivity,
-            R.style.SpinnerDatePickerStyle,
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                year = selectedYear
-                monthOfYear = selectedMonth + 1
-                dayOfMonth = selectedDayOfMonth
-                displaySelectedDate()
-            },  year, monthOfYear - 1, dayOfMonth)
-        datePickerDialog.show()
+        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
+    }
+
+    override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
+        year = selectedYear
+        monthOfYear = selectedMonth + 1
+        dayOfMonth = selectedDayOfMonth
+        displaySelectedDate()
     }
 
     private fun selectTime() {
-        val timePickerDialog = TimePickerDialog(this@CreateEventActivity, {
-                _, selectedHours, selectedMinutes ->
-            hours = selectedHours
-            minutes = selectedMinutes
-            displaySelectedTime()
-        }, 0, 0, true)
-        timePickerDialog.show()
+        PlandoraTimePicker(this, this).showDialog()
+    }
+
+    override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
+        Log.d("dt", "$selectedHour $selectedMinute")
+        hours = selectedHour
+        minutes = selectedMinute
+        displaySelectedTime()
     }
 
     private fun displaySelectedDate() {
@@ -166,6 +172,7 @@ open class CreateEventActivity :
             attendees.add(UserController().currentUserId())
             giftIdeas = list
         }
+        Log.d("create", event.timestamp.toString())
         validateForm(event)
         return true
     }
@@ -203,9 +210,6 @@ open class CreateEventActivity :
         btn_time_picker.setOnClickListener { selectTime() }
         event_date_input.setOnClickListener { selectDate() }
         event_time_input.setOnClickListener { selectTime() }
-        btn_add_attendee.setOnClickListener {
-            // AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
-        }
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }
