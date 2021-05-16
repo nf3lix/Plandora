@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 
-class PlandoraUserController {
+class UserController {
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()

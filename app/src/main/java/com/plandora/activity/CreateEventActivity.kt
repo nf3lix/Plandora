@@ -16,8 +16,8 @@ import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.PlandoraUser
@@ -63,7 +63,7 @@ open class CreateEventActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
-        event = Event(ownerId = PlandoraUserController().currentUserId(), attendees = arrayListOf())
+        event = Event(ownerId = UserController().currentUserId(), attendees = arrayListOf())
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
         addActionBar()
@@ -167,7 +167,7 @@ open class CreateEventActivity :
             annual = cb_annual.isChecked
             timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
             attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
-            attendees.add(PlandoraUserController().currentUserId())
+            attendees.add(UserController().currentUserId())
             giftIdeas = list
         }
         validateForm(event)
@@ -175,7 +175,7 @@ open class CreateEventActivity :
     }
 
     private suspend fun createEvent(event: Event) {
-        PlandoraEventController().createEvent(event).collect { state ->
+        EventController().createEvent(event).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> { finish() }

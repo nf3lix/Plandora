@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.ViewGroup
 import com.plandora.R
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.UserController
 import com.plandora.activity.PlandoraDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
@@ -30,7 +30,7 @@ class AddGiftIdeaDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
 
     private fun addNewGiftIdea() {
         val newGiftIdea = GiftIdeaUIWrapper(title, viewInflated.add_gift_idea_description.text.toString(),
-                PlandoraUserController().currentUserId(), 0.0F, ArrayList()
+                UserController().currentUserId(), 0.0F, ArrayList()
         )
         activity.addGiftIdea(newGiftIdea)
         activity.addGiftIdeasRecyclerView()

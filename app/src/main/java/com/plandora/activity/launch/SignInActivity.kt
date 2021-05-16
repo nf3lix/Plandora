@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
-import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.EventController
 import com.plandora.controllers.State
 import com.plandora.models.SignInForm
 import com.plandora.validator.Validator
@@ -103,7 +103,7 @@ class SignInActivity : PlandoraActivity() {
     }
 
     private suspend fun loadEvents() {
-        PlandoraEventController().updateEventList().collect { state ->
+        EventController().updateEventList().collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {

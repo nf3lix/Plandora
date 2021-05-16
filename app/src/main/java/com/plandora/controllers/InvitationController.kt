@@ -2,7 +2,6 @@ package com.plandora.controllers
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.events.EventInvitationStatus
 import com.plandora.utils.constants.FirestoreConstants
@@ -54,7 +53,7 @@ class InvitationController {
     private suspend fun fetchEventListQuerySnapshot(): QuerySnapshot {
         return firestoreInstance
             .collection(FirestoreConstants.INVITATIONS)
-            .whereEqualTo(FirestoreConstants.INVITED_USER_ID, PlandoraUserController().currentUserId())
+            .whereEqualTo(FirestoreConstants.INVITED_USER_ID, UserController().currentUserId())
             .get().await()
     }
 

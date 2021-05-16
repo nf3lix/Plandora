@@ -12,7 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.plandora.R
 import com.plandora.activity.CreateEventActivity
 import com.plandora.adapters.EventRecyclerAdapter
-import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.EventController
 import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
 import com.plandora.models.events.Event
@@ -52,7 +52,7 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUD
     }
 
     private fun addEventRecyclerView() {
-        eventList = PlandoraEventController.eventList
+        eventList = EventController.eventList
         rootView.findViewById<RecyclerView>(R.id.recycler_view).apply {
             layoutManager = LinearLayoutManager(activity)
             eventAdapter = EventRecyclerAdapter(eventList, this@DashboardFragment)
@@ -86,7 +86,7 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUD
     }
 
     private suspend fun loadEvents() {
-        PlandoraEventController().updateEventList().collect { state ->
+        EventController().updateEventList().collect { state ->
             when(state) {
                 is State.Loading -> {
                 }

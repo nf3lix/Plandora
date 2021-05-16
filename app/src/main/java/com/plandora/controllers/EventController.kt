@@ -1,6 +1,5 @@
 package com.plandora.controllers
 
-import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 
-class PlandoraEventController {
+class EventController {
 
     companion object {
         val eventList: ArrayList<Event> = ArrayList()
@@ -46,7 +45,7 @@ class PlandoraEventController {
     private suspend fun fetchEventListQuerySnapshot(): QuerySnapshot {
         return firestoreInstance
                 .collection(FirestoreConstants.EVENTS)
-                .whereArrayContains(FirestoreConstants.ATTENDEES, PlandoraUserController().currentUserId())
+                .whereArrayContains(FirestoreConstants.ATTENDEES, UserController().currentUserId())
                 .get().await()
     }
 
@@ -101,7 +100,7 @@ class PlandoraEventController {
 
     private suspend fun addCurrentUserIdToEvent(eventId: String) {
         firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
-                .update(FirestoreConstants.ATTENDEES, FieldValue.arrayUnion(PlandoraUserController().currentUserId())).await()
+                .update(FirestoreConstants.ATTENDEES, FieldValue.arrayUnion(UserController().currentUserId())).await()
     }
 
     fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) = flow<State<String>>{
@@ -165,7 +164,7 @@ class PlandoraEventController {
 
     private suspend fun createInvitation(eventId: String, event: Event, invitedUser: PlandoraUser): Boolean {
         if(!event.invitedUserIds.contains(invitedUser.id)) {
-            val invitation = EventInvitation(invitedUser.id, PlandoraUserController().currentUserId(), eventId, System.currentTimeMillis())
+            val invitation = EventInvitation(invitedUser.id, UserController().currentUserId(), eventId, System.currentTimeMillis())
             addInvitationToFirestoreCollections(eventId, invitation, invitedUser)
             return true
         }
