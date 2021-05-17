@@ -199,7 +199,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private fun validateForm(event: Event) {
-        val validation = EditEventValidator(this).getValidationState(event)
+        val validation = EditEventValidator().getValidationState(event)
         if(validation.isInvalid()) {
             Toast.makeText(this, validation.validationMessage, Toast.LENGTH_SHORT).show()
             return

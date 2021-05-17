@@ -207,7 +207,7 @@ open class CreateEventActivity :
     }
 
     private fun validateForm(event: Event) {
-        val state = CreateEventValidator(this).getValidationState(event)
+        val state = CreateEventValidator().getValidationState(event)
         Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
         if(state.validationState == Validator.ValidationState.VALID) {
             uiScope.launch {

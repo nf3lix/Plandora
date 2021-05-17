@@ -30,7 +30,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun validateForm(signUpForm: SignUpForm) {
-        val state = SignUpValidator(this).getValidationState(signUpForm)
+        val state = SignUpValidator().getValidationState(signUpForm)
         if(state.validationState == Validator.ValidationState.INVALID) {
             Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
             return
