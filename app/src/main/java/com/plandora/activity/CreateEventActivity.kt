@@ -20,12 +20,13 @@ import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
 import com.plandora.controllers.State
 import com.plandora.crud_workflows.CRUDActivity
-import com.plandora.models.validation_types.CreateEventValidationTypes
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
+import com.plandora.validator.Validator
+import com.plandora.validator.validators.CreateEventValidator
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -169,13 +170,7 @@ open class CreateEventActivity :
             attendees.add(PlandoraUserController().currentUserId())
             giftIdeas = list
         }
-        val validation = validateForm(event)
-        Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
-        if(validation == CreateEventValidationTypes.SUCCESS) {
-            uiScope.launch {
-                createEvent(event)
-            }
-        }
+        validateForm(event)
         return true
     }
 
@@ -211,11 +206,13 @@ open class CreateEventActivity :
         giftIdeasList.add(giftIdea)
     }
 
-    private fun validateForm(event: Event): CreateEventValidationTypes {
-        return when {
-            !event.annual && event.timestamp < System.currentTimeMillis() -> { CreateEventValidationTypes.EVENT_IN_THE_PAST }
-            event.title.isEmpty() -> { CreateEventValidationTypes.EMPTY_TITLE }
-            else -> CreateEventValidationTypes.SUCCESS
+    private fun validateForm(event: Event) {
+        val state = CreateEventValidator().getValidationState(event)
+        Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
+        if(state.validationState == Validator.ValidationState.VALID) {
+            uiScope.launch {
+                createEvent(event)
+            }
         }
     }
 

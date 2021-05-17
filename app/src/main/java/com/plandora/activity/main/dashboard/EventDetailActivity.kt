@@ -23,14 +23,13 @@ import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
-import com.plandora.models.validation_types.EditEventValidationTypes
+import com.plandora.validator.validators.EditEventValidator
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.collections.ArrayList
 
 class EventDetailActivity : PlandoraActivity(),
@@ -133,11 +132,7 @@ class EventDetailActivity : PlandoraActivity(),
                 oldEvent.attendees,
                 oldEvent.giftIdeas
         )
-        val validation = validateForm(newEvent)
-        Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
-        if(validation == EditEventValidationTypes.SUCCESS) {
-            saveEntry()
-        }
+        validateForm(newEvent)
     }
 
     private fun saveEntry() {
@@ -203,16 +198,13 @@ class EventDetailActivity : PlandoraActivity(),
         setSupportActionBar(toolbar_main_activity)
     }
 
-    private fun validateForm(event: Event): EditEventValidationTypes {
-        return when {
-            !event.annual && event.timestamp < System.currentTimeMillis() -> {
-                EditEventValidationTypes.EVENT_IN_THE_PAST
-            }
-            event.title.isEmpty() -> {
-                EditEventValidationTypes.EMPTY_TITLE
-            }
-            else -> EditEventValidationTypes.SUCCESS
+    private fun validateForm(event: Event) {
+        val validation = EditEventValidator().getValidationState(event)
+        if(validation.isInvalid()) {
+            Toast.makeText(this, validation.validationMessage, Toast.LENGTH_SHORT).show()
+            return
         }
+        saveEntry()
     }
 
     private fun deleteSelectedEvents() {
