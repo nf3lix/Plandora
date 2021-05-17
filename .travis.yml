@@ -1,4 +1,5 @@
 language: generic
+
 jobs:
   include:
 #      - stage: "Tests"                # naming the Tests stage
@@ -9,3 +10,8 @@ jobs:
 #    - stage: deploy
 #      name: "Deploy to GCP"
 #      script: ./deploy
+
+language: java
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
