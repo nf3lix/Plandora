@@ -2,7 +2,6 @@ package com.plandora.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.plandora.controllers.PlandoraUserController
 
 data class PlandoraUser(
     val id: String = "",

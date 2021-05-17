@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.plandora.R
 import com.plandora.activity.main.MainActivity
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +49,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun startActivityAfterSplashScreen() {
-        if(PlandoraUserController().currentUserId().isNotEmpty()) {
+        if(UserController().currentUserId().isNotEmpty()) {
             setUpMainActivity()
             return
         }
@@ -69,7 +69,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private suspend fun loadEvents() {
-        PlandoraEventController().updateEventList().collect { state ->
+        EventController().updateEventList().collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {

@@ -1,29 +1,25 @@
 package com.plandora.validator.validators
 
-import android.text.TextUtils
-import com.plandora.R
-import com.plandora.activity.launch.SignInActivity
 import com.plandora.models.SignInForm
 import com.plandora.validator.ValidationResult
 import com.plandora.validator.Validator
 
-class SignInValidator(private val activity: SignInActivity): Validator {
+class SignInValidator : Validator<SignInForm, SignInValidator.SignInValidationResult> {
 
-    override fun <T> getValidationState(data: T): ValidationResult {
-        if(data !is SignInForm) {
-            throw Exception()
-        }
+    override fun getValidationState(data: SignInForm): SignInValidationResult {
         return when {
-            TextUtils.isEmpty(data.email) -> ValidationResults.EmptyEmailResult(activity)
-            TextUtils.isEmpty(data.password) -> ValidationResults.EmptyPasswordResult(activity)
-            else -> ValidationResults.ValidDataResult(activity)
+            data.email.isEmpty() -> ValidationResults.EmptyEmailResult()
+            data.password.isEmpty() -> ValidationResults.EmptyPasswordResult()
+            else -> ValidationResults.ValidDataResult()
         }
     }
 
     sealed class ValidationResults {
-        class EmptyEmailResult(activity: SignInActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.empty_email)))
-        class EmptyPasswordResult(activity: SignInActivity) : ValidationResult(Validator.ValidationState.INVALID, activity.getString((R.string.empty_password)))
-        class ValidDataResult(activity: SignInActivity) : ValidationResult(Validator.ValidationState.VALID, activity.getString((R.string.sign_up_valid_form)))
+        class EmptyEmailResult : SignInValidationResult(Validator.ValidationState.INVALID, "Email must not be empty")
+        class EmptyPasswordResult : SignInValidationResult(Validator.ValidationState.INVALID, "Password must not be empty")
+        class ValidDataResult : SignInValidationResult(Validator.ValidationState.VALID, "Valid input")
     }
+
+    abstract class SignInValidationResult(val state: Validator.ValidationState, val message: String) : ValidationResult(state, message)
 
 }

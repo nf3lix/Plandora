@@ -1,11 +1,11 @@
 package com.plandora.validator
 
-interface Validator {
+interface Validator<T: Any, R: ValidationResult> {
 
     enum class ValidationState {
         VALID, INVALID, UNKNOWN
     }
 
-    fun <T> getValidationState(data: T): ValidationResult
+    fun getValidationState(data: T): R
 
 }

@@ -1,6 +1,7 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -10,13 +11,13 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
-import com.plandora.activity.dialogs.AddAttendeeDialog
-import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.AddAttendeeDialog
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
@@ -88,7 +89,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun addUserByIdToAttendeesList(userId: String) {
-        PlandoraUserController().getUserById(userId).collect { state ->
+        UserController().getUserById(userId).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
@@ -142,7 +143,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun updateEvent(oldEvent: Event, newEvent: Event) {
-        PlandoraEventController().updateEvent(oldEvent, newEvent).collect { state ->
+        EventController().updateEvent(oldEvent, newEvent).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> { finish() }
@@ -158,7 +159,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) {
-        PlandoraEventController().addGiftIdeaToEvent(event, giftIdea).collect { state ->
+        EventController().addGiftIdeaToEvent(event, giftIdea).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
@@ -199,7 +200,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private fun validateForm(event: Event) {
-        val validation = EditEventValidator(this).getValidationState(event)
+        val validation = EditEventValidator().getValidationState(event)
         if(validation.isInvalid()) {
             Toast.makeText(this, validation.validationMessage, Toast.LENGTH_SHORT).show()
             return
@@ -218,7 +219,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun removeGiftIdeaFromEvent(event: Event, giftIdea: GiftIdea) {
-        PlandoraEventController().removeGiftIdeaFromEvent(event, giftIdea).collect { state ->
+        EventController().removeGiftIdeaFromEvent(event, giftIdea).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {

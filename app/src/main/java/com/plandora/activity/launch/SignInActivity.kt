@@ -2,15 +2,12 @@ package com.plandora.activity.launch
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.main.MainActivity
-import com.plandora.controllers.InvitationController
-import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.EventController
 import com.plandora.controllers.State
 import com.plandora.models.SignInForm
 import com.plandora.validator.Validator
@@ -102,11 +99,11 @@ class SignInActivity : PlandoraActivity() {
     }
 
     private fun signInFormIsValid(form: SignInForm): Boolean {
-        return SignInValidator(this).getValidationState(form).validationState == Validator.ValidationState.VALID
+        return SignInValidator().getValidationState(form).validationState == Validator.ValidationState.VALID
     }
 
     private suspend fun loadEvents() {
-        PlandoraEventController().updateEventList().collect { state ->
+        EventController().updateEventList().collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {

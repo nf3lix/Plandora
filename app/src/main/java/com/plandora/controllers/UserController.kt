@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.plandora.activity.dialogs.AddAttendeeDialog
+import com.plandora.activity.components.dialogs.AddAttendeeDialog
 import com.plandora.activity.launch.SignUpActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.models.SignUpForm
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 
-class PlandoraUserController {
+class UserController {
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()

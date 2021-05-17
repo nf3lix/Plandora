@@ -7,7 +7,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import kotlinx.android.synthetic.main.layout_gift_ideas_list_item.view.*
@@ -91,7 +91,7 @@ class GiftIdeaRecyclerAdapter(
         }
 
         private suspend fun setCreatorName(giftIdea: GiftIdeaUIWrapper) {
-            PlandoraUserController().getUserById(giftIdea.ownerId).collect { state ->
+            UserController().getUserById(giftIdea.ownerId).collect { state ->
                 when(state) {
                     is State.Loading -> {}
                     is State.Success -> { creator.text = state.data.displayName }
@@ -145,7 +145,7 @@ class GiftIdeaRecyclerAdapter(
         }
 
         private suspend fun setCreatorName(giftIdea: GiftIdeaUIWrapper) {
-            PlandoraUserController().getUserById(giftIdea.ownerId).collect { state ->
+            UserController().getUserById(giftIdea.ownerId).collect { state ->
                 when(state) {
                     is State.Loading -> {}
                     is State.Success -> { creator.text = state.data.displayName }

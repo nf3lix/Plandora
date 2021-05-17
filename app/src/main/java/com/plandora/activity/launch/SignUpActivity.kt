@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.plandora.R
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.UserController
 import com.plandora.models.SignUpForm
 import com.plandora.validator.Validator
 import com.plandora.validator.validators.SignUpValidator
@@ -30,12 +30,12 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun validateForm(signUpForm: SignUpForm) {
-        val state = SignUpValidator(this).getValidationState(signUpForm)
+        val state = SignUpValidator().getValidationState(signUpForm)
         if(state.validationState == Validator.ValidationState.INVALID) {
             Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
             return
         }
-        PlandoraUserController().signUpUser(this, signUpForm)
+        UserController().signUpUser(this, signUpForm)
     }
 
     fun onSignUpSuccess() {
