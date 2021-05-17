@@ -1,4 +1,5 @@
 # Plandora
+[![Plandora](https://cdn.discordapp.com/attachments/760409169437130773/843837039539257395/badge-logo.png)](https://plandora51897980.wordpress.com/)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.3.72-blue.svg?style=flat&logo=kotlin&logoColor=white)](http://kotlinlang.org) ![Lines of code](https://img.shields.io/tokei/lines/github/nf3lix/Plandora) [![CodeFactor](https://www.codefactor.io/repository/github/nf3lix/plandora/badge)](https://www.codefactor.io/repository/github/nf3lix/plandora) [![codecov](https://codecov.io/gh/nf3lix/Plandora/branch/master/graph/badge.svg?token=RTC0C6H7FE)](https://codecov.io/gh/nf3lix/Plandora) [![Android CI](https://github.com/nf3lix/Plandora/actions/workflows/android.yml/badge.svg)](https://github.com/nf3lix/Plandora/actions/workflows/android.yml) [![Build Status](https://www.travis-ci.com/nf3lix/Plandora.svg?branch=master)](https://www.travis-ci.com/nf3lix/Plandora) 
 ## What is Plandora?
 Have you ever forgotten the birthday of a good friend or even a family member? Unpleasant situation, right? Our vision is to prevent you from having this experience!
