@@ -96,8 +96,6 @@ data class Event(
     }
 
     fun getTimeAsString(): String {
-        Log.d("model", timestamp.toString())
-        Log.d("model", Timestamp(timestamp).toString())
         return SimpleDateFormat("HH:mm").format(Timestamp(timestamp))
     }
 

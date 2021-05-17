@@ -115,7 +115,6 @@ open class CreateEventActivity :
     }
 
     override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
-        Log.d("dt", "$selectedHour $selectedMinute")
         hours = selectedHour
         minutes = selectedMinute
         displaySelectedTime()
@@ -171,7 +170,6 @@ open class CreateEventActivity :
             attendees.add(UserController().currentUserId())
             giftIdeas = list
         }
-        Log.d("create", event.timestamp.toString())
         validateForm(event)
         return true
     }

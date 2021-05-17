@@ -68,7 +68,6 @@ class EventDetailActivity : PlandoraActivity(),
         event_title_input.setText(event.title)
         event_description_input.setText(event.description)
         event_date_input.setText(event.getDateAsString())
-        Log.d("dt", event.getTimeAsString())
         event_time_input.setText(event.getTimeAsString())
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
         event_type_spinner.setSelection(event.eventType.ordinal)
