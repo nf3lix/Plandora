@@ -111,7 +111,6 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        Log.d("event_d", (!oldEvent.isOwner(UserController().currentUserId())).toString())
         prepareDeleteIcon(menu)
         return super.onPrepareOptionsMenu(menu)
     }
@@ -120,6 +119,12 @@ class EventDetailActivity : PlandoraActivity(),
         return when(item.itemId) {
             R.id.save_entry -> {
                 onSaveButtonClicked()
+                true
+            }
+            R.id.delete_entry -> {
+                uiScope.launch {
+                    deleteEvent(oldEvent)
+                }
                 true
             }
             else -> false
@@ -157,6 +162,18 @@ class EventDetailActivity : PlandoraActivity(),
                 is State.Loading -> { }
                 is State.Success -> { finish() }
                 is State.Failed -> { Toast.makeText(this, "Could not update event", Toast.LENGTH_SHORT).show() }
+            }
+        }
+    }
+
+    private suspend fun deleteEvent(event: Event) {
+        EventController().deleteEvent(event).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { finish() }
+                is State.Failed -> {
+                    Toast.makeText(this@EventDetailActivity, state.message, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
