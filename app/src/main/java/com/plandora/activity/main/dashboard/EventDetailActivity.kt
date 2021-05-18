@@ -10,6 +10,8 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.components.dialogs.AddAttendeeDialog
 import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
+import com.plandora.activity.components.dialogs.ConfirmDialogListener
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
@@ -33,7 +35,8 @@ import kotlin.collections.ArrayList
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    ConfirmDialogListener
 {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
@@ -122,9 +125,7 @@ class EventDetailActivity : PlandoraActivity(),
                 true
             }
             R.id.delete_entry -> {
-                uiScope.launch {
-                    deleteEvent(oldEvent)
-                }
+                ConfirmDeletionDialog(this, this).showDialog()
                 true
             }
             else -> false
@@ -281,6 +282,12 @@ class EventDetailActivity : PlandoraActivity(),
         }
         btn_delete_items.setOnClickListener {
             deleteSelectedEvents()
+        }
+    }
+
+    override fun onPositiveButtonClicked() {
+        uiScope.launch {
+            deleteEvent(oldEvent)
         }
     }
 
