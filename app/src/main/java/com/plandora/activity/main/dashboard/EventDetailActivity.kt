@@ -2,10 +2,7 @@ package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -113,6 +110,12 @@ class EventDetailActivity : PlandoraActivity(),
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        Log.d("event_d", (!oldEvent.isOwner(UserController().currentUserId())).toString())
+        prepareDeleteIcon(menu)
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
@@ -120,6 +123,12 @@ class EventDetailActivity : PlandoraActivity(),
                 true
             }
             else -> false
+        }
+    }
+
+    private fun prepareDeleteIcon(menu: Menu?) {
+        if (menu != null && !oldEvent.isOwner(UserController().currentUserId())) {
+            menu.getItem(0).isVisible = false
         }
     }
 
