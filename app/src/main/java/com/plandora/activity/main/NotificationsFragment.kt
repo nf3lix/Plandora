@@ -12,7 +12,7 @@ import com.plandora.R
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.EventInvitationRecyclerAdapter
 import com.plandora.controllers.InvitationController
-import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.EventController
 import com.plandora.controllers.State
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.events.EventInvitationStatus
@@ -71,7 +71,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     }
 
     private suspend fun loadEvent(eventId: String, status: EventInvitationStatus) {
-        PlandoraEventController().getEventById(eventId).collect { state ->
+        EventController().getEventById(eventId).collect { state ->
             when(state) {
                 is State.Loading -> {}
                 is State.Success -> {
@@ -88,7 +88,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     }
 
     private suspend fun acceptInvitation(eventId: String) {
-        PlandoraEventController().acceptInvitation(eventId).collect { state ->
+        EventController().acceptInvitation(eventId).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {

@@ -2,6 +2,7 @@ package com.plandora.models.events
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.PlandoraUser
 import java.sql.Timestamp
@@ -99,7 +100,7 @@ data class Event(
     }
 
     fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
-        return SimpleDateFormat("dd-MM-yyyy mm:HH", Locale.US)
+        return SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US)
             .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time
     }
 
@@ -107,7 +108,7 @@ data class Event(
         return !isInPast() || annual
     }
 
-    fun isInPast(): Boolean {
+    private fun isInPast(): Boolean {
         val currentTimestamp = System.currentTimeMillis() - 8.64e7
         return timestamp < currentTimestamp
     }

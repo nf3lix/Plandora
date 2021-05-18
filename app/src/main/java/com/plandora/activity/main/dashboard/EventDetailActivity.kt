@@ -1,6 +1,7 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -10,27 +11,26 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
-import com.plandora.activity.dialogs.AddAttendeeDialog
-import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.AddAttendeeDialog
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
-import com.plandora.models.validation_types.EditEventValidationTypes
+import com.plandora.validator.validators.EditEventValidator
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.collections.ArrayList
 
 class EventDetailActivity : PlandoraActivity(),
@@ -89,7 +89,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun addUserByIdToAttendeesList(userId: String) {
-        PlandoraUserController().getUserById(userId).collect { state ->
+        UserController().getUserById(userId).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
@@ -133,11 +133,7 @@ class EventDetailActivity : PlandoraActivity(),
                 oldEvent.attendees,
                 oldEvent.giftIdeas
         )
-        val validation = validateForm(newEvent)
-        Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
-        if(validation == EditEventValidationTypes.SUCCESS) {
-            saveEntry()
-        }
+        validateForm(newEvent)
     }
 
     private fun saveEntry() {
@@ -147,7 +143,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun updateEvent(oldEvent: Event, newEvent: Event) {
-        PlandoraEventController().updateEvent(oldEvent, newEvent).collect { state ->
+        EventController().updateEvent(oldEvent, newEvent).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> { finish() }
@@ -163,7 +159,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) {
-        PlandoraEventController().addGiftIdeaToEvent(event, giftIdea).collect { state ->
+        EventController().addGiftIdeaToEvent(event, giftIdea).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
@@ -203,16 +199,13 @@ class EventDetailActivity : PlandoraActivity(),
         setSupportActionBar(toolbar_main_activity)
     }
 
-    private fun validateForm(event: Event): EditEventValidationTypes {
-        return when {
-            !event.annual && event.timestamp < System.currentTimeMillis() -> {
-                EditEventValidationTypes.EVENT_IN_THE_PAST
-            }
-            event.title.isEmpty() -> {
-                EditEventValidationTypes.EMPTY_TITLE
-            }
-            else -> EditEventValidationTypes.SUCCESS
+    private fun validateForm(event: Event) {
+        val validation = EditEventValidator().getValidationState(event)
+        if(validation.isInvalid()) {
+            Toast.makeText(this, validation.validationMessage, Toast.LENGTH_SHORT).show()
+            return
         }
+        saveEntry()
     }
 
     private fun deleteSelectedEvents() {
@@ -226,7 +219,7 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     private suspend fun removeGiftIdeaFromEvent(event: Event, giftIdea: GiftIdea) {
-        PlandoraEventController().removeGiftIdeaFromEvent(event, giftIdea).collect { state ->
+        EventController().removeGiftIdeaFromEvent(event, giftIdea).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
