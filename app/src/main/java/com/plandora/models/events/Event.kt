@@ -62,6 +62,9 @@ data class Event(
     }
 
     fun remainingDays(): Int {
+        if(isToday()) {
+            return 0
+        }
         val diff = timestamp - System.currentTimeMillis()
         return when(annual && diff < 0) {
             true -> millisToDays(getNextEvent(timestamp))
@@ -115,6 +118,12 @@ data class Event(
     private fun isInPast(): Boolean {
         val currentTimestamp = System.currentTimeMillis() - 8.64e7
         return timestamp < currentTimestamp
+    }
+
+    private fun isToday(): Boolean {
+        val eventDate = SimpleDateFormat("MM-dd-yyyy").format(Timestamp(timestamp))
+        val currentDate = SimpleDateFormat("MM-dd-yyyy").format(Timestamp(System.currentTimeMillis()))
+        return eventDate.contentEquals(currentDate)
     }
 
     override fun compareTo(other: Event): Int {
