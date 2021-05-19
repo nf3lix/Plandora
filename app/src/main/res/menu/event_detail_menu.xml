@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.main.dashboard.EventDetailActivity">
 
+    <item android:id="@+id/delete_entry"
+            android:icon="@drawable/ic_delete_item"
+            android:title="Save entry"
+            android:orderInCategory="200"
+            app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/save_entry"
         android:icon="@drawable/ic_save"
         android:title="Save entry"

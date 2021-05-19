@@ -2,10 +2,7 @@ package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +10,8 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.components.dialogs.AddAttendeeDialog
 import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
+import com.plandora.activity.components.dialogs.ConfirmDialogListener
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
@@ -36,7 +35,8 @@ import kotlin.collections.ArrayList
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    ConfirmDialogListener
 {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
@@ -113,13 +113,28 @@ class EventDetailActivity : PlandoraActivity(),
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        prepareDeleteIcon(menu)
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
                 onSaveButtonClicked()
                 true
             }
+            R.id.delete_entry -> {
+                ConfirmDeletionDialog(this, this).showDialog()
+                true
+            }
             else -> false
+        }
+    }
+
+    private fun prepareDeleteIcon(menu: Menu?) {
+        if (menu != null && !oldEvent.isOwner(UserController().currentUserId())) {
+            menu.getItem(0).isVisible = false
         }
     }
 
@@ -148,6 +163,18 @@ class EventDetailActivity : PlandoraActivity(),
                 is State.Loading -> { }
                 is State.Success -> { finish() }
                 is State.Failed -> { Toast.makeText(this, "Could not update event", Toast.LENGTH_SHORT).show() }
+            }
+        }
+    }
+
+    private suspend fun deleteEvent(event: Event) {
+        EventController().deleteEvent(event).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { finish() }
+                is State.Failed -> {
+                    Toast.makeText(this@EventDetailActivity, state.message, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -255,6 +282,12 @@ class EventDetailActivity : PlandoraActivity(),
         }
         btn_delete_items.setOnClickListener {
             deleteSelectedEvents()
+        }
+    }
+
+    override fun onPositiveButtonClicked() {
+        uiScope.launch {
+            deleteEvent(oldEvent)
         }
     }
 

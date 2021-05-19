@@ -73,6 +73,10 @@ data class Event(
         return user.id.contentEquals(this.ownerId)
     }
 
+    fun isOwner(userId: String): Boolean {
+        return userId.contentEquals(this.ownerId)
+    }
+
     fun isInvitedUser(user: PlandoraUser): Boolean {
         return invitedUserIds.contains(user.id) && !attendees.contains(user.id)
     }

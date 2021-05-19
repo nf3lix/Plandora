@@ -198,4 +198,13 @@ class EventController {
         return eventId
     }
 
+    fun deleteEvent(event: Event) = flow<State<String>> {
+        emit(State.loading())
+        val eventId = getEventId(event)
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).delete()
+        emit(State.success("Event deleted"))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
 }
