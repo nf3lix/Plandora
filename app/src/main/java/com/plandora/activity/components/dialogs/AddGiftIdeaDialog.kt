@@ -29,7 +29,9 @@ class AddGiftIdeaDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
     }
 
     private fun addNewGiftIdea() {
-        val newGiftIdea = GiftIdeaUIWrapper(title, viewInflated.add_gift_idea_description.text.toString(),
+        val newGiftIdea = GiftIdeaUIWrapper(
+                viewInflated.add_gift_idea_title.text.toString(),
+                viewInflated.add_gift_idea_description.text.toString(),
                 UserController().currentUserId(), 0.0F, ArrayList()
         )
         activity.addGiftIdea(newGiftIdea)
