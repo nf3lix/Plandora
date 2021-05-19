@@ -8,6 +8,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.components.date_time_picker.DatePickerObserver
+import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
+import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
+import com.plandora.activity.components.date_time_picker.TimePickerObserver
 import com.plandora.activity.components.dialogs.AddAttendeeDialog
 import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
@@ -30,19 +34,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.time.Year
+import java.util.*
 import kotlin.collections.ArrayList
 
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    ConfirmDialogListener
+    ConfirmDialogListener,
+    DatePickerObserver,
+    TimePickerObserver
 {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
     private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
     private val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
+
+    private var year = 0
+    private var monthOfYear = 0
+    private var dayOfMonth = 0
+    private var hours = 0; private var minutes = 0
 
     private lateinit var oldEvent: Event
     private lateinit var newEvent: Event
@@ -74,6 +87,13 @@ class EventDetailActivity : PlandoraActivity(),
         cb_annual.isChecked = event.annual
         addAllAttendeesToList()
         addAllGiftIdeas(event.giftIdeas)
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = event.timestamp
+        year = calendar.get(Calendar.YEAR)
+        monthOfYear = calendar.get(Calendar.MONTH) + 1
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        minutes = calendar.get(Calendar.MINUTE)
+        hours = calendar.get(Calendar.HOUR_OF_DAY)
     }
 
     private fun addAllAttendeesToList() {
@@ -85,7 +105,6 @@ class EventDetailActivity : PlandoraActivity(),
                 addUserByIdToAttendeesList(userId)
             }
             addAttendeesRecyclerView()
-            Log.d("att_list", attendeesList.toString())
         }
     }
 
@@ -145,7 +164,7 @@ class EventDetailActivity : PlandoraActivity(),
                 EventType.valueOf(event_type_spinner.selectedItem.toString()),
                 event_description_input.text.toString(),
                 cb_annual.isChecked,
-                oldEvent.timestamp,
+                Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes),
                 oldEvent.attendees,
                 oldEvent.giftIdeas
         )
@@ -274,7 +293,19 @@ class EventDetailActivity : PlandoraActivity(),
         attendeesList.add(attendee)
     }
 
+    private fun selectDate() {
+        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
+    }
+
+    private fun selectTime() {
+        PlandoraTimePicker(this, this).showDialog()
+    }
+
     private fun setupClickListeners() {
+        btn_date_picker.setOnClickListener { selectDate() }
+        btn_time_picker.setOnClickListener { selectTime() }
+        event_date_input.setOnClickListener { selectDate() }
+        event_time_input.setOnClickListener { selectTime() }
         btn_add_attendee.setOnClickListener {
             AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, oldEvent, this).showDialog()
         }
@@ -290,6 +321,29 @@ class EventDetailActivity : PlandoraActivity(),
         uiScope.launch {
             deleteEvent(oldEvent)
         }
+    }
+
+    override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
+        year = selectedYear
+        monthOfYear = selectedMonth + 1
+        dayOfMonth = selectedDayOfMonth
+        displaySelectedDate()
+    }
+
+    override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
+        hours = selectedHour
+        minutes = selectedMinute
+        displaySelectedTime()
+    }
+
+    private fun displaySelectedDate() {
+        event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
+            "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
+    }
+
+    private fun displaySelectedTime() {
+        event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
+            "%02d".format(hours), "%02d".format(minutes)))
     }
 
 }
