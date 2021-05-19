@@ -85,7 +85,6 @@ class EventDetailActivity : PlandoraActivity(),
                 addUserByIdToAttendeesList(userId)
             }
             addAttendeesRecyclerView()
-            Log.d("att_list", attendeesList.toString())
         }
     }
 

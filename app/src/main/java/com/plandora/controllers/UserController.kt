@@ -46,9 +46,11 @@ class UserController {
         FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
             .whereEqualTo(FirestoreConstants.USER_NAME_FIELD, username).get()
             .addOnSuccessListener { document ->
-                if(document.documents.size > 0) {
+                if(document.documents.size == 1) {
                     val attendee = document.documents[0].toObject(PlandoraUser::class.java)!!
                     dialog.onUserFetched(attendee)
+                } else {
+                    Toast.makeText(dialog.context, "User not found", Toast.LENGTH_LONG).show()
                 }
             }
     }
