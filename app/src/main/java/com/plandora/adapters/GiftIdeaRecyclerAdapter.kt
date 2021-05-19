@@ -29,8 +29,8 @@ class GiftIdeaRecyclerAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(!multiSelect) {
             return GiftIdeaSingleSelectViewHolder(LayoutInflater
-                    .from(parent.context)
-                    .inflate(R.layout.layout_gift_ideas_list_item, parent, false))
+                .from(parent.context)
+                .inflate(R.layout.layout_gift_ideas_list_item, parent, false))
         }
         return GiftIdeaViewHolder(LayoutInflater
             .from(parent.context)
@@ -82,11 +82,12 @@ class GiftIdeaRecyclerAdapter(
                 false -> itemView.gift_idea_background.setBackgroundResource(R.drawable.gift_idea_background)
             }
 
-            itemView.gift_idea_card_view.setOnClickListener {
+            itemView.gift_idea_card_view.setOnLongClickListener {
                 when(giftIdea.selected) {
                     true -> deselect(giftIdea)
                     false -> select(giftIdea)
                 }
+                return@setOnLongClickListener true
             }
         }
 
@@ -127,7 +128,7 @@ class GiftIdeaRecyclerAdapter(
                 setCreatorName(giftIdea)
             }
 
-            itemView.gift_idea_card_view.setOnClickListener {
+            itemView.gift_idea_card_view.setOnLongClickListener {
                 selectedItemPos = adapterPosition
                 if(items[selectedItemPos].selected) {
                     deselect(items[selectedItemPos])
@@ -141,7 +142,19 @@ class GiftIdeaRecyclerAdapter(
                     items[adapterPosition].selected = true
                 }
                 notifyItemChanged(selectedItemPos)
+                return@setOnLongClickListener true
             }
+
+            itemView.gift_idea_card_view.setOnClickListener {
+                if(selectedItemPos != -1) {
+                    if(items[selectedItemPos].selected) {
+                        deselect(items[selectedItemPos])
+                        selectedItemPos = -1
+                    }
+                    notifyItemChanged(selectedItemPos)
+                }
+            }
+
         }
 
         private suspend fun setCreatorName(giftIdea: GiftIdeaUIWrapper) {
