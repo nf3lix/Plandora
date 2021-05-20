@@ -1,21 +1,33 @@
 package com.plandora.adapters
 
+import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors.getColor
 import com.plandora.R
 import com.plandora.models.events.Event
 import kotlinx.android.synthetic.main.layout_event_list_item.view.*
+import kotlin.math.absoluteValue
 
-class EventRecyclerAdapter(private var items: List<Event>, private val onClickListener: OnClickListener)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class EventRecyclerAdapter(
+    private var items: List<Event>,
+    private val onClickListener: OnClickListener
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private lateinit var context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return EventViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_event_list_item, parent, false), onClickListener)
+        context = parent.context
+        return EventViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.layout_event_list_item, parent, false), onClickListener, context
+        )
     }
 
     override fun getItemCount(): Int {
@@ -23,14 +35,14 @@ class EventRecyclerAdapter(private var items: List<Event>, private val onClickLi
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder) {
+        when (holder) {
             is EventViewHolder -> {
                 holder.bind(items[position])
             }
         }
     }
 
-    class EventViewHolder(itemView: View, private val onClickListener: OnClickListener) :
+    class EventViewHolder(itemView: View, private val onClickListener: OnClickListener, val context: Context) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         private val eventTitle: TextView = itemView.event_title
@@ -48,7 +60,7 @@ class EventRecyclerAdapter(private var items: List<Event>, private val onClickLi
                 .replace("{time}", event.remainingDays().toString(), true)
 
             //Every Event that takes place in less than 10 days should be displayed in colorAccent instead of colorPrimary
-            if (event.remainingDays() < 10) eventRemainingDays.setTextColor(R.color.colorAccent.toInt())
+            if (event.remainingDays() < 10) eventRemainingDays.setTextColor(context.resources.getColor(R.color.colorAccent))
         }
 
         override fun onClick(v: View?) {
