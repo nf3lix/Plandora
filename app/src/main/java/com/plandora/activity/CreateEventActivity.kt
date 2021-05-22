@@ -1,5 +1,6 @@
 package com.plandora.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
@@ -62,8 +64,11 @@ open class CreateEventActivity :
     private var dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
     private var hours = 0; private var minutes = 0
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val networkCheck = NetworkCheck(this)
+        networkCheck.registerNetworkCallback()
         setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
         event = Event(ownerId = UserController().currentUserId(), attendees = arrayListOf())

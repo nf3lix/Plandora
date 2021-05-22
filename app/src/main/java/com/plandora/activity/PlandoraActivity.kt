@@ -18,13 +18,6 @@ open class PlandoraActivity : AppCompatActivity() {
 
     private lateinit var progressBar: Dialog
 
-    @RequiresApi(Build.VERSION_CODES.N)
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        val networkCheck = NetworkCheck(this)
-        networkCheck.registerNetworkCallback()
-    }
-
     open fun addActionBar() {
         setSupportActionBar(toolbar_main_activity)
     }
