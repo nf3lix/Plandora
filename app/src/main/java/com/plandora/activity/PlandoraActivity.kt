@@ -1,6 +1,13 @@
 package com.plandora.activity
 
 import android.app.Dialog
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.os.Build
+import android.os.Bundle
+import android.os.PersistableBundle
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.plandora.R
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -10,6 +17,13 @@ import kotlinx.android.synthetic.main.dialog_progress.view.*
 open class PlandoraActivity : AppCompatActivity() {
 
     private lateinit var progressBar: Dialog
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        val networkCheck = NetworkCheck(this)
+        networkCheck.registerNetworkCallback()
+    }
 
     open fun addActionBar() {
         setSupportActionBar(toolbar_main_activity)

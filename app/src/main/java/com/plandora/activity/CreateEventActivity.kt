@@ -185,6 +185,10 @@ open class CreateEventActivity :
     }
 
     private suspend fun createEvent(event: Event) {
+        if(!NetworkCheck.isNetworkConnected) {
+            Toast.makeText(this, "Please check your internet connection", Toast.LENGTH_LONG).show()
+            return
+        }
         showProgressBar()
         EventController().createEvent(event).collect { state ->
             when(state) {
