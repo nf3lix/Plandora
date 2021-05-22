@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -15,6 +17,7 @@ import com.plandora.activity.launch.SignInActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.app_bar_main.view.*
 import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 
 class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -44,12 +47,20 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         toolbar_main_activity.setNavigationOnClickListener {
             toggleDrawer()
         }
+        val button = findViewById<ImageButton>(R.id.search_events)
+        button.setOnClickListener{
+            createSearchForEventsView()
+        }
+
+    }
+
+    fun createSearchForEventsView(){
+        //TODO
     }
 
     override fun onNavigationItemSelected(item: MenuItem) : Boolean {
         when(item.itemId) {
             R.id.nav_sign_out -> signOut()
-            R.id.search_events -> Log.d("Search_Events", "Search-Button clicked")
         }
         return true
     }
