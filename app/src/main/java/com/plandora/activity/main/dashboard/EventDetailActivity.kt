@@ -233,22 +233,16 @@ class EventDetailActivity : PlandoraActivity(),
     }
 
     override fun onGiftItemClicked(position: Int) {
-        Log.d("activity", giftIdeaAdapter.getSelectedItems().toString())
-        Log.d("activity", position.toString())
         GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
     }
 
     override fun onGiftIdeaSelected(position: Int) {
-        Log.d("activity", giftIdeaAdapter.getSelectedItems().toString())
-        Log.d("activity", position.toString())
         Handler().postDelayed({
             btn_delete_items.visibility = View.VISIBLE
         }, 20)
     }
 
     override fun onGiftIdeaDeselected(position: Int) {
-        Log.d("activity", giftIdeaAdapter.getSelectedItems().toString())
-        Log.d("activity", position.toString())
         Handler().postDelayed({
             btn_delete_items.visibility = View.GONE
         }, 20)
