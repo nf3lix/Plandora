@@ -33,7 +33,7 @@ jobs:
       run: ./gradlew assemble
       
     - name: Create Report
-      run: ./gradlew createDebugCoverageReport
+      run: ./gradlew connectedCheck
       
     - name: CodeCov report deploy
       run: bash <(curl -s https://codecov.io/bash)
