@@ -65,7 +65,7 @@
                                     android:id="@+id/event_title_input"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:inputType="text" />
+                                    android:inputType="textCapSentences"/>
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
@@ -79,7 +79,7 @@
                                     android:id="@+id/event_description_input"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:inputType="textLongMessage" />
+                                    android:inputType="textLongMessage|textCapSentences" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <LinearLayout

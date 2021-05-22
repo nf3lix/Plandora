@@ -44,7 +44,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:inputType="text"
+                android:inputType="textCapWords"
                 android:id="@+id/unique_name_input"
                 android:hint="@string/unique_username" />
 
@@ -54,7 +54,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:inputType="text"
+                android:inputType="textCapWords"
                 android:id="@+id/display_name_input"
                 android:hint="@string/display_name" />
 

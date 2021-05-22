@@ -18,7 +18,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Title"
                 android:layout_margin="20dp"
-                android:inputType="text" />
+                android:inputType="textCapSentences" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:hint="Description"
-                android:inputType="textLongMessage" />
+                android:inputType="textLongMessage|textCapSentences" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
