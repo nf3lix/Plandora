@@ -2,7 +2,9 @@ package com.plandora.activity.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
@@ -13,6 +15,7 @@ import com.plandora.activity.launch.SignInActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 
 class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -46,9 +49,11 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
     override fun onNavigationItemSelected(item: MenuItem) : Boolean {
         when(item.itemId) {
             R.id.nav_sign_out -> signOut()
+            R.id.search_events -> Log.d("Search_Events", "Search-Button clicked")
         }
         return true
     }
+
 
     private fun loadFragment(fragment: Fragment): Boolean {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
