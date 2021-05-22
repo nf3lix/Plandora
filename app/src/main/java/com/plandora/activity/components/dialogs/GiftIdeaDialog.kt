@@ -42,7 +42,7 @@ class GiftIdeaDialog(private val context: Context, private val view: ViewGroup?,
         UserController().getUserById(giftIdea.ownerId).collect { state ->
             when(state) {
                 is State.Loading -> {}
-                is State.Success -> { viewInflated.gift_idea_description.text = state.data.displayName }
+                is State.Success -> { viewInflated.gift_idea_author.text = state.data.displayName }
                 is State.Failed -> {}
             }
         }
