@@ -185,10 +185,13 @@ open class CreateEventActivity :
     }
 
     private suspend fun createEvent(event: Event) {
+        showProgressBar()
         EventController().createEvent(event).collect { state ->
             when(state) {
                 is State.Loading -> { }
-                is State.Success -> { finish() }
+                is State.Success -> {
+                    hideProgressBar()
+                    finish() }
                 is State.Failed -> { Toast.makeText(this, "Could not create event", Toast.LENGTH_LONG).show() }
             }
         }
