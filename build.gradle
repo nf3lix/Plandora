@@ -27,8 +27,8 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-jacocoAndroidUnitTestReport {
-  csv.enabled false
-  html.enabled true
-  xml.enabled true
-}
+#jacocoAndroidUnitTestReport {
+#  csv.enabled false
+#  html.enabled true
+#  xml.enabled true
+#}
