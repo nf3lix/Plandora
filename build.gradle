@@ -27,7 +27,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-jacoco {
+'jacoco' {
   toolVersion = "0.8.4"
 }
 
