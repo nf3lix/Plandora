@@ -33,6 +33,9 @@ jobs:
       run: ./gradlew assemble
       
     - name: Create Report
+      run: ./gradlew build jacocoTestReport assembleAndroidTest
+      
+    - name: Check Connection for Report
       run: ./gradlew connectedCheck
       
     - name: CodeCov report deploy
