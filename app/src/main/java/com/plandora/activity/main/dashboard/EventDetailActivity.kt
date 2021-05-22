@@ -224,7 +224,7 @@ class EventDetailActivity : PlandoraActivity(),
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
             giftIdeaAdapter = GiftIdeaRecyclerAdapter(
-                    giftIdeasList, this@EventDetailActivity, false)
+                    giftIdeasList, this@EventDetailActivity)
             adapter = giftIdeaAdapter
         }
     }

@@ -19,11 +19,10 @@ import kotlinx.coroutines.launch
 
 class GiftIdeaRecyclerAdapter(
     private var items: List<GiftIdeaUIWrapper>,
-    private var giftIdeaClickListener: GiftIdeaClickListener,
-    private val multiSelect: Boolean = true) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var giftIdeaClickListener: GiftIdeaClickListener)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var selectedItemPos = -1
-    var lastItemSelectedPos = -1
 
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
@@ -75,11 +74,7 @@ class GiftIdeaRecyclerAdapter(
                 if(items[selectedItemPos].selected) {
                     deselect(items[selectedItemPos])
                     selectedItemPos = -1
-                } else if(lastItemSelectedPos == -1) {
-                    lastItemSelectedPos = selectedItemPos
                 } else {
-                    notifyItemChanged(lastItemSelectedPos)
-                    lastItemSelectedPos = selectedItemPos
                     items.forEach{ it.selected = false }
                     items[adapterPosition].selected = true
                 }
