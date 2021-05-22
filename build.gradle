@@ -32,7 +32,7 @@ task clean(type: Delete) {
 }
 
 tasks.withType(Test) {
-  jacoco.includeNoLocationClasses = true
+  'jacoco'.includeNoLocationClasses = true
 }
 
 jacocoAndroidUnitTestReport {
