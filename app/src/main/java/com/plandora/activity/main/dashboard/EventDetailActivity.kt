@@ -2,6 +2,7 @@ package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,10 +16,7 @@ import com.plandora.activity.components.date_time_picker.DatePickerObserver
 import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
 import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
-import com.plandora.activity.components.dialogs.AddAttendeeDialog
-import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
-import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
-import com.plandora.activity.components.dialogs.ConfirmDialogListener
+import com.plandora.activity.components.dialogs.*
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
@@ -234,9 +232,25 @@ class EventDetailActivity : PlandoraActivity(),
     override fun onDeleteAttendeeButtonClicked(position: Int) {
     }
 
-    override fun onGiftItemClicked(activated: Boolean) {
+    override fun onGiftItemClicked(position: Int) {
+        Log.d("activity", giftIdeaAdapter.getSelectedItems().toString())
+        Log.d("activity", position.toString())
+        GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
+    }
+
+    override fun onGiftIdeaSelected(position: Int) {
+        Log.d("activity", giftIdeaAdapter.getSelectedItems().toString())
+        Log.d("activity", position.toString())
         Handler().postDelayed({
-            btn_delete_items.visibility = if(giftIdeaAdapter.getSelectedItems().size > 0) View.VISIBLE else View.GONE
+            btn_delete_items.visibility = View.VISIBLE
+        }, 20)
+    }
+
+    override fun onGiftIdeaDeselected(position: Int) {
+        Log.d("activity", giftIdeaAdapter.getSelectedItems().toString())
+        Log.d("activity", position.toString())
+        Handler().postDelayed({
+            btn_delete_items.visibility = View.GONE
         }, 20)
     }
 
