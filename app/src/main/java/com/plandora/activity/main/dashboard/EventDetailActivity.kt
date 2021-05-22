@@ -1,8 +1,12 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,16 +16,13 @@ import com.plandora.activity.components.date_time_picker.DatePickerObserver
 import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
 import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
-import com.plandora.activity.components.dialogs.AddAttendeeDialog
-import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
-import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
-import com.plandora.activity.components.dialogs.ConfirmDialogListener
+import com.plandora.activity.components.dialogs.*
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.EventController
-import com.plandora.controllers.UserController
 import com.plandora.controllers.State
+import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
@@ -34,9 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.time.Year
 import java.util.*
-import kotlin.collections.ArrayList
 
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
@@ -225,7 +224,7 @@ class EventDetailActivity : PlandoraActivity(),
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
             giftIdeaAdapter = GiftIdeaRecyclerAdapter(
-                    giftIdeasList, this@EventDetailActivity, false)
+                    giftIdeasList, this@EventDetailActivity)
             adapter = giftIdeaAdapter
         }
     }
@@ -233,8 +232,20 @@ class EventDetailActivity : PlandoraActivity(),
     override fun onDeleteAttendeeButtonClicked(position: Int) {
     }
 
-    override fun onGiftItemClicked(activated: Boolean) {
-        btn_delete_items.visibility = if(giftIdeaAdapter.getSelectedItems().size > 0) View.VISIBLE else View.GONE
+    override fun onGiftItemClicked(position: Int) {
+        GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
+    }
+
+    override fun onGiftIdeaSelected(position: Int) {
+        Handler().postDelayed({
+            btn_delete_items.visibility = View.VISIBLE
+        }, 20)
+    }
+
+    override fun onGiftIdeaDeselected(position: Int) {
+        Handler().postDelayed({
+            btn_delete_items.visibility = View.GONE
+        }, 20)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
