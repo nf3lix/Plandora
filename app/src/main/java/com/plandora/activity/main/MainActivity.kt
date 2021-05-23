@@ -3,6 +3,7 @@ package com.plandora.activity.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageButton
@@ -15,6 +16,8 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.launch.SignInActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
+import com.plandora.activity.main.dashboard.EventDetailActivity
+import com.plandora.activity.main.dashboard.SearchForEventsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.app_bar_main.view.*
@@ -47,15 +50,6 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         toolbar_main_activity.setNavigationOnClickListener {
             toggleDrawer()
         }
-        val button = findViewById<ImageButton>(R.id.search_events)
-        button.setOnClickListener{
-            createSearchForEventsView()
-        }
-
-    }
-
-    fun createSearchForEventsView(){
-        //TODO
     }
 
     override fun onNavigationItemSelected(item: MenuItem) : Boolean {
@@ -65,6 +59,24 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         return true
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_tool_bar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.search_events -> {
+                startSearchForEventsActivity()
+                true
+            }
+            else -> false
+        }
+    }
+
+    fun startSearchForEventsActivity() {
+        //startActivity(Intent(this, SearchForEventsActivity::class.java))
+    }
 
     private fun loadFragment(fragment: Fragment): Boolean {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
