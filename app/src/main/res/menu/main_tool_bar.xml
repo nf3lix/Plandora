@@ -5,7 +5,7 @@
     tools:context=".activity.main.dashboard.SearchForEventsActivity">
 
     <item android:id="@+id/search_events"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_search"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:title="Save entry"

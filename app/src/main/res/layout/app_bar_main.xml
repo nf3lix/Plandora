@@ -17,14 +17,6 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopularOverlay">
 
-            <!--<ImageButton
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end"
-                android:layout_marginRight="10dp"
-                android:id="@+id/search_events"
-                android:background="@drawable/ic_filter"/>!-->
-
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
