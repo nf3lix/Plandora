@@ -59,25 +59,6 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         return true
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_tool_bar, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.search_events -> {
-                startSearchForEventsActivity()
-                true
-            }
-            else -> false
-        }
-    }
-
-    fun startSearchForEventsActivity() {
-        //startActivity(Intent(this, SearchForEventsActivity::class.java))
-    }
-
     private fun loadFragment(fragment: Fragment): Boolean {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
         return true
@@ -110,4 +91,4 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         finish()
     }
 
-}
+    }
