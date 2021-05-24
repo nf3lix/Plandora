@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
@@ -63,15 +64,9 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
 
     private fun setupButtonListeners() {
         btn_search_for_events.setOnClickListener {
-            if (search_for_events_title_input.text.toString()
-                    .equals("") && search_type_spinner.selectedItem.toString().equals("")
-            ) {
-                Log.d("Search_for_Events", "No Input")
-            } else {
-                eventTitleSelected = !search_for_events_title_input.text.toString().equals("")
-                eventTypeSelected = !search_type_spinner.selectedItem.toString().equals("")
-                addEventRecyclerView()
-            }
+            eventTitleSelected = !search_for_events_title_input.text.toString().equals("")
+            eventTypeSelected = !search_type_spinner.selectedItem.toString().equals("")
+            addEventRecyclerView()
         }
     }
 
@@ -86,7 +81,15 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     }
 
     private fun addEventRecyclerView() {
-        getFilteredEventList()
+        eventList = PlandoraEventController.eventList
+        if(eventTitleSelected || eventTypeSelected) {
+            getFilteredEventList()
+        } else {
+            filteredEventList = eventList
+        }
+        if(filteredEventList.isEmpty()){
+            Toast.makeText(this, "No matching Events found.", Toast.LENGTH_SHORT).show()
+        }
         this.findViewById<RecyclerView>(R.id.search_for_events_recycler_view).apply {
             layoutManager = LinearLayoutManager(this@SearchForEventsActivity)
             eventAdapter = EventRecyclerAdapter(filteredEventList, this@SearchForEventsActivity)
@@ -95,7 +98,6 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     }
 
     private fun getFilteredEventList() {
-        eventList = PlandoraEventController.eventList
         filteredEventList = ArrayList()
         for (event in eventList) {
             if (matchingEvent(event)) {
