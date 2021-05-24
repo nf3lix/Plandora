@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.adapters.EventRecyclerAdapter
-import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.EventController
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import kotlinx.android.synthetic.main.activity_create_event.*
@@ -37,7 +37,7 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_for_events)
         //addActionBar()
-        eventList = PlandoraEventController.eventList
+        eventList = EventController.eventList
         getEventTypes()
         search_type_spinner.adapter =
             ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, eventTypeList)
@@ -81,7 +81,7 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     }
 
     private fun addEventRecyclerView() {
-        eventList = PlandoraEventController.eventList
+        eventList = EventController.eventList
         if(eventTitleSelected || eventTypeSelected) {
             getFilteredEventList()
         } else {

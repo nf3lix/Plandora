@@ -42,8 +42,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="10dp"
-                    android:background="@color/colorBackgroundGrey"
-                    android:src="@drawable/ic_search" />
+                    android:src="@drawable/ic_search_black" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -60,6 +59,7 @@
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
 
             </androidx.cardview.widget.CardView>
 
