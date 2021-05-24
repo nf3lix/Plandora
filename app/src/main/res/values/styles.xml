@@ -15,6 +15,7 @@
 
     <style name="SpinnerDatePicker" parent="android:Widget.Material.DatePicker">
         <item name="android:datePickerMode">spinner</item>
+        <item name="android:title">Select Date</item>
     </style>
 
     <style name="SpinnerDatePickerStyle" parent="android:Theme.Material.Dialog">

@@ -11,15 +11,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.plandora.R
 import com.plandora.activity.CreateEventActivity
-import com.plandora.models.events.Event
 import com.plandora.adapters.EventRecyclerAdapter
 import com.plandora.controllers.PlandoraEventController
+import com.plandora.controllers.State
+import com.plandora.crud_workflows.CRUDActivity
+import com.plandora.models.events.Event
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
+class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener, CRUDActivity {
 
     private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
     private lateinit var eventList: ArrayList<Event>
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         displayDashboardFragment(inflater, container)
@@ -35,6 +43,13 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     override fun onClickListener(index: Int) {
         startEventDetailActivity(eventList[index])
+    }
+
+    override fun onResume() {
+        super.onResume()
+        uiScope.launch {
+            loadEvents()
+        }
     }
 
     private fun addEventRecyclerView() {
@@ -64,7 +79,31 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     private fun addFabButtonListener() {
         rootView.findViewById<FloatingActionButton>(R.id.fab_create_board)
-                .setOnClickListener { startActivity(Intent(rootView.context, CreateEventActivity::class.java )) }
+            .setOnClickListener {
+                startActivity(Intent(rootView.context, CreateEventActivity::class.java))
+            }
+    }
+
+    override fun onSuccess() {
+        addEventRecyclerView()
+    }
+
+    override fun onInternalFailure(message: String) {
+    }
+
+    private suspend fun loadEvents() {
+        PlandoraEventController().updateEventList().collect { state ->
+            when(state) {
+                is State.Loading -> {
+                }
+                is State.Success -> {
+                    addEventRecyclerView()
+                }
+                is State.Failed -> {
+                    //
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {

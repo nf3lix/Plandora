@@ -10,13 +10,19 @@ import com.plandora.R
 import com.plandora.activity.main.MainActivity
 import com.plandora.controllers.PlandoraEventController
 import com.plandora.controllers.PlandoraUserController
-import com.plandora.crud_workflows.CRUDActivity
+import com.plandora.controllers.State
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class SplashScreenActivity : AppCompatActivity(), CRUDActivity {
+class SplashScreenActivity : AppCompatActivity() {
 
     companion object {
         private const val SPLASH_SCREEN_DELAY: Long = 2000
     }
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +46,6 @@ class SplashScreenActivity : AppCompatActivity(), CRUDActivity {
 
     private fun resumeAfterSplashScreen() {
         startActivityAfterSplashScreen()
-        finish()
     }
 
     private fun startActivityAfterSplashScreen() {
@@ -49,15 +54,34 @@ class SplashScreenActivity : AppCompatActivity(), CRUDActivity {
             return
         }
         startActivity(Intent(this, SignInActivity::class.java))
+        finish()
     }
 
     private fun setUpMainActivity() {
-        PlandoraEventController().getEventList(this)
-        startActivity(Intent(this, MainActivity::class.java))
+        uiScope.launch {
+            loadEvents()
+        }
     }
 
-    override fun onInternalFailure(message: String) {
-        Toast.makeText(this, "An internal error occured", Toast.LENGTH_LONG).show()
+    private fun resumeWithMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private suspend fun loadEvents() {
+        PlandoraEventController().updateEventList().collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    Toast.makeText(this, "Successfully loaded events", Toast.LENGTH_LONG).show()
+                    resumeWithMainActivity()
+                }
+                is State.Failed -> {
+                    Toast.makeText(this, "Could not load events", Toast.LENGTH_LONG).show()
+                    resumeWithMainActivity()
+                }
+            }
+        }
     }
 
 

@@ -1,5 +1,7 @@
 # Plandora
-[![CodeFactor](https://www.codefactor.io/repository/github/nf3lix/plandora/badge)](https://www.codefactor.io/repository/github/nf3lix/plandora)
+[![CodeFactor](https://www.codefactor.io/repository/github/nf3lix/plandora/badge)](https://www.codefactor.io/repository/github/nf3lix/plandora)  
+[![Android CI](https://github.com/nf3lix/Plandora/actions/workflows/android.yml/badge.svg)](https://github.com/nf3lix/Plandora/actions/workflows/android.yml)  
+[![TravisCI](https://travis-ci.com/nf3lix/Plandora.svg?branch=master)](https://github.com/nf3lix/Plandora/actions)   
 
 ## What is Plandora?
 Have you ever forgotten the birthday of a good friend or even a family member? Unpleasant situation, right? Our vision is to prevent you from having this experience!
@@ -14,6 +16,8 @@ There won’t be any missed birthdays, any disappointment or guilty feelings!
 [Blog posts](https://plandora51897980.wordpress.com/blog/)
 
 [YouTrack Dashboard](https://dhbw-karlsruhe.myjetbrains.com/youtrack/agiles/108-76/109-278)
+
+[Our Documantation](https://github.com/Honrix/PlandoraDocumentation)
 
 ## Branches
 - feature/fix/...

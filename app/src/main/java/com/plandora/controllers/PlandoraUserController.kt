@@ -5,11 +5,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.plandora.activity.dialogs.AddAttendeeDialog
 import com.plandora.activity.launch.SignUpActivity
 import com.plandora.models.PlandoraUser
 import com.plandora.utils.constants.FirestoreConstants
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 
 class PlandoraUserController {
 
@@ -24,19 +28,28 @@ class PlandoraUserController {
         }
     }
 
-    fun getUserFromId(userId: String): PlandoraUser {
-        // not implemented yet
-        return PlandoraUser(userId, "Felix", "Felix", "test@test.de")
+    fun getUserById(userId: String) = flow<State<PlandoraUser>> {
+        emit(State.loading())
+        val user = fetchUser(userId)
+        emit(State.success(user))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun fetchUser(userId: String): PlandoraUser {
+        val document = firestoreInstance.collection(FirestoreConstants.USERS).document(userId).get().await()
+        return document.toObject(PlandoraUser::class.java)!!
     }
 
-    fun getUserFromName(username: String): PlandoraUser? {
+    fun inviteUserToEvent(username: String, dialog: AddAttendeeDialog) {
         FirebaseFirestore.getInstance().collection(FirestoreConstants.USERS)
             .whereEqualTo(FirestoreConstants.USER_NAME_FIELD, username).get()
             .addOnSuccessListener { document ->
-                document.documents[0].toObject(PlandoraUser::class.java)
-                return@addOnSuccessListener
+                if(document.documents.size > 0) {
+                    val attendee = document.documents[0].toObject(PlandoraUser::class.java)!!
+                    dialog.onUserFetched(attendee)
+                }
             }
-        return null
     }
 
     fun signUpUser(activity: SignUpActivity, uniqueName: String, displayName: String, email: String, password: String) {

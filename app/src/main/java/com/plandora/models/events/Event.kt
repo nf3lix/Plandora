@@ -18,7 +18,8 @@ data class Event(
     var timestamp: Long = 0,
     var attendees: ArrayList<String> = ArrayList(),
     var giftIdeas: ArrayList<GiftIdea> = ArrayList(),
-    var ownerId: String = ""
+    var ownerId: String = "",
+    var invitedUserIds: ArrayList<String> = ArrayList()
 ) : Parcelable, Comparable<Event> {
 
     constructor(parcel: Parcel) : this(
@@ -29,7 +30,8 @@ data class Event(
         parcel.readLong(),
         parcel.createStringArrayList()!!,
         parcel.createTypedArrayList(GiftIdea)!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
@@ -41,6 +43,7 @@ data class Event(
         writeStringList(attendees)
         writeTypedList(giftIdeas)
         writeString(ownerId)
+        writeStringList(invitedUserIds)
     }
 
     override fun describeContents(): Int {
@@ -69,6 +72,10 @@ data class Event(
         return user.id.contentEquals(this.ownerId)
     }
 
+    fun isInvitedUser(user: PlandoraUser): Boolean {
+        return invitedUserIds.contains(user.id) && !attendees.contains(user.id)
+    }
+
     private fun getNextEvent(timestamp: Long): Long {
         val date = Date(timestamp)
         val calendar = GregorianCalendar()
@@ -94,6 +101,15 @@ data class Event(
     fun getTimestamp(year: Int, monthOfYear: Int, dayOfMonth: Int, hours: Int, minutes: Int): Long {
         return SimpleDateFormat("dd-MM-yyyy mm:HH", Locale.US)
             .parse("${dayOfMonth.toString().format(2)}-${monthOfYear.toString().format(2)}-${year.toString().format(4)} ${hours.toString().format(2)}:${minutes.toString().format(2)}")!!.time
+    }
+
+    fun relevantForDashboard(): Boolean {
+        return !isInPast() || annual
+    }
+
+    fun isInPast(): Boolean {
+        val currentTimestamp = System.currentTimeMillis() - 8.64e7
+        return timestamp < currentTimestamp
     }
 
     override fun compareTo(other: Event): Int {
