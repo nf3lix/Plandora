@@ -1,6 +1,16 @@
+#language: java
+#before_script:
+#  - git update-index --chmod=+x gradlew
+#script:
+#  - ./gradlew check
+#  - ./gradlew codeCoverageReport
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
+  
 language: generic
-jobs:
-  include:
+
+# jobs:
+#  include:
 #      - stage: "Tests"                # naming the Tests stage
 #      name: "Unit Tests"            # names the first Tests stage job
 #      script: chmod +x ./app/src/test/java/com/plandora/*

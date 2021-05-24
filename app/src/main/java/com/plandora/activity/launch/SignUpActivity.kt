@@ -3,11 +3,12 @@ package com.plandora.activity.launch
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Toast
 import com.plandora.R
-import com.plandora.controllers.PlandoraUserController
-import com.plandora.models.validation_types.SignUpValidationTypes
+import com.plandora.controllers.UserController
+import com.plandora.models.SignUpForm
+import com.plandora.validator.Validator
+import com.plandora.validator.validators.SignUpValidator
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
@@ -24,24 +25,17 @@ class SignUpActivity : AppCompatActivity() {
         val email = email_input.text.toString()
         val password = password_input.text.toString()
         val repeatPassword = repeat_password_input.text.toString()
-        val validationId = validateForm(uniqueName, displayName, email, password, repeatPassword)
-        if(validationId != SignUpValidationTypes.SUCCESS) {
-            Toast.makeText(this, getString(validationId.messageId), Toast.LENGTH_SHORT).show()
-        } else {
-            PlandoraUserController().signUpUser(this, uniqueName, displayName, email, password)
-        }
+        val signUp = SignUpForm(uniqueName, displayName, email, password, repeatPassword)
+        validateForm(signUp)
     }
 
-    private fun validateForm(uniqueName: String, displayName: String, email: String,
-                             password: String, repeatPassword: String): SignUpValidationTypes {
-        return when {
-            TextUtils.isEmpty(uniqueName) -> SignUpValidationTypes.EMPTY_UNIQUE_NAME
-            TextUtils.isEmpty(displayName) -> SignUpValidationTypes.EMPTY_DISPLAY_NAME
-            TextUtils.isEmpty(email) -> SignUpValidationTypes.EMPTY_EMAIL
-            TextUtils.isEmpty(password) -> SignUpValidationTypes.EMPTY_PASSWORD
-            (password != repeatPassword) -> SignUpValidationTypes.PASSWORDS_DO_NOT_MATCH
-            else -> SignUpValidationTypes.SUCCESS
+    private fun validateForm(signUpForm: SignUpForm) {
+        val state = SignUpValidator().getValidationState(signUpForm)
+        if(state.validationState == Validator.ValidationState.INVALID) {
+            Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
+            return
         }
+        UserController().signUpUser(this, signUpForm)
     }
 
     fun onSignUpSuccess() {

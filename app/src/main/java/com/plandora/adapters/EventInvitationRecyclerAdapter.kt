@@ -7,10 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
-import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import kotlinx.android.synthetic.main.layout_invitation_list_item.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -51,8 +50,8 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
         fun bind(eventInvitation: EventInvitation) {
             acceptButton.setOnClickListener{ onAcceptListener(adapterPosition) }
             declineButton.setOnClickListener{ onDeclineListener(adapterPosition) }
-            eventTitle.text = PlandoraEventController.events[eventInvitation.eventId]?.title
-            remainingDays.text = PlandoraEventController.events[eventInvitation.eventId]?.remainingDays().toString()
+            eventTitle.text = EventController.events[eventInvitation.eventId]?.title
+            remainingDays.text = EventController.events[eventInvitation.eventId]?.remainingDays().toString()
             uiScope.launch {
                 loadUsername(eventInvitation.invitationOwnerId)
             }
@@ -67,7 +66,7 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
         }
 
         suspend fun loadUsername(userId: String) {
-            PlandoraUserController().getUserById(userId).collect { state ->
+            UserController().getUserById(userId).collect { state ->
                 when(state) {
                     is State.Loading -> { }
                     is State.Success -> {

@@ -1,4 +1,4 @@
-package com.plandora.activity.dialogs
+package com.plandora.activity.components.dialogs
 
 import android.content.Context
 import android.content.DialogInterface
@@ -7,8 +7,8 @@ import android.widget.Toast
 import com.plandora.R
 import com.plandora.activity.PlandoraDialog
 import com.plandora.activity.main.dashboard.EventDetailActivity
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
+import com.plandora.controllers.UserController
 import com.plandora.controllers.State
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
@@ -24,7 +24,7 @@ class AddAttendeeDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onPositiveButtonClick(dialog: DialogInterface, which: Int) {
-        PlandoraUserController().inviteUserToEvent(viewInflated.add_attendee_input.text.toString(), this)
+        UserController().inviteUserToEvent(viewInflated.add_attendee_input.text.toString(), this)
         dialog.dismiss()
     }
 
@@ -39,7 +39,7 @@ class AddAttendeeDialog(context: Context, view: ViewGroup?, attachToRoot: Boolea
     }
 
     private suspend fun sendEventInvitation(event: Event, invitedUser: PlandoraUser) {
-        PlandoraEventController().sendEventInvitation(event, invitedUser).collect { state ->
+        EventController().sendEventInvitation(event, invitedUser).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {

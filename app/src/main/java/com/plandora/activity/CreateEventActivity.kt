@@ -1,8 +1,7 @@
 package com.plandora.activity
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,21 +10,25 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.activity.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.date_time_picker.DatePickerObserver
+import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
+import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
+import com.plandora.activity.components.date_time_picker.TimePickerObserver
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
-import com.plandora.controllers.PlandoraEventController
-import com.plandora.controllers.PlandoraUserController
+import com.plandora.controllers.EventController
 import com.plandora.controllers.State
-import com.plandora.crud_workflows.CRUDActivity
-import com.plandora.models.validation_types.CreateEventValidationTypes
+import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
+import com.plandora.validator.Validator
+import com.plandora.validator.validators.CreateEventValidator
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -33,15 +36,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 open class CreateEventActivity :
     PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
-    CRUDActivity.EventCRUDActivity,
-    CRUDActivity.InvitationCRUDActivity
+    DatePickerObserver,
+    TimePickerObserver
 {
 
     private val uiScope = CoroutineScope(Dispatchers.Main)
@@ -62,7 +64,7 @@ open class CreateEventActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
-        event = Event(ownerId = PlandoraUserController().currentUserId(), attendees = arrayListOf())
+        event = Event(ownerId = UserController().currentUserId(), attendees = arrayListOf())
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
         addActionBar()
@@ -98,25 +100,24 @@ open class CreateEventActivity :
     }
 
     private fun selectDate() {
-        val datePickerDialog = DatePickerDialog(this@CreateEventActivity,
-            R.style.SpinnerDatePickerStyle,
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                year = selectedYear
-                monthOfYear = selectedMonth + 1
-                dayOfMonth = selectedDayOfMonth
-                displaySelectedDate()
-            },  year, monthOfYear - 1, dayOfMonth)
-        datePickerDialog.show()
+        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
+    }
+
+    override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
+        year = selectedYear
+        monthOfYear = selectedMonth + 1
+        dayOfMonth = selectedDayOfMonth
+        displaySelectedDate()
     }
 
     private fun selectTime() {
-        val timePickerDialog = TimePickerDialog(this@CreateEventActivity, {
-                _, selectedHours, selectedMinutes ->
-            hours = selectedHours
-            minutes = selectedMinutes
-            displaySelectedTime()
-        }, 0, 0, true)
-        timePickerDialog.show()
+        PlandoraTimePicker(this, this).showDialog()
+    }
+
+    override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
+        hours = selectedHour
+        minutes = selectedMinute
+        displaySelectedTime()
     }
 
     private fun displaySelectedDate() {
@@ -166,25 +167,19 @@ open class CreateEventActivity :
             annual = cb_annual.isChecked
             timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
             attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
-            attendees.add(PlandoraUserController().currentUserId())
+            attendees.add(UserController().currentUserId())
             giftIdeas = list
         }
-        val validation = validateForm(event)
-        Toast.makeText(this, getString(validation.message), Toast.LENGTH_SHORT).show()
-        if(validation == CreateEventValidationTypes.SUCCESS) {
-            uiScope.launch {
-                createEvent(event)
-            }
-        }
+        validateForm(event)
         return true
     }
 
     private suspend fun createEvent(event: Event) {
-        PlandoraEventController().createEvent(event).collect { state ->
+        EventController().createEvent(event).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> { finish() }
-                is State.Failed -> { onInternalFailure("Could not create event") }
+                is State.Failed -> { Toast.makeText(this, "Could not create event", Toast.LENGTH_LONG).show() }
             }
         }
     }
@@ -193,57 +188,18 @@ open class CreateEventActivity :
         setSupportActionBar(toolbar_main_activity)
     }
 
-    override fun onInvitationCreateSuccess(attendee: PlandoraUser) {
-        Toast.makeText(this, "User successfully invited", Toast.LENGTH_LONG).show()
-        attendeesList.add(attendee)
-        addAttendeesRecyclerView()
-    }
-
-    override fun onInvitationCreateFailure() {
-        onInternalFailure("Could not invite user")
-    }
-
-    override fun onInvitationExists() {
-        onInternalFailure("This invitation already exists")
-    }
-
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
         giftIdeasList.add(giftIdea)
     }
 
-    private fun validateForm(event: Event): CreateEventValidationTypes {
-        return when {
-            !event.annual && event.timestamp < System.currentTimeMillis() -> { CreateEventValidationTypes.EVENT_IN_THE_PAST }
-            event.title.isEmpty() -> { CreateEventValidationTypes.EMPTY_TITLE }
-            else -> CreateEventValidationTypes.SUCCESS
+    private fun validateForm(event: Event) {
+        val state = CreateEventValidator().getValidationState(event)
+        Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
+        if(state.validationState == Validator.ValidationState.VALID) {
+            uiScope.launch {
+                createEvent(event)
+            }
         }
-    }
-
-    override fun onCreateSuccess(event: Event) {
-        finish()
-    }
-
-    override fun onCreateFailure() {
-        onInternalFailure("Could not create event")
-    }
-
-    override fun onUpdateSuccess(event: Event) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onUpdateFailure(message: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRemoveSuccess(event: Event) {
-    }
-
-    override fun onRemoveFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onInternalFailure(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setupButtonListeners() {
@@ -251,9 +207,6 @@ open class CreateEventActivity :
         btn_time_picker.setOnClickListener { selectTime() }
         event_date_input.setOnClickListener { selectDate() }
         event_time_input.setOnClickListener { selectTime() }
-        btn_add_attendee.setOnClickListener {
-            // AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
-        }
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }
