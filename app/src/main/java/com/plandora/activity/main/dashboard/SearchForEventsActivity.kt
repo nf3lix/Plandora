@@ -20,13 +20,17 @@ import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.activity_search_for_events.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickListener  {
+class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickListener {
 
     private lateinit var rootView: View
     private lateinit var eventAdapter: EventRecyclerAdapter
     private lateinit var eventList: ArrayList<Event>
 
     private var eventTypeList: ArrayList<String> = ArrayList()
+    private lateinit var filteredEventList: ArrayList<Event>
+
+    private var eventTypeSelected: Boolean = false
+    private var eventTitleSelected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +38,8 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
         //addActionBar()
         eventList = PlandoraEventController.eventList
         getEventTypes()
-        search_type_spinner.adapter = ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, eventTypeList)
-        //search_type_spinner.adapter = ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, arrayListOf("Hallo", "Test"))
+        search_type_spinner.adapter =
+            ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, eventTypeList)
         setupButtonListeners()
     }
 
@@ -46,8 +50,8 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
 
     private fun getEventTypes() {
         eventTypeList.add("")
-        for(event in eventList){
-            if(!eventTypeList.contains(event.eventType.name)){
+        for (event in eventList) {
+            if (!eventTypeList.contains(event.eventType.name)) {
                 eventTypeList.add(event.eventType.name)
             }
         }
@@ -59,9 +63,13 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
 
     private fun setupButtonListeners() {
         btn_search_for_events.setOnClickListener {
-            if(search_for_events_title_input.text.toString().equals("") && search_type_spinner.selectedItem.toString().equals("")) {
+            if (search_for_events_title_input.text.toString()
+                    .equals("") && search_type_spinner.selectedItem.toString().equals("")
+            ) {
                 Log.d("Search_for_Events", "No Input")
             } else {
+                eventTitleSelected = !search_for_events_title_input.text.toString().equals("")
+                eventTypeSelected = !search_type_spinner.selectedItem.toString().equals("")
                 addEventRecyclerView()
             }
         }
@@ -78,14 +86,38 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     }
 
     private fun addEventRecyclerView() {
-        eventList = PlandoraEventController.eventList
-        //rootView.findViewById<RecyclerView>(R.id.search_for_events_recycler_view).apply {
+        getFilteredEventList()
         this.findViewById<RecyclerView>(R.id.search_for_events_recycler_view).apply {
             layoutManager = LinearLayoutManager(this@SearchForEventsActivity)
-            eventAdapter = EventRecyclerAdapter(eventList, this@SearchForEventsActivity)
+            eventAdapter = EventRecyclerAdapter(filteredEventList, this@SearchForEventsActivity)
             adapter = eventAdapter
         }
     }
 
+    private fun getFilteredEventList() {
+        eventList = PlandoraEventController.eventList
+        filteredEventList = ArrayList()
+        for (event in eventList) {
+            if (matchingEvent(event)) {
+                filteredEventList.add(event)
+            }
+        }
+    }
+
+    private fun matchingEvent(event: Event): Boolean {
+        return if (eventTypeSelected) {
+            if (event.eventType.toString() == search_type_spinner.selectedItem.toString()) {
+                if (eventTitleSelected) {
+                    event.title == search_for_events_title_input.text.toString()
+                } else {
+                    true
+                }
+            } else {
+                false
+            }
+        } else {
+            event.title == search_for_events_title_input.text.toString()
+        }
+    }
 
 }
