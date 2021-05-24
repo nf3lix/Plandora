@@ -45,13 +45,21 @@
                     android:background="@color/colorBackgroundGrey"
                     android:src="@drawable/ic_search" />
 
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="44dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="Search"
-                    android:textSize="24dp" />
+                    android:layout_marginEnd="10dp"
+                    android:hint="Search">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/search_for_events_title_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/colorBackgroundGrey"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -82,6 +90,7 @@
                 app:cardCornerRadius="7dp">
 
                 <Button
+                    android:id="@+id/btn_search_for_events"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="@color/colorPrimary"
@@ -94,5 +103,13 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_for_events_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
 
 </LinearLayout>

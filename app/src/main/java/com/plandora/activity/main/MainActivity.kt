@@ -2,12 +2,7 @@ package com.plandora.activity.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
@@ -16,8 +11,6 @@ import com.plandora.R
 import com.plandora.activity.PlandoraActivity
 import com.plandora.activity.launch.SignInActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
-import com.plandora.activity.main.dashboard.EventDetailActivity
-import com.plandora.activity.main.dashboard.SearchForEventsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.app_bar_main.view.*
@@ -91,4 +84,4 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
         finish()
     }
 
-    }
+}
