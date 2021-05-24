@@ -3,12 +3,10 @@ package com.plandora.activity.main.dashboard
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
@@ -37,6 +35,7 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_for_events)
         //addActionBar()
+        EventController().updateEventList()
         eventList = EventController.eventList
         getEventTypes()
         search_type_spinner.adapter =
@@ -45,7 +44,7 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_tool_bar, menu)
+        menuInflater.inflate(R.menu.search_for_events_menu, menu)
         return true
     }
 
@@ -71,13 +70,23 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     }
 
     override fun onClickListener(index: Int) {
-        startEventDetailActivity(eventList[index])
+        startEventDetailActivity(filteredEventList[index])
     }
 
     private fun startEventDetailActivity(event: Event) {
         val intent = Intent(this, EventDetailActivity::class.java)
         intent.putExtra("event_object", event)
         startActivity(intent)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.close_search -> {
+                finish()
+                true
+            }
+            else -> false
+        }
     }
 
     private fun addEventRecyclerView() {
