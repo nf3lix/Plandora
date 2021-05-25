@@ -22,7 +22,7 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
@@ -39,21 +39,23 @@
                     android:layout_margin="10dp"
                     android:src="@drawable/ic_search_black" />
 
-                <com.google.android.material.textfield.TextInputLayout
+                <!--<com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="44dp"
                     android:layout_marginEnd="10dp"
-                    android:hint="Search">
+                    android:hint="Search">-->
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/search_for_events_title_input"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorBackgroundGrey"
+                        android:layout_marginStart="44dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@android:color/black"
                         android:inputType="text" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                <!--</com.google.android.material.textfield.TextInputLayout>-->
 
 
             </androidx.cardview.widget.CardView>
@@ -71,7 +73,7 @@
                 <Spinner
                     android:id="@+id/search_type_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
             </androidx.cardview.widget.CardView>
 

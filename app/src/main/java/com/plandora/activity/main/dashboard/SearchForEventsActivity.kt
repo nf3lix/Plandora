@@ -109,13 +109,13 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
     private fun getFilteredEventList() {
         filteredEventList = ArrayList()
         for (event in eventList) {
-            if (matchingEvent(event)) {
+            if (isMatchingEvent(event)) {
                 filteredEventList.add(event)
             }
         }
     }
 
-    private fun matchingEvent(event: Event): Boolean {
+    private fun isMatchingEvent(event: Event): Boolean {
         return if (eventTypeSelected) {
             if (event.eventType.toString() == search_type_spinner.selectedItem.toString()) {
                 if (eventTitleSelected) {
