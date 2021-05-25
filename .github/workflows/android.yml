@@ -31,3 +31,9 @@ jobs:
 
     - name: Build Project
       run: ./gradlew assemble
+      
+    #- name: Create Report
+    #  run: ./gradlew jacocoTestReport
+      
+    - name: CodeCov report deploy
+      run: bash <(curl -s https://codecov.io/bash)

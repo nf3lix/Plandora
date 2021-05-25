@@ -1,10 +1,10 @@
 package com.plandora.activity.main.dashboard
 
+import android.content.ClipData
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +30,7 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         displayDashboardFragment(inflater, container)
+        setHasOptionsMenu(true)
         addFabButtonListener()
         return rootView
     }
@@ -65,6 +66,11 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
         startActivity(intent)
     }
 
+    private fun startSearchForEventsActivity() {
+        val intent = Intent(rootView.context, SearchForEventsActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun displayDashboardFragment(inflater: LayoutInflater, container: ViewGroup?) {
         rootView = inflater.inflate(R.layout.fragment_dashboard_main, container, false)
         rootView.findViewById<RecyclerView>(R.id.recycler_view).addItemDecoration(EventItemSpacingDecoration(40))
@@ -89,6 +95,21 @@ class DashboardFragment : Fragment(), EventRecyclerAdapter.OnClickListener {
                     //
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.main_tool_bar, menu)
+        super.onCreateOptionsMenu(menu, menuInflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.search_events -> {
+                startSearchForEventsActivity()
+                true
+            }
+            else -> false
         }
     }
 
