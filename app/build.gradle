@@ -33,14 +33,6 @@ android {
     }
 }
 
-jacoco {
-  toolVersion = "0.8.5"
-}
-
-tasks.withType(Test) {
-  jacoco.includeNoLocationClasses = true
-}
-
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
