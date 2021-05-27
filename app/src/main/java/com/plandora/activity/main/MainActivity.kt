@@ -13,6 +13,8 @@ import com.plandora.activity.launch.SignInActivity
 import com.plandora.activity.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.app_bar_main.view.*
+import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 
 class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelectedListener {
 

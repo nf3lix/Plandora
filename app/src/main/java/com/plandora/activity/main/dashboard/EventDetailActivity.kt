@@ -1,6 +1,7 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -11,14 +12,17 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.PlandoraActivity
-import com.plandora.activity.components.dialogs.AddAttendeeDialog
-import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.date_time_picker.DatePickerObserver
+import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
+import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
+import com.plandora.activity.components.date_time_picker.TimePickerObserver
+import com.plandora.activity.components.dialogs.*
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.EventController
-import com.plandora.controllers.UserController
 import com.plandora.controllers.State
+import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
 import com.plandora.models.events.EventType
@@ -31,18 +35,26 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.collections.ArrayList
+import java.util.*
 
 class EventDetailActivity : PlandoraActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
-    GiftIdeaRecyclerAdapter.GiftIdeaClickListener
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    ConfirmDialogListener,
+    DatePickerObserver,
+    TimePickerObserver
 {
 
     private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
     private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
     private val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
+
+    private var year = 0
+    private var monthOfYear = 0
+    private var dayOfMonth = 0
+    private var hours = 0; private var minutes = 0
 
     private lateinit var oldEvent: Event
     private lateinit var newEvent: Event
@@ -74,6 +86,13 @@ class EventDetailActivity : PlandoraActivity(),
         cb_annual.isChecked = event.annual
         addAllAttendeesToList()
         addAllGiftIdeas(event.giftIdeas)
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = event.timestamp
+        year = calendar.get(Calendar.YEAR)
+        monthOfYear = calendar.get(Calendar.MONTH) + 1
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        minutes = calendar.get(Calendar.MINUTE)
+        hours = calendar.get(Calendar.HOUR_OF_DAY)
     }
 
     private fun addAllAttendeesToList() {
@@ -113,13 +132,28 @@ class EventDetailActivity : PlandoraActivity(),
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        prepareDeleteIcon(menu)
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
                 onSaveButtonClicked()
                 true
             }
+            R.id.delete_entry -> {
+                ConfirmDeletionDialog(this, this).showDialog()
+                true
+            }
             else -> false
+        }
+    }
+
+    private fun prepareDeleteIcon(menu: Menu?) {
+        if (menu != null && !oldEvent.isOwner(UserController().currentUserId())) {
+            menu.getItem(0).isVisible = false
         }
     }
 
@@ -129,7 +163,7 @@ class EventDetailActivity : PlandoraActivity(),
                 EventType.valueOf(event_type_spinner.selectedItem.toString()),
                 event_description_input.text.toString(),
                 cb_annual.isChecked,
-                oldEvent.timestamp,
+                Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes),
                 oldEvent.attendees,
                 oldEvent.giftIdeas
         )
@@ -148,6 +182,18 @@ class EventDetailActivity : PlandoraActivity(),
                 is State.Loading -> { }
                 is State.Success -> { finish() }
                 is State.Failed -> { Toast.makeText(this, "Could not update event", Toast.LENGTH_SHORT).show() }
+            }
+        }
+    }
+
+    private suspend fun deleteEvent(event: Event) {
+        EventController().deleteEvent(event).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { finish() }
+                is State.Failed -> {
+                    Toast.makeText(this@EventDetailActivity, state.message, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -178,7 +224,7 @@ class EventDetailActivity : PlandoraActivity(),
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
             giftIdeaAdapter = GiftIdeaRecyclerAdapter(
-                    giftIdeasList, this@EventDetailActivity, false)
+                    giftIdeasList, this@EventDetailActivity)
             adapter = giftIdeaAdapter
         }
     }
@@ -186,8 +232,20 @@ class EventDetailActivity : PlandoraActivity(),
     override fun onDeleteAttendeeButtonClicked(position: Int) {
     }
 
-    override fun onGiftItemClicked(activated: Boolean) {
-        btn_delete_items.visibility = if(giftIdeaAdapter.getSelectedItems().size > 0) View.VISIBLE else View.GONE
+    override fun onGiftItemClicked(position: Int) {
+        GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
+    }
+
+    override fun onGiftIdeaSelected(position: Int) {
+        Handler().postDelayed({
+            btn_delete_items.visibility = View.VISIBLE
+        }, 20)
+    }
+
+    override fun onGiftIdeaDeselected(position: Int) {
+        Handler().postDelayed({
+            btn_delete_items.visibility = View.GONE
+        }, 20)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -246,7 +304,19 @@ class EventDetailActivity : PlandoraActivity(),
         attendeesList.add(attendee)
     }
 
+    private fun selectDate() {
+        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
+    }
+
+    private fun selectTime() {
+        PlandoraTimePicker(this, this).showDialog()
+    }
+
     private fun setupClickListeners() {
+        btn_date_picker.setOnClickListener { selectDate() }
+        btn_time_picker.setOnClickListener { selectTime() }
+        event_date_input.setOnClickListener { selectDate() }
+        event_time_input.setOnClickListener { selectTime() }
         btn_add_attendee.setOnClickListener {
             AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, oldEvent, this).showDialog()
         }
@@ -256,6 +326,35 @@ class EventDetailActivity : PlandoraActivity(),
         btn_delete_items.setOnClickListener {
             deleteSelectedEvents()
         }
+    }
+
+    override fun onPositiveButtonClicked() {
+        uiScope.launch {
+            deleteEvent(oldEvent)
+        }
+    }
+
+    override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
+        year = selectedYear
+        monthOfYear = selectedMonth + 1
+        dayOfMonth = selectedDayOfMonth
+        displaySelectedDate()
+    }
+
+    override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
+        hours = selectedHour
+        minutes = selectedMinute
+        displaySelectedTime()
+    }
+
+    private fun displaySelectedDate() {
+        event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
+            "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
+    }
+
+    private fun displaySelectedTime() {
+        event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
+            "%02d".format(hours), "%02d".format(minutes)))
     }
 
 }

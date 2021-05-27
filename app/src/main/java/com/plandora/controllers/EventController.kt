@@ -101,6 +101,8 @@ class EventController {
     private suspend fun addCurrentUserIdToEvent(eventId: String) {
         firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
                 .update(FirestoreConstants.ATTENDEES, FieldValue.arrayUnion(UserController().currentUserId())).await()
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
+            .update(FirestoreConstants.EVENT_INVITED_USER_IDS, FieldValue.arrayRemove(UserController().currentUserId())).await()
     }
 
     fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) = flow<State<String>>{
@@ -197,5 +199,14 @@ class EventController {
         }
         return eventId
     }
+
+    fun deleteEvent(event: Event) = flow<State<String>> {
+        emit(State.loading())
+        val eventId = getEventId(event)
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).delete()
+        emit(State.success("Event deleted"))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
 }

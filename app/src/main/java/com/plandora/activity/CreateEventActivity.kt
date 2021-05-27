@@ -1,6 +1,8 @@
 package com.plandora.activity
 
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -8,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
@@ -15,6 +18,7 @@ import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
 import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
 import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.GiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
@@ -60,8 +64,11 @@ open class CreateEventActivity :
     private var dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
     private var hours = 0; private var minutes = 0
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val networkCheck = NetworkCheck(this)
+        networkCheck.registerNetworkCallback()
         setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
         event = Event(ownerId = UserController().currentUserId(), attendees = arrayListOf())
@@ -135,8 +142,16 @@ open class CreateEventActivity :
         addAttendeesRecyclerView()
     }
 
-    override fun onGiftItemClicked(activated: Boolean) {
-        btn_delete_items.visibility = if(activated) View.VISIBLE else View.GONE
+    override fun onGiftItemClicked(position: Int) {
+        GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
+    }
+
+    override fun onGiftIdeaSelected(position: Int) {
+        btn_delete_items.visibility = View.VISIBLE
+    }
+
+    override fun onGiftIdeaDeselected(position: Int) {
+        btn_delete_items.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -175,10 +190,17 @@ open class CreateEventActivity :
     }
 
     private suspend fun createEvent(event: Event) {
+        if(!NetworkCheck.isNetworkConnected) {
+            Toast.makeText(this, "Please check your internet connection", Toast.LENGTH_LONG).show()
+            return
+        }
+        showProgressBar()
         EventController().createEvent(event).collect { state ->
             when(state) {
                 is State.Loading -> { }
-                is State.Success -> { finish() }
+                is State.Success -> {
+                    hideProgressBar()
+                    finish() }
                 is State.Failed -> { Toast.makeText(this, "Could not create event", Toast.LENGTH_LONG).show() }
             }
         }
@@ -194,11 +216,16 @@ open class CreateEventActivity :
 
     private fun validateForm(event: Event) {
         val state = CreateEventValidator().getValidationState(event)
-        Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
-        if(state.validationState == Validator.ValidationState.VALID) {
-            uiScope.launch {
-                createEvent(event)
+        when(state.validationState) {
+            Validator.ValidationState.INVALID -> {
+                Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
             }
+            Validator.ValidationState.VALID -> {
+                uiScope.launch {
+                    createEvent(event)
+                }
+            }
+            else -> Toast.makeText(this, state.validationMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
