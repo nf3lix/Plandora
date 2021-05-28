@@ -43,7 +43,7 @@ class EventDetailActivity : EventActivity(),
     TimePickerObserver
 {
 
-    private lateinit var oldEvent: Event
+    // private lateinit var oldEvent: Event
     private lateinit var newEvent: Event
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +63,8 @@ class EventDetailActivity : EventActivity(),
         minutes = 0
     }
 
-    private fun setupBasedOnEvent(event: Event) {
-        oldEvent = event
+    private fun setupBasedOnEvent(oldEvent: Event) {
+        event = oldEvent
         addBasicEventInformation(event)
         addGiftIdeasRecyclerView()
     }
@@ -90,10 +90,10 @@ class EventDetailActivity : EventActivity(),
 
     private fun addAllAttendeesToList() {
         uiScope.launch {
-            for(userId in oldEvent.attendees) {
+            for(userId in event.attendees) {
                 addUserByIdToAttendeesList(userId)
             }
-            for(userId in oldEvent.invitedUserIds) {
+            for(userId in event.invitedUserIds) {
                 addUserByIdToAttendeesList(userId)
             }
             addAttendeesRecyclerView()
@@ -120,7 +120,7 @@ class EventDetailActivity : EventActivity(),
         attendees_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@EventDetailActivity)
             addItemDecoration(EventItemSpacingDecoration(5))
-            attendeesAdapter = AttendeeRecyclerAdapter(oldEvent, attendeesList, this@EventDetailActivity)
+            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventDetailActivity)
             adapter = attendeesAdapter
         }
     }
@@ -145,7 +145,7 @@ class EventDetailActivity : EventActivity(),
     }
 
     private fun prepareDeleteIcon(menu: Menu?) {
-        if (menu != null && !oldEvent.isOwner(UserController().currentUserId())) {
+        if (menu != null && !event.isOwner(UserController().currentUserId())) {
             menu.getItem(0).isVisible = false
         }
     }
@@ -157,15 +157,15 @@ class EventDetailActivity : EventActivity(),
                 event_description_input.text.toString(),
                 cb_annual.isChecked,
                 Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes),
-                oldEvent.attendees,
-                oldEvent.giftIdeas
+                event.attendees,
+                event.giftIdeas
         )
         validateForm(newEvent)
     }
 
     private fun saveEntry() {
         uiScope.launch {
-            updateEvent(oldEvent, newEvent)
+            updateEvent(event, newEvent)
         }
     }
 
@@ -193,7 +193,7 @@ class EventDetailActivity : EventActivity(),
 
     override fun addGiftIdea(giftIdea: GiftIdeaUIWrapper) {
         uiScope.launch {
-            addGiftIdeaToEvent(oldEvent, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdea))
+            addGiftIdeaToEvent(event, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdea))
         }
     }
 
@@ -238,7 +238,7 @@ class EventDetailActivity : EventActivity(),
         val giftIdeas = ArrayList<GiftIdea>()
         selectedItems.forEach { giftIdeas.add(GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(it)) }
         uiScope.launch {
-            removeGiftIdeaFromEvent(oldEvent, giftIdeas[0])
+            removeGiftIdeaFromEvent(event, giftIdeas[0])
         }
         btn_delete_items.visibility = View.GONE
     }
@@ -260,11 +260,11 @@ class EventDetailActivity : EventActivity(),
     }
 
     private fun removeGiftIdeaFromEventModel(giftIdea: GiftIdea) {
-        oldEvent.giftIdeas.remove(giftIdea)
+        event.giftIdeas.remove(giftIdea)
     }
 
     private fun addGiftIdeaToEventModel(giftIdea: GiftIdea) {
-        oldEvent.giftIdeas.add(giftIdea)
+        event.giftIdeas.add(giftIdea)
     }
 
     fun addAttendeeToList(attendee: PlandoraUser) {
@@ -277,7 +277,7 @@ class EventDetailActivity : EventActivity(),
         event_date_input.setOnClickListener { selectDate() }
         event_time_input.setOnClickListener { selectTime() }
         btn_add_attendee.setOnClickListener {
-            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, oldEvent, this).showDialog()
+            AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
         }
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
@@ -289,7 +289,7 @@ class EventDetailActivity : EventActivity(),
 
     override fun onPositiveButtonClicked() {
         uiScope.launch {
-            deleteEvent(oldEvent)
+            deleteEvent(event)
         }
     }
 

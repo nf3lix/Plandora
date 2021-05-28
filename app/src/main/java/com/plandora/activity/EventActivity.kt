@@ -15,6 +15,7 @@ import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.models.PlandoraUser
+import com.plandora.models.events.Event
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.coroutines.CoroutineScope
@@ -24,8 +25,11 @@ abstract class EventActivity :
     PlandoraActivity(),
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
     DatePickerObserver, TimePickerObserver,
-    GiftIdeaDialogActivity
+    GiftIdeaDialogActivity,
+    AttendeeRecyclerAdapter.OnDeleteButtonListener
 {
+
+    internal lateinit var event: Event
 
     internal lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     internal lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -97,6 +101,20 @@ abstract class EventActivity :
                 giftIdeasList, this@EventActivity)
             adapter = giftIdeaAdapter
         }
+    }
+
+    private fun addAttendeesRecyclerView() {
+        attendees_recycler_view.apply {
+            layoutManager = LinearLayoutManager(this@EventActivity)
+            addItemDecoration(EventItemSpacingDecoration(5))
+            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventActivity)
+            adapter = attendeesAdapter
+        }
+    }
+
+    override fun onDeleteAttendeeButtonClicked(position: Int) {
+        attendeesList.remove(attendeesList[position])
+        addAttendeesRecyclerView()
     }
 
 }

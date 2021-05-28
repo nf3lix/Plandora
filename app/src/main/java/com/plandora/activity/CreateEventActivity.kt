@@ -50,7 +50,7 @@ open class CreateEventActivity :
     TimePickerObserver
 {
 
-    private lateinit var event: Event
+    // private lateinit var event: Event
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
