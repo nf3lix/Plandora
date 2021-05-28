@@ -69,15 +69,6 @@ open class CreateEventActivity :
         minutes = 0
     }
 
-    private fun addAttendeesRecyclerView() {
-        attendees_recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@CreateEventActivity)
-            addItemDecoration(EventItemSpacingDecoration(5))
-            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@CreateEventActivity)
-            adapter = attendeesAdapter
-        }
-    }
-
     private fun deleteAttendee() {
         val selectedItems = giftIdeaAdapter.getSelectedItems()
         giftIdeasList.removeAll(selectedItems)

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.EventActivity
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
@@ -113,15 +112,6 @@ class EventDetailActivity : EventActivity(),
 
     private fun addAllGiftIdeas(giftIdeas: ArrayList<GiftIdea>) {
         giftIdeas.forEach { giftIdea -> giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea)) }
-    }
-
-    fun addAttendeesRecyclerView() {
-        attendees_recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@EventDetailActivity)
-            addItemDecoration(EventItemSpacingDecoration(5))
-            attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventDetailActivity)
-            adapter = attendeesAdapter
-        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
