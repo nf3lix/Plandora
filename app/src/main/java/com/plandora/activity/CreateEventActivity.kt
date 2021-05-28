@@ -19,6 +19,7 @@ import com.plandora.controllers.State
 import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
+import com.plandora.models.events.EventChronology
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
@@ -58,11 +59,7 @@ open class CreateEventActivity :
     }
 
     override fun initChrono() {
-        year = Calendar.getInstance().get(Calendar.YEAR)
-        monthOfYear = Calendar.getInstance().get(Calendar.MONTH) + 1
-        dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        hours = 0
-        minutes = 0
+        eventChronology = EventChronology.eventChronologyFromCurrentTimestamp()
     }
 
     private fun deleteAttendee() {
@@ -103,7 +100,7 @@ open class CreateEventActivity :
             eventType = EventType.valueOf(event_type_spinner.selectedItem.toString())
             description = event_description_input.text.toString()
             annual = cb_annual.isChecked
-            timestamp = Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes)
+            timestamp = eventChronology.getTimestamp()
             attendees = PlandoraUser().getIdsFromUserObjects(attendeesList)
             attendees.add(UserController().currentUserId())
             giftIdeas = list

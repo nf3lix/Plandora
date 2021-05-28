@@ -22,6 +22,7 @@ import com.plandora.controllers.State
 import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
+import com.plandora.models.events.EventChronology
 import com.plandora.models.events.EventType
 import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
@@ -54,13 +55,7 @@ class EventDetailActivity : EventActivity(),
     }
 
     override fun initChrono() {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = event.timestamp
-        year = calendar.get(Calendar.YEAR)
-        monthOfYear = calendar.get(Calendar.MONTH) + 1
-        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-        minutes = calendar.get(Calendar.MINUTE)
-        hours = calendar.get(Calendar.HOUR_OF_DAY)
+        eventChronology = EventChronology.eventChronologyFromEvent(event)
     }
 
     private fun setupBasedOnEvent(oldEvent: Event) {
@@ -139,7 +134,7 @@ class EventDetailActivity : EventActivity(),
                 EventType.valueOf(event_type_spinner.selectedItem.toString()),
                 event_description_input.text.toString(),
                 cb_annual.isChecked,
-                Event().getTimestamp(year, monthOfYear, dayOfMonth, hours, minutes),
+                eventChronology.getTimestamp(),
                 event.attendees,
                 event.giftIdeas
         )

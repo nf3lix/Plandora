@@ -18,6 +18,7 @@ import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.models.PlandoraUser
 import com.plandora.models.events.Event
+import com.plandora.models.events.EventChronology
 import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.coroutines.CoroutineScope
@@ -32,17 +33,11 @@ abstract class EventActivity :
 {
 
     internal lateinit var event: Event
-
+    internal lateinit var eventChronology: EventChronology
     internal lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     internal lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
     internal val attendeesList: ArrayList<PlandoraUser> = ArrayList()
     internal val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
-
-    internal var year = 0
-    internal var monthOfYear = 0
-    internal var dayOfMonth = 0
-    internal var hours = 0;
-    internal var minutes = 0
 
     internal val uiScope = CoroutineScope(Dispatchers.Main)
 
@@ -59,16 +54,16 @@ abstract class EventActivity :
 
     internal fun displaySelectedDate() {
         event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
-            "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
+            "%02d".format(eventChronology.monthOfYear), "%02d".format(eventChronology.dayOfMonth), "%04d".format(eventChronology.year)))
     }
 
     internal fun displaySelectedTime() {
         event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
-            "%02d".format(hours), "%02d".format(minutes)))
+            "%02d".format(eventChronology.hour), "%02d".format(eventChronology.minute)))
     }
 
     internal fun selectDate() {
-        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
+        PlandoraDatePicker(this, this).showDialog(eventChronology.year, eventChronology.monthOfYear - 1, eventChronology.dayOfMonth)
     }
 
     internal fun selectTime() {
@@ -92,15 +87,15 @@ abstract class EventActivity :
     }
 
     override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
-        year = selectedYear
-        monthOfYear = selectedMonth + 1
-        dayOfMonth = selectedDayOfMonth
+        eventChronology.year = selectedYear
+        eventChronology.monthOfYear = selectedMonth + 1
+        eventChronology.dayOfMonth = selectedDayOfMonth
         displaySelectedDate()
     }
 
     override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
-        hours = selectedHour
-        minutes = selectedMinute
+        eventChronology.hour = selectedHour
+        eventChronology.minute = selectedMinute
         displaySelectedTime()
     }
 
