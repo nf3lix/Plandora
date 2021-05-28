@@ -43,7 +43,6 @@ class EventDetailActivity : EventActivity(),
     TimePickerObserver
 {
 
-    // private lateinit var oldEvent: Event
     private lateinit var newEvent: Event
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -272,10 +271,7 @@ class EventDetailActivity : EventActivity(),
     }
 
     private fun setupClickListeners() {
-        btn_date_picker.setOnClickListener { selectDate() }
-        btn_time_picker.setOnClickListener { selectTime() }
-        event_date_input.setOnClickListener { selectDate() }
-        event_time_input.setOnClickListener { selectTime() }
+        setupDateTimeButtonListeners()
         btn_add_attendee.setOnClickListener {
             AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
         }

@@ -2,8 +2,6 @@ package com.plandora.activity
 
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,11 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
-import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
-import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
 import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
-import com.plandora.activity.components.dialogs.GiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
@@ -35,8 +30,6 @@ import com.plandora.validator.Validator
 import com.plandora.validator.validators.CreateEventValidator
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -49,8 +42,6 @@ open class CreateEventActivity :
     DatePickerObserver,
     TimePickerObserver
 {
-
-    // private lateinit var event: Event
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,19 +83,6 @@ open class CreateEventActivity :
         giftIdeasList.removeAll(selectedItems)
         btn_delete_items.visibility = View.GONE
         addGiftIdeasRecyclerView()
-    }
-
-    override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
-        year = selectedYear
-        monthOfYear = selectedMonth + 1
-        dayOfMonth = selectedDayOfMonth
-        displaySelectedDate()
-    }
-
-    override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
-        hours = selectedHour
-        minutes = selectedMinute
-        displaySelectedTime()
     }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
@@ -188,10 +166,7 @@ open class CreateEventActivity :
     }
 
     private fun setupButtonListeners() {
-        btn_date_picker.setOnClickListener { selectDate() }
-        btn_time_picker.setOnClickListener { selectTime() }
-        event_date_input.setOnClickListener { selectDate() }
-        event_time_input.setOnClickListener { selectTime() }
+        setupDateTimeButtonListeners()
         btn_add_gift_idea.setOnClickListener {
             AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }

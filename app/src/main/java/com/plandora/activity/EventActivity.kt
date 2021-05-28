@@ -1,6 +1,8 @@
 package com.plandora.activity
 
+import android.os.Bundle
 import android.os.Handler
+import android.os.PersistableBundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -110,6 +112,13 @@ abstract class EventActivity :
             attendeesAdapter = AttendeeRecyclerAdapter(event, attendeesList, this@EventActivity)
             adapter = attendeesAdapter
         }
+    }
+
+    internal fun setupDateTimeButtonListeners() {
+        btn_date_picker.setOnClickListener { selectDate() }
+        btn_time_picker.setOnClickListener { selectTime() }
+        event_date_input.setOnClickListener { selectDate() }
+        event_time_input.setOnClickListener { selectTime() }
     }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
