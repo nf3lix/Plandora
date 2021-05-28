@@ -1,16 +1,17 @@
 package com.plandora.activity
 
-import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
 import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
 import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
 import com.plandora.activity.components.dialogs.GiftIdeaDialog
+import com.plandora.activity.main.GiftIdeaDialogActivity
+import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.models.PlandoraUser
@@ -19,7 +20,12 @@ import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-abstract class EventActivity : PlandoraActivity(), GiftIdeaRecyclerAdapter.GiftIdeaClickListener, DatePickerObserver, TimePickerObserver {
+abstract class EventActivity :
+    PlandoraActivity(),
+    GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
+    DatePickerObserver, TimePickerObserver,
+    GiftIdeaDialogActivity
+{
 
     internal lateinit var attendeesAdapter: AttendeeRecyclerAdapter
     internal lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
@@ -33,11 +39,6 @@ abstract class EventActivity : PlandoraActivity(), GiftIdeaRecyclerAdapter.GiftI
     internal var minutes = 0
 
     internal val uiScope = CoroutineScope(Dispatchers.Main)
-
-    // override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-    //     super.onCreate(savedInstanceState, persistentState)
-    //     initChrono()
-    // }
 
     internal abstract fun initChrono()
 
@@ -86,6 +87,16 @@ abstract class EventActivity : PlandoraActivity(), GiftIdeaRecyclerAdapter.GiftI
         hours = selectedHour
         minutes = selectedMinute
         displaySelectedTime()
+    }
+
+    override fun addGiftIdeasRecyclerView() {
+        gift_ideas_recycler_view.apply {
+            layoutManager = LinearLayoutManager(this@EventActivity)
+            addItemDecoration(EventItemSpacingDecoration(5))
+            giftIdeaAdapter = GiftIdeaRecyclerAdapter(
+                giftIdeasList, this@EventActivity)
+            adapter = giftIdeaAdapter
+        }
     }
 
 }

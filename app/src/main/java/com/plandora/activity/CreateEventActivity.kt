@@ -87,15 +87,6 @@ open class CreateEventActivity :
         }
     }
 
-    override fun addGiftIdeasRecyclerView() {
-        gift_ideas_recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@CreateEventActivity)
-            addItemDecoration(EventItemSpacingDecoration(5))
-            giftIdeaAdapter = GiftIdeaRecyclerAdapter(giftIdeasList, this@CreateEventActivity)
-            adapter = giftIdeaAdapter
-        }
-    }
-
     private fun deleteAttendee() {
         val selectedItems = giftIdeaAdapter.getSelectedItems()
         giftIdeasList.removeAll(selectedItems)
@@ -115,16 +106,6 @@ open class CreateEventActivity :
         minutes = selectedMinute
         displaySelectedTime()
     }
-
-    // private fun displaySelectedDate() {
-    //     event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
-    //         "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
-    // }
-//
-    // private fun displaySelectedTime() {
-    //     event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
-    //         "%02d".format(hours), "%02d".format(minutes)))
-    // }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
         attendeesList.remove(attendeesList[position])

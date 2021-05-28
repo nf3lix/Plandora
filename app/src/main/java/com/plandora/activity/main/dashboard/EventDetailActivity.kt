@@ -212,16 +212,6 @@ class EventDetailActivity : EventActivity(),
         }
     }
 
-    override fun addGiftIdeasRecyclerView() {
-        gift_ideas_recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@EventDetailActivity)
-            addItemDecoration(EventItemSpacingDecoration(5))
-            giftIdeaAdapter = GiftIdeaRecyclerAdapter(
-                    giftIdeasList, this@EventDetailActivity)
-            adapter = giftIdeaAdapter
-        }
-    }
-
     override fun onDeleteAttendeeButtonClicked(position: Int) {
     }
 
