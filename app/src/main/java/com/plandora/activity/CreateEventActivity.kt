@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 open class CreateEventActivity :
-    PlandoraActivity(),
+    EventActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
@@ -50,23 +50,12 @@ open class CreateEventActivity :
     TimePickerObserver
 {
 
-    private val uiScope = CoroutineScope(Dispatchers.Main)
-
-    private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
-    private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
-    private var attendeesList: ArrayList<PlandoraUser> = ArrayList()
-    private var giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
-
     private lateinit var event: Event
-
-    private var year = Calendar.getInstance().get(Calendar.YEAR)
-    private var monthOfYear = Calendar.getInstance().get(Calendar.MONTH) + 1
-    private var dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-    private var hours = 0; private var minutes = 0
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initChrono()
         val networkCheck = NetworkCheck(this)
         networkCheck.registerNetworkCallback()
         setContentView(R.layout.activity_create_event)
@@ -79,6 +68,14 @@ open class CreateEventActivity :
         displaySelectedTime()
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
         setupButtonListeners()
+    }
+
+    override fun initChrono() {
+        year = Calendar.getInstance().get(Calendar.YEAR)
+        monthOfYear = Calendar.getInstance().get(Calendar.MONTH) + 1
+        dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+        hours = 0
+        minutes = 0
     }
 
     private fun addAttendeesRecyclerView() {
@@ -106,19 +103,11 @@ open class CreateEventActivity :
         addGiftIdeasRecyclerView()
     }
 
-    private fun selectDate() {
-        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
-    }
-
     override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
         year = selectedYear
         monthOfYear = selectedMonth + 1
         dayOfMonth = selectedDayOfMonth
         displaySelectedDate()
-    }
-
-    private fun selectTime() {
-        PlandoraTimePicker(this, this).showDialog()
     }
 
     override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
@@ -127,31 +116,19 @@ open class CreateEventActivity :
         displaySelectedTime()
     }
 
-    private fun displaySelectedDate() {
-        event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
-            "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
-    }
-
-    private fun displaySelectedTime() {
-        event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
-            "%02d".format(hours), "%02d".format(minutes)))
-    }
+    // private fun displaySelectedDate() {
+    //     event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
+    //         "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
+    // }
+//
+    // private fun displaySelectedTime() {
+    //     event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
+    //         "%02d".format(hours), "%02d".format(minutes)))
+    // }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
         attendeesList.remove(attendeesList[position])
         addAttendeesRecyclerView()
-    }
-
-    override fun onGiftItemClicked(position: Int) {
-        GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
-    }
-
-    override fun onGiftIdeaSelected(position: Int) {
-        btn_delete_items.visibility = View.VISIBLE
-    }
-
-    override fun onGiftIdeaDeselected(position: Int) {
-        btn_delete_items.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

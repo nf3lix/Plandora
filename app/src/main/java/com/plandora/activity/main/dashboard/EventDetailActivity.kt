@@ -1,8 +1,6 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,12 +9,13 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
-import com.plandora.activity.PlandoraActivity
+import com.plandora.activity.EventActivity
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
-import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
-import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
-import com.plandora.activity.components.dialogs.*
+import com.plandora.activity.components.dialogs.AddAttendeeDialog
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
+import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
+import com.plandora.activity.components.dialogs.ConfirmDialogListener
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
@@ -31,13 +30,11 @@ import com.plandora.models.gift_ideas.GiftIdeaUIWrapper
 import com.plandora.validator.validators.EditEventValidator
 import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
-class EventDetailActivity : PlandoraActivity(),
+class EventDetailActivity : EventActivity(),
     GiftIdeaDialogActivity,
     AttendeeRecyclerAdapter.OnDeleteButtonListener,
     GiftIdeaRecyclerAdapter.GiftIdeaClickListener,
@@ -46,20 +43,8 @@ class EventDetailActivity : PlandoraActivity(),
     TimePickerObserver
 {
 
-    private lateinit var attendeesAdapter: AttendeeRecyclerAdapter
-    private lateinit var giftIdeaAdapter: GiftIdeaRecyclerAdapter
-    private val attendeesList: ArrayList<PlandoraUser> = ArrayList()
-    private val giftIdeasList: ArrayList<GiftIdeaUIWrapper> = ArrayList()
-
-    private var year = 0
-    private var monthOfYear = 0
-    private var dayOfMonth = 0
-    private var hours = 0; private var minutes = 0
-
     private lateinit var oldEvent: Event
     private lateinit var newEvent: Event
-
-    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +53,14 @@ class EventDetailActivity : PlandoraActivity(),
         setupClickListeners()
         val event = intent.getParcelableExtra<Event>("event_object")!!
         setupBasedOnEvent(event)
+    }
+
+    override fun initChrono() {
+        year = 0
+        monthOfYear = 0
+        dayOfMonth = 0
+        hours = 0;
+        minutes = 0
     }
 
     private fun setupBasedOnEvent(event: Event) {
@@ -232,22 +225,6 @@ class EventDetailActivity : PlandoraActivity(),
     override fun onDeleteAttendeeButtonClicked(position: Int) {
     }
 
-    override fun onGiftItemClicked(position: Int) {
-        GiftIdeaDialog(this, findViewById<ViewGroup>(android.R.id.content).rootView as ViewGroup, GiftIdeaUIWrapper.createGiftIdeaFromUIWrapper(giftIdeasList[position])).showDialog()
-    }
-
-    override fun onGiftIdeaSelected(position: Int) {
-        Handler().postDelayed({
-            btn_delete_items.visibility = View.VISIBLE
-        }, 20)
-    }
-
-    override fun onGiftIdeaDeselected(position: Int) {
-        Handler().postDelayed({
-            btn_delete_items.visibility = View.GONE
-        }, 20)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.event_detail_menu, menu)
         return true
@@ -304,14 +281,6 @@ class EventDetailActivity : PlandoraActivity(),
         attendeesList.add(attendee)
     }
 
-    private fun selectDate() {
-        PlandoraDatePicker(this, this).showDialog(year, monthOfYear - 1, dayOfMonth)
-    }
-
-    private fun selectTime() {
-        PlandoraTimePicker(this, this).showDialog()
-    }
-
     private fun setupClickListeners() {
         btn_date_picker.setOnClickListener { selectDate() }
         btn_time_picker.setOnClickListener { selectTime() }
@@ -332,29 +301,6 @@ class EventDetailActivity : PlandoraActivity(),
         uiScope.launch {
             deleteEvent(oldEvent)
         }
-    }
-
-    override fun updateSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int) {
-        year = selectedYear
-        monthOfYear = selectedMonth + 1
-        dayOfMonth = selectedDayOfMonth
-        displaySelectedDate()
-    }
-
-    override fun updateSelectedTime(selectedHour: Int, selectedMinute: Int) {
-        hours = selectedHour
-        minutes = selectedMinute
-        displaySelectedTime()
-    }
-
-    private fun displaySelectedDate() {
-        event_date_input.setText(String.format(resources.getString(R.string.event_date_display),
-            "%02d".format(monthOfYear), "%02d".format(dayOfMonth), "%04d".format(year)))
-    }
-
-    private fun displaySelectedTime() {
-        event_time_input.setText(String.format(resources.getString(R.string.event_time_display),
-            "%02d".format(hours), "%02d".format(minutes)))
     }
 
 }
