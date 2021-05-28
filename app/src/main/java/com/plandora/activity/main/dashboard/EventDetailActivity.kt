@@ -12,7 +12,6 @@ import com.plandora.activity.EventActivity
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
 import com.plandora.activity.components.dialogs.AddAttendeeDialog
-import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.components.dialogs.ConfirmDeletionDialog
 import com.plandora.activity.components.dialogs.ConfirmDialogListener
 import com.plandora.activity.main.GiftIdeaDialogActivity
@@ -46,23 +45,25 @@ class EventDetailActivity : EventActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_event)
         addActionBar()
-        setupClickListeners()
-        val event = intent.getParcelableExtra<Event>("event_object")!!
         setupBasedOnEvent(event)
     }
 
+    override fun initEvent() {
+        event = intent.getParcelableExtra<Event>("event_object")!!
+    }
+
     override fun initChrono() {
-        year = 0
-        monthOfYear = 0
-        dayOfMonth = 0
-        hours = 0;
-        minutes = 0
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = event.timestamp
+        year = calendar.get(Calendar.YEAR)
+        monthOfYear = calendar.get(Calendar.MONTH) + 1
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        minutes = calendar.get(Calendar.MINUTE)
+        hours = calendar.get(Calendar.HOUR_OF_DAY)
     }
 
     private fun setupBasedOnEvent(oldEvent: Event) {
-        event = oldEvent
         addBasicEventInformation(event)
         addGiftIdeasRecyclerView()
     }
@@ -77,13 +78,6 @@ class EventDetailActivity : EventActivity(),
         cb_annual.isChecked = event.annual
         addAllAttendeesToList()
         addAllGiftIdeas(event.giftIdeas)
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = event.timestamp
-        year = calendar.get(Calendar.YEAR)
-        monthOfYear = calendar.get(Calendar.MONTH) + 1
-        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-        minutes = calendar.get(Calendar.MINUTE)
-        hours = calendar.get(Calendar.HOUR_OF_DAY)
     }
 
     private fun addAllAttendeesToList() {
@@ -260,13 +254,10 @@ class EventDetailActivity : EventActivity(),
         attendeesList.add(attendee)
     }
 
-    private fun setupClickListeners() {
-        setupDateTimeButtonListeners()
+    override fun setupClickListeners() {
+        super.setupClickListeners()
         btn_add_attendee.setOnClickListener {
             AddAttendeeDialog(it.context, it.rootView as? ViewGroup, false, event, this).showDialog()
-        }
-        btn_add_gift_idea.setOnClickListener {
-            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
         }
         btn_delete_items.setOnClickListener {
             deleteSelectedEvents()

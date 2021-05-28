@@ -5,17 +5,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.plandora.R
 import com.plandora.activity.components.date_time_picker.DatePickerObserver
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
-import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
-import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.EventController
@@ -46,19 +42,19 @@ open class CreateEventActivity :
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initChrono()
         val networkCheck = NetworkCheck(this)
         networkCheck.registerNetworkCallback()
-        setContentView(R.layout.activity_create_event)
         attendees_linear_layout.visibility = View.GONE
-        event = Event(ownerId = UserController().currentUserId(), attendees = arrayListOf())
         addAttendeesRecyclerView()
         addGiftIdeasRecyclerView()
         addActionBar()
         displaySelectedDate()
         displaySelectedTime()
         event_type_spinner.adapter = ArrayAdapter<EventType>(this, R.layout.support_simple_spinner_dropdown_item, EventType.values())
-        setupButtonListeners()
+    }
+
+    override fun initEvent() {
+        event = Event(ownerId = UserController().currentUserId(), attendees = arrayListOf())
     }
 
     override fun initChrono() {
@@ -156,11 +152,8 @@ open class CreateEventActivity :
         }
     }
 
-    private fun setupButtonListeners() {
-        setupDateTimeButtonListeners()
-        btn_add_gift_idea.setOnClickListener {
-            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
-        }
+    override fun setupClickListeners() {
+        super.setupClickListeners()
         btn_delete_items.setOnClickListener {
             deleteAttendee()
         }

@@ -1,5 +1,6 @@
 package com.plandora.activity
 
+import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import com.plandora.activity.components.date_time_picker.DatePickerObserver
 import com.plandora.activity.components.date_time_picker.PlandoraDatePicker
 import com.plandora.activity.components.date_time_picker.PlandoraTimePicker
 import com.plandora.activity.components.date_time_picker.TimePickerObserver
+import com.plandora.activity.components.dialogs.AddGiftIdeaDialog
 import com.plandora.activity.components.dialogs.GiftIdeaDialog
 import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
@@ -44,6 +46,15 @@ abstract class EventActivity :
 
     internal val uiScope = CoroutineScope(Dispatchers.Main)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_create_event)
+        initEvent()
+        initChrono()
+        setupClickListeners()
+    }
+
+    internal abstract fun initEvent()
     internal abstract fun initChrono()
 
     internal fun displaySelectedDate() {
@@ -112,11 +123,14 @@ abstract class EventActivity :
         }
     }
 
-    internal fun setupDateTimeButtonListeners() {
+    internal open fun setupClickListeners() {
         btn_date_picker.setOnClickListener { selectDate() }
         btn_time_picker.setOnClickListener { selectTime() }
         event_date_input.setOnClickListener { selectDate() }
         event_time_input.setOnClickListener { selectTime() }
+        btn_add_gift_idea.setOnClickListener {
+            AddGiftIdeaDialog(it.context, it.rootView as? ViewGroup, false, this).showDialog()
+        }
     }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
