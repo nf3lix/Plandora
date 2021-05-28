@@ -94,7 +94,8 @@ class EventDetailActivity : EventActivity(),
                 is State.Success -> {
                     attendeesList.add(state.data)
                 }
-                is State.Failed -> { }
+                is State.Failed -> {
+                }
             }
         }
     }
@@ -158,11 +159,16 @@ class EventDetailActivity : EventActivity(),
     }
 
     private suspend fun deleteEvent(event: Event) {
+        showProgressBar()
         EventController().deleteEvent(event).collect { state ->
             when(state) {
                 is State.Loading -> { }
-                is State.Success -> { finish() }
+                is State.Success -> {
+                    hideProgressBar()
+                    finish()
+                }
                 is State.Failed -> {
+                    hideProgressBar()
                     Toast.makeText(this@EventDetailActivity, state.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -176,14 +182,17 @@ class EventDetailActivity : EventActivity(),
     }
 
     private suspend fun addGiftIdeaToEvent(event: Event, giftIdea: GiftIdea) {
+        showProgressBar()
         EventController().addGiftIdeaToEvent(event, giftIdea).collect { state ->
             when(state) {
                 is State.Loading -> { }
                 is State.Success -> {
+                    hideProgressBar()
                     giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea))
                     addGiftIdeaToEventModel(giftIdea)
                 }
                 is State.Failed -> {
+                    hideProgressBar()
                     Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
                 }
             }
