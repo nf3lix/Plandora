@@ -1,4 +1,4 @@
-language: java
+language: generic
 
 #after_success:
 #  - bash <(curl -s https://codecov.io/bash)
