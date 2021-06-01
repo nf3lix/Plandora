@@ -14,7 +14,7 @@ class GiftIdeaRecyclerAdapterUnitTest {
 
     @Before
     fun initAdapter() {
-        adapter = GiftIdeaRecyclerAdapter(giftIdeasList, activity, false)
+        adapter = GiftIdeaRecyclerAdapter(giftIdeasList, activity)
     }
 
     @Test
