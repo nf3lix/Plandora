@@ -8,7 +8,8 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import com.plandora.R
-import com.plandora.models.validation_types.SignUpValidationTypes
+import com.plandora.validator.validators.SignUpValidator
+//import com.plandora.models.validation_types.SignUpValidationTypes
 import org.hamcrest.Matchers
 import org.junit.Rule
 import org.junit.Test
@@ -19,10 +20,10 @@ class SignUpActivityTest {
     var activityRule: ActivityTestRule<SignUpActivity>
             = ActivityTestRule(SignUpActivity::class.java)
 
-    @Test
+   @Test
     fun showToastIfUniqueNameIsEmpty() {
         onView(withId(R.id.btn_sign_up)).perform(click())
-        onView(withText(activityRule.activity.baseContext.getString(SignUpValidationTypes.EMPTY_UNIQUE_NAME.messageId)))
+        onView(withText(SignUpValidator.ValidationResults.EmptyUniqueNameResult().message))
             .inRoot(RootMatchers.withDecorView(Matchers.not(Matchers.`is`(activityRule.activity.window.decorView))))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
@@ -32,7 +33,7 @@ class SignUpActivityTest {
         onView(withId(R.id.unique_name_input)).perform(typeText("UNIQUE_NAME"))
         onView(isRoot()).perform(closeSoftKeyboard())
         onView(withId(R.id.btn_sign_up)).perform(click())
-        onView(withText(activityRule.activity.baseContext.getString(SignUpValidationTypes.EMPTY_DISPLAY_NAME.messageId)))
+        onView(withText(SignUpValidator.ValidationResults.EmptyDisplayNameResult().message))
             .inRoot(RootMatchers.withDecorView(Matchers.not(Matchers.`is`(activityRule.activity.window.decorView))))
             .check(ViewAssertions.matches(isDisplayed()))
     }
@@ -43,7 +44,7 @@ class SignUpActivityTest {
         onView(withId(R.id.display_name_input)).perform(typeText("DISPLAY_NAME"))
         onView(isRoot()).perform(closeSoftKeyboard())
         onView(withId(R.id.btn_sign_up)).perform(click())
-        onView(withText(activityRule.activity.baseContext.getString(SignUpValidationTypes.EMPTY_EMAIL.messageId)))
+        onView(withText(SignUpValidator.ValidationResults.EmptyEmailResult().message))
             .inRoot(RootMatchers.withDecorView(Matchers.not(Matchers.`is`(activityRule.activity.window.decorView))))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
@@ -55,7 +56,7 @@ class SignUpActivityTest {
         onView(withId(R.id.email_input)).perform(typeText("EMAIL"))
         onView(isRoot()).perform(closeSoftKeyboard())
         onView(withId(R.id.btn_sign_up)).perform(click())
-        onView(withText(activityRule.activity.baseContext.getString(SignUpValidationTypes.EMPTY_PASSWORD.messageId)))
+        onView(withText(SignUpValidator.ValidationResults.EmptyPasswordResult().message))
             .inRoot(RootMatchers.withDecorView(Matchers.not(Matchers.`is`(activityRule.activity.window.decorView))))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
@@ -69,7 +70,7 @@ class SignUpActivityTest {
         onView(withId(R.id.repeat_password_input)).perform(typeText("PASSWORD_2"))
         onView(isRoot()).perform(closeSoftKeyboard())
         onView(withId(R.id.btn_sign_up)).perform(click())
-        onView(withText(activityRule.activity.baseContext.getString(SignUpValidationTypes.PASSWORDS_DO_NOT_MATCH.messageId)))
+        onView(withText(SignUpValidator.ValidationResults.PasswordDoNotMatchResult().message))
             .inRoot(RootMatchers.withDecorView(Matchers.not(Matchers.`is`(activityRule.activity.window.decorView))))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
