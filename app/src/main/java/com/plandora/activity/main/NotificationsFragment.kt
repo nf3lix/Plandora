@@ -1,6 +1,7 @@
 package com.plandora.activity.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     override fun onResume() {
         super.onResume()
         uiScope.launch {
+            loadInvitedEvents()
             loadInvitations()
         }
     }
@@ -52,6 +54,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     }
 
     private fun addEventInvitationRecyclerView() {
+        Log.d("notifications", InvitationController.getAllInvitations().toString())
         eventInvitationList.addAll(InvitationController.getAllInvitations())
     }
 
@@ -63,6 +66,18 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
                     addEventInvitationRecyclerView()
                     eventInvitationAdapter.notifyDataSetChanged()
                 }
+                is State.Failed -> {
+                    Toast.makeText(activity, state.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private suspend fun loadInvitedEvents() {
+        InvitationController().getInvitedEvents().collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { }
                 is State.Failed -> {
                     Toast.makeText(activity, state.message, Toast.LENGTH_LONG).show()
                 }
