@@ -7,9 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
-import com.plandora.controllers.EventController
-import com.plandora.controllers.UserController
+import com.plandora.controllers.InvitationController
 import com.plandora.controllers.State
+import com.plandora.controllers.UserController
+import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import kotlinx.android.synthetic.main.layout_invitation_list_item.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -50,8 +51,9 @@ class EventInvitationRecyclerAdapter (private var invitationList: List<EventInvi
         fun bind(eventInvitation: EventInvitation) {
             acceptButton.setOnClickListener{ onAcceptListener(adapterPosition) }
             declineButton.setOnClickListener{ onDeclineListener(adapterPosition) }
-            eventTitle.text = EventController.events[eventInvitation.eventId]?.title
-            remainingDays.text = EventController.events[eventInvitation.eventId]?.remainingDays().toString()
+            val event: Event = InvitationController.getEventFromInvitation(eventInvitation)!!
+            eventTitle.text = event.title
+            remainingDays.text = "In ${event.remainingDays()} days"
             uiScope.launch {
                 loadUsername(eventInvitation.invitationOwnerId)
             }

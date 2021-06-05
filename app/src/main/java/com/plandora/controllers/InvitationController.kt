@@ -2,6 +2,7 @@ package com.plandora.controllers
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.plandora.models.events.Event
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.events.EventInvitationStatus
 import com.plandora.utils.constants.FirestoreConstants
@@ -15,9 +16,14 @@ class InvitationController {
 
     companion object {
         private val invitations: HashMap<String, EventInvitation> = HashMap()
+        private val invitedEvents: HashMap<String, Event> = HashMap()
 
         fun getAllInvitations(): ArrayList<EventInvitation> {
             return ArrayList(invitations.values)
+        }
+
+        fun getEventFromInvitation(eventInvitation: EventInvitation): Event? {
+            return invitedEvents[eventInvitation.eventId]
         }
 
         fun getInvitationById(key: String): EventInvitation? {
@@ -55,6 +61,33 @@ class InvitationController {
             .collection(FirestoreConstants.INVITATIONS)
             .whereEqualTo(FirestoreConstants.INVITED_USER_ID, UserController().currentUserId())
             .get().await()
+    }
+
+    fun getInvitedEvents() = flow<State<String>> {
+        emit(State.loading())
+        val document = fetchEvents()
+        transformEventListDocument(document)
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun fetchEvents(): QuerySnapshot {
+        return firestoreInstance
+            .collection(FirestoreConstants.EVENTS)
+            .whereArrayContains(FirestoreConstants.EVENT_INVITED_USER_IDS, UserController().currentUserId())
+            .get().await()
+    }
+
+    private fun transformEventListDocument(querySnapshot: QuerySnapshot) {
+        invitedEvents.clear()
+        addEventsFromQuerySnapshot(querySnapshot)
+    }
+
+    private fun addEventsFromQuerySnapshot(querySnapshot: QuerySnapshot) {
+        querySnapshot.forEach { document ->
+            invitedEvents[document.id] = document.toObject(Event::class.java)
+        }
     }
 
     private fun addInvitationsFromQuerySnapshot(querySnapshot: QuerySnapshot) {

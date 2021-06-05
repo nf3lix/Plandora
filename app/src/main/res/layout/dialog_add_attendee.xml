@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:hint="Name or Email"
             android:layout_margin="20dp"
-            android:inputType="textCapSentences" />
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 </FrameLayout>
