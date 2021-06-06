@@ -1,7 +1,6 @@
 package com.plandora.activity.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.EventInvitationRecyclerAdapter
-import com.plandora.controllers.InvitationController
 import com.plandora.controllers.EventController
+import com.plandora.controllers.InvitationController
 import com.plandora.controllers.State
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.events.EventInvitationStatus
@@ -54,7 +53,6 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     }
 
     private fun addEventInvitationRecyclerView() {
-        Log.d("notifications", InvitationController.getAllInvitations().toString())
         eventInvitationList.addAll(InvitationController.getAllInvitations())
     }
 
@@ -129,6 +127,16 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
         }
     }
 
+    private suspend fun callBackInvitation(invitation: EventInvitation) {
+        InvitationController().callBackInvitation(invitation).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { }
+                is State.Failed -> { }
+            }
+        }
+    }
+
     private fun removeInvitationItem(position: Int) {
         eventInvitationList.removeAt(position)
         eventInvitationAdapter.notifyDataSetChanged()
@@ -144,7 +152,9 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     override fun onDeclineListener(position: Int) {
         currentPosition = position
         uiScope.launch {
-            loadEvent(eventInvitationList[position].eventId, EventInvitationStatus.DECLINED)
+            callBackInvitation(eventInvitationList[position])
+            removeInvitationItem(currentPosition)
+            loadInvitedEvents()
         }
     }
 

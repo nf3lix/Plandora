@@ -1,5 +1,7 @@
 package com.plandora.controllers
 
+import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.plandora.models.events.Event
@@ -106,6 +108,24 @@ class InvitationController {
             }
         }
         return invitationId
+    }
+
+    fun callBackInvitation(invitation: EventInvitation) = flow<State<String>> {
+        emit(State.loading())
+        removeInvitationFromEventDocument(invitation)
+        deleteInvitationDocument(getInvitationId(invitation))
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun removeInvitationFromEventDocument(invitation: EventInvitation) {
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(invitation.eventId)
+            .update(FirestoreConstants.EVENT_INVITED_USER_IDS, FieldValue.arrayRemove(invitation.invitedUserId)).await()
+    }
+
+    private suspend fun deleteInvitationDocument(invitationId: String) {
+        firestoreInstance.collection(FirestoreConstants.INVITATIONS).document(invitationId).delete().await()
     }
 
 }
