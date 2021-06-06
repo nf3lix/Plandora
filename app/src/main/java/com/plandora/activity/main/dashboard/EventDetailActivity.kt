@@ -1,6 +1,7 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,6 +19,7 @@ import com.plandora.activity.main.GiftIdeaDialogActivity
 import com.plandora.adapters.AttendeeRecyclerAdapter
 import com.plandora.adapters.GiftIdeaRecyclerAdapter
 import com.plandora.controllers.EventController
+import com.plandora.controllers.InvitationController
 import com.plandora.controllers.State
 import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
@@ -31,7 +33,8 @@ import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class EventDetailActivity : EventActivity(),
     GiftIdeaDialogActivity,
@@ -43,6 +46,7 @@ class EventDetailActivity : EventActivity(),
 {
 
     private lateinit var newEvent: Event
+    private val attendeesMap: HashMap<String, PlandoraUser> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +97,7 @@ class EventDetailActivity : EventActivity(),
                 is State.Loading -> { }
                 is State.Success -> {
                     attendeesList.add(state.data)
+                    attendeesMap[userId] = state.data
                 }
                 is State.Failed -> {
                 }
@@ -200,6 +205,23 @@ class EventDetailActivity : EventActivity(),
     }
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
+        val attendee = attendeesList[position]
+        Log.d("activity", attendee.toString())
+        uiScope.launch {
+            removeAttendee(attendee)
+        }
+    }
+
+    private suspend fun removeAttendee(attendee: PlandoraUser) {
+        EventController().removeAttendee(attendee.id, event).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    Toast.makeText(this, "User removed", Toast.LENGTH_LONG).show()
+                }
+                is State.Failed -> { }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -272,6 +294,16 @@ class EventDetailActivity : EventActivity(),
         uiScope.launch {
             deleteEvent(event)
         }
+    }
+
+    private fun getUserId(user: PlandoraUser): String {
+        var userId = ""
+        for (entry: MutableMap.MutableEntry<String, PlandoraUser> in attendeesMap) {
+            if(entry.value == user) {
+                userId = entry.key
+            }
+        }
+        return userId
     }
 
 }
