@@ -119,7 +119,7 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
         return if (eventTypeSelected) {
             if (event.eventType.toString() == search_type_spinner.selectedItem.toString()) {
                 if (eventTitleSelected) {
-                    event.title == search_for_events_title_input.text.toString()
+                    event.title.contains(search_for_events_title_input.text.toString())
                 } else {
                     true
                 }
@@ -127,7 +127,7 @@ class SearchForEventsActivity: PlandoraActivity(), EventRecyclerAdapter.OnClickL
                 false
             }
         } else {
-            event.title == search_for_events_title_input.text.toString()
+            event.title.contains(search_for_events_title_input.text.toString())
         }
     }
 
