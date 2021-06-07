@@ -2,13 +2,11 @@ package com.plandora.models.events
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
-import com.plandora.models.gift_ideas.GiftIdea
 import com.plandora.models.PlandoraUser
+import com.plandora.models.gift_ideas.GiftIdea
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 data class Event(
