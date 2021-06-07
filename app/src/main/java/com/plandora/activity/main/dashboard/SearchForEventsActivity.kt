@@ -2,11 +2,11 @@ package com.plandora.activity.main.dashboard
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
@@ -14,8 +14,6 @@ import com.plandora.activity.PlandoraActivity
 import com.plandora.adapters.EventRecyclerAdapter
 import com.plandora.controllers.EventController
 import com.plandora.models.events.Event
-import com.plandora.models.events.EventType
-import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.activity_search_for_events.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 

@@ -1,6 +1,5 @@
 package com.plandora.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.controllers.UserController
-import com.plandora.models.events.Event
 import com.plandora.models.PlandoraUser
+import com.plandora.models.events.Event
 import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 
 class AttendeeRecyclerAdapter(private var event: Event, private var items: List<PlandoraUser>, private val onDeleteButtonListener: OnDeleteButtonListener)

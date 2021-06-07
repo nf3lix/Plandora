@@ -1,6 +1,5 @@
 package com.plandora.controllers
 
-import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -112,20 +111,34 @@ class InvitationController {
 
     fun callBackInvitation(invitation: EventInvitation) = flow<State<String>> {
         emit(State.loading())
-        removeInvitationFromEventDocument(invitation)
+        removeInvitationFromEventDocument(invitation.eventId, invitation.invitedUserId)
         deleteInvitationDocument(getInvitationId(invitation))
         emit(State.success(""))
     }.catch {
         emit(State.failed(it.message.toString()))
     }.flowOn(Dispatchers.IO)
 
-    private suspend fun removeInvitationFromEventDocument(invitation: EventInvitation) {
-        firestoreInstance.collection(FirestoreConstants.EVENTS).document(invitation.eventId)
-            .update(FirestoreConstants.EVENT_INVITED_USER_IDS, FieldValue.arrayRemove(invitation.invitedUserId)).await()
+    fun callBackInvitation(eventId: String, userId: String) = flow<State<String>> {
+        emit(State.loading())
+        removeInvitationFromEventDocument(eventId, userId)
+        deleteInvitationDocument(eventId, userId)
+        emit(State.success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    private suspend fun removeInvitationFromEventDocument(eventId: String, userId: String) {
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId)
+            .update(FirestoreConstants.EVENT_INVITED_USER_IDS, FieldValue.arrayRemove(userId)).await()
     }
 
     private suspend fun deleteInvitationDocument(invitationId: String) {
         firestoreInstance.collection(FirestoreConstants.INVITATIONS).document(invitationId).delete().await()
     }
 
+    private suspend fun deleteInvitationDocument(eventId: String, userId: String) {
+        val querySnapshot = firestoreInstance.collection(FirestoreConstants.INVITATIONS).whereEqualTo("eventId", eventId).whereEqualTo(FirestoreConstants.INVITED_USER_ID, userId).get().await()
+        val id = querySnapshot.documents[0].id
+        firestoreInstance.collection(FirestoreConstants.INVITATIONS).document(id).delete().await()
+    }
 }

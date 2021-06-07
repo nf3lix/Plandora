@@ -191,7 +191,7 @@ class EventController {
         return document.toObject(Event::class.java)!!
     }
 
-    private fun getEventId(event: Event): String {
+    fun getEventId(event: Event): String {
         var eventId = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == event) {

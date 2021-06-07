@@ -1,7 +1,6 @@
 package com.plandora.activity.main.dashboard
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -33,8 +32,6 @@ import kotlinx.android.synthetic.main.activity_create_event.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class EventDetailActivity : EventActivity(),
     GiftIdeaDialogActivity,
@@ -206,9 +203,12 @@ class EventDetailActivity : EventActivity(),
 
     override fun onDeleteAttendeeButtonClicked(position: Int) {
         val attendee = attendeesList[position]
-        Log.d("activity", attendee.toString())
         uiScope.launch {
-            removeAttendee(attendee)
+            if(!event.isInvitedUser(attendee)) {
+                removeAttendee(attendee)
+            } else {
+                removePendingInvitation(attendee)
+            }
         }
     }
 
@@ -218,6 +218,22 @@ class EventDetailActivity : EventActivity(),
                 is State.Loading -> { }
                 is State.Success -> {
                     Toast.makeText(this, "User removed", Toast.LENGTH_LONG).show()
+                    attendeesList.remove(attendee)
+                    attendeesAdapter.notifyDataSetChanged()
+                }
+                is State.Failed -> { }
+            }
+        }
+    }
+
+    private suspend fun removePendingInvitation(user: PlandoraUser) {
+        InvitationController().callBackInvitation(EventController().getEventId(event), user.id).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    Toast.makeText(this, "User removed", Toast.LENGTH_LONG).show()
+                    attendeesList.remove(user)
+                    attendeesAdapter.notifyDataSetChanged()
                 }
                 is State.Failed -> { }
             }
