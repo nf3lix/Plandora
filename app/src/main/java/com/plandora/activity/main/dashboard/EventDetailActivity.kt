@@ -48,7 +48,7 @@ class EventDetailActivity : EventActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addActionBar()
-        setupBasedOnEvent(event)
+        setupBasedOnEvent()
     }
 
     override fun initEvent() {
@@ -59,7 +59,7 @@ class EventDetailActivity : EventActivity(),
         eventChronology = EventChronology.eventChronologyFromEvent(event)
     }
 
-    private fun setupBasedOnEvent(oldEvent: Event) {
+    private fun setupBasedOnEvent() {
         addBasicEventInformation(event)
         addGiftIdeasRecyclerView()
     }
@@ -106,11 +106,6 @@ class EventDetailActivity : EventActivity(),
         giftIdeas.forEach { giftIdea -> giftIdeasList.add(GiftIdeaUIWrapper.createFromGiftIdea(giftIdea)) }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        prepareDeleteIcon(menu)
-        return super.onPrepareOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.save_entry -> {
@@ -118,17 +113,19 @@ class EventDetailActivity : EventActivity(),
                 true
             }
             R.id.delete_entry -> {
-                ConfirmDeletionDialog(this, this).showDialog()
+                showDeletionDialog()
                 true
             }
             else -> false
         }
     }
 
-    private fun prepareDeleteIcon(menu: Menu?) {
-        if (menu != null && !event.isOwner(UserController().currentUserId())) {
-            menu.getItem(0).isVisible = false
+    private fun showDeletionDialog() {
+        if(event.isOwner(UserController().currentUserId())) {
+            ConfirmDeletionDialog(this, this, "Delete item", "Are you sure you want to delete this item permanently for all attendees?").showDialog()
+            return
         }
+        ConfirmDeletionDialog(this, this, "Leave event", "Are you sure you want to leave this event? It will still be available for all other attendees.").showDialog()
     }
 
     private fun onSaveButtonClicked() {
@@ -218,7 +215,6 @@ class EventDetailActivity : EventActivity(),
                 is State.Loading -> { }
                 is State.Success -> {
                     Toast.makeText(this, "User removed", Toast.LENGTH_LONG).show()
-                    // event.invitedUserIds.remove(attendee.id)
                     attendeesList.remove(attendee)
                     attendeesAdapter.notifyDataSetChanged()
                 }
@@ -284,7 +280,7 @@ class EventDetailActivity : EventActivity(),
                     addGiftIdeasRecyclerView()
                 }
                 is State.Failed -> {
-                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -301,7 +297,6 @@ class EventDetailActivity : EventActivity(),
     fun addAttendeeToList(attendee: PlandoraUser) {
         event.invitedUserIds.add(attendee.id)
         attendeesList.add(attendee)
-        // event.invitedUserIds.remove(attendee.id)
     }
 
     override fun setupClickListeners() {
@@ -314,20 +309,26 @@ class EventDetailActivity : EventActivity(),
         }
     }
 
-    override fun onPositiveButtonClicked() {
+    override fun onConfirmDeletionClicked() {
         uiScope.launch {
-            deleteEvent(event)
+            if(event.isOwner(UserController().currentUserId())) {
+                deleteEvent(event)
+            } else {
+                leaveEvent()
+            }
         }
     }
 
-    private fun getUserId(user: PlandoraUser): String {
-        var userId = ""
-        for (entry: MutableMap.MutableEntry<String, PlandoraUser> in attendeesMap) {
-            if(entry.value == user) {
-                userId = entry.key
+    private suspend fun leaveEvent() {
+        EventController().removeAttendee(UserController().currentUserId(), event).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> {
+                    finish()
+                }
+                is State.Failed -> { }
             }
         }
-        return userId
     }
 
 }
