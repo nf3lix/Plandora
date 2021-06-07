@@ -218,6 +218,7 @@ class EventDetailActivity : EventActivity(),
                 is State.Loading -> { }
                 is State.Success -> {
                     Toast.makeText(this, "User removed", Toast.LENGTH_LONG).show()
+                    // event.invitedUserIds.remove(attendee.id)
                     attendeesList.remove(attendee)
                     attendeesAdapter.notifyDataSetChanged()
                 }
@@ -227,6 +228,11 @@ class EventDetailActivity : EventActivity(),
     }
 
     private suspend fun removePendingInvitation(user: PlandoraUser) {
+        var id = EventController().getEventId(event)
+        if(id.isEmpty()) {
+            event.invitedUserIds.remove(user.id)
+            id = EventController().getEventId(event)
+        }
         InvitationController().callBackInvitation(EventController().getEventId(event), user.id).collect { state ->
             when(state) {
                 is State.Loading -> { }
@@ -293,7 +299,9 @@ class EventDetailActivity : EventActivity(),
     }
 
     fun addAttendeeToList(attendee: PlandoraUser) {
+        event.invitedUserIds.add(attendee.id)
         attendeesList.add(attendee)
+        // event.invitedUserIds.remove(attendee.id)
     }
 
     override fun setupClickListeners() {
