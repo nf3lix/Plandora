@@ -7,8 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
-import com.plandora.models.events.Event
+import com.plandora.controllers.UserController
 import com.plandora.models.PlandoraUser
+import com.plandora.models.events.Event
 import kotlinx.android.synthetic.main.layout_attendees_list_item.view.*
 
 class AttendeeRecyclerAdapter(private var event: Event, private var items: List<PlandoraUser>, private val onDeleteButtonListener: OnDeleteButtonListener)
@@ -36,17 +37,21 @@ class AttendeeRecyclerAdapter(private var event: Event, private var items: List<
     class AttendeeViewHolder(itemView: View, private val onClickListener: OnDeleteButtonListener) : RecyclerView.ViewHolder(itemView), OnDeleteButtonListener {
         private val displayName: TextView = itemView.attendee_displayName
         private val eventOwnerIcon: ImageView = itemView.attendee_owner_icon
+        private val pendingInvitationIcon: ImageView = itemView.pending_invitation
         private val eventDeleteButton: ImageView = itemView.attendee_delete_button
 
         fun bind(event: Event, user: PlandoraUser) {
+            eventOwnerIcon.visibility = View.GONE
+            pendingInvitationIcon.visibility = View.GONE
+            eventDeleteButton.visibility = View.GONE
             displayName.text = user.displayName
             if(event.isOwner(user)) {
-                eventOwnerIcon.setImageResource(R.drawable.ic_event_owner_icon)
-                eventDeleteButton.visibility
+                eventOwnerIcon.visibility = View.VISIBLE
             } else if(event.isInvitedUser(user)) {
-                eventDeleteButton.setImageResource(R.drawable.ic_event_attendee_pending)
-            } else {
-                eventDeleteButton.setImageResource(R.drawable.ic_remove_attendee_icon)
+                pendingInvitationIcon.visibility = View.VISIBLE
+            }
+            if(event.ownerId == UserController().currentUserId() && UserController().currentUserId() != user.id) {
+                eventDeleteButton.visibility = View.VISIBLE
                 eventDeleteButton.setOnClickListener{ onDeleteAttendeeButtonClicked(adapterPosition) }
             }
         }

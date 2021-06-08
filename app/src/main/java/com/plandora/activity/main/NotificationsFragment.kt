@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.plandora.R
 import com.plandora.activity.main.dashboard.EventItemSpacingDecoration
 import com.plandora.adapters.EventInvitationRecyclerAdapter
-import com.plandora.controllers.InvitationController
 import com.plandora.controllers.EventController
+import com.plandora.controllers.InvitationController
 import com.plandora.controllers.State
 import com.plandora.models.events.EventInvitation
 import com.plandora.models.events.EventInvitationStatus
@@ -37,6 +37,7 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     override fun onResume() {
         super.onResume()
         uiScope.launch {
+            loadInvitedEvents()
             loadInvitations()
         }
     }
@@ -63,6 +64,18 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
                     addEventInvitationRecyclerView()
                     eventInvitationAdapter.notifyDataSetChanged()
                 }
+                is State.Failed -> {
+                    Toast.makeText(activity, state.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private suspend fun loadInvitedEvents() {
+        InvitationController().getInvitedEvents().collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { }
                 is State.Failed -> {
                     Toast.makeText(activity, state.message, Toast.LENGTH_LONG).show()
                 }
@@ -114,6 +127,16 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
         }
     }
 
+    private suspend fun callBackInvitation(invitation: EventInvitation) {
+        InvitationController().callBackInvitation(invitation).collect { state ->
+            when(state) {
+                is State.Loading -> { }
+                is State.Success -> { }
+                is State.Failed -> { }
+            }
+        }
+    }
+
     private fun removeInvitationItem(position: Int) {
         eventInvitationList.removeAt(position)
         eventInvitationAdapter.notifyDataSetChanged()
@@ -129,7 +152,9 @@ class NotificationsFragment : Fragment(), EventInvitationRecyclerAdapter.OnHandl
     override fun onDeclineListener(position: Int) {
         currentPosition = position
         uiScope.launch {
-            loadEvent(eventInvitationList[position].eventId, EventInvitationStatus.DECLINED)
+            callBackInvitation(eventInvitationList[position])
+            removeInvitationItem(currentPosition)
+            loadInvitedEvents()
         }
     }
 

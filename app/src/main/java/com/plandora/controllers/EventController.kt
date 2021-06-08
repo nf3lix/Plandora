@@ -190,7 +190,8 @@ class EventController {
         val document = firestoreInstance.collection(FirestoreConstants.EVENTS).document(eventId).get().await()
         return document.toObject(Event::class.java)!!
     }
-    private fun getEventId(event: Event): String {
+
+    fun getEventId(event: Event): String {
         var eventId = ""
         for (entry: MutableMap.MutableEntry<String, Event> in events.entries) {
             if(entry.value == event) {
@@ -199,6 +200,15 @@ class EventController {
         }
         return eventId
     }
+
+    fun removeAttendee(userId: String, event: Event) = flow<State<String>> {
+        emit(State.loading())
+        firestoreInstance.collection(FirestoreConstants.EVENTS).document(getEventId(event))
+            .update(FirestoreConstants.ATTENDEES, FieldValue.arrayRemove(userId)).await()
+        emit(State.Success(""))
+    }.catch {
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
     fun deleteEvent(event: Event) = flow<State<String>> {
         emit(State.loading())

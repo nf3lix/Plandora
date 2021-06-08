@@ -7,11 +7,6 @@
             android:title="Profile" />
 
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="Settings" />
-
-        <item
             android:id="@+id/nav_sign_out"
             android:icon="@drawable/ic_sign_out"
             android:title="Sign out" />
