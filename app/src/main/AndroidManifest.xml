@@ -24,7 +24,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.main.dashboard.SearchForEventsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_search_for_events" />
         <activity
             android:name=".activity.launch.SplashScreenActivity"
             android:screenOrientation="portrait"

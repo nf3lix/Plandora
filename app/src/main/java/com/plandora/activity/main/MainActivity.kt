@@ -2,6 +2,7 @@ package com.plandora.activity.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -48,6 +49,13 @@ class MainActivity : PlandoraActivity(), NavigationView.OnNavigationItemSelected
     override fun onNavigationItemSelected(item: MenuItem) : Boolean {
         when(item.itemId) {
             R.id.nav_sign_out -> signOut()
+            R.id.nav_user_profile -> {
+                drawer_layout.closeDrawer(GravityCompat.START)
+                updateFragment(
+                    ProfileFragment(),
+                    resources.getString(R.string.profile_toolbar_title)
+                )
+            }
         }
         return true
     }
