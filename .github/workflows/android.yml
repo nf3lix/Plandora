@@ -32,7 +32,7 @@ jobs:
       run: ./gradlew assemble
       
     #- name: Create Report
-    #  run: ./gradlew jacocoTestReport
+    #  run: ./gradlew jacocoTestReport 
       
     #- name: CodeCov report deploy
     #  run: bash <(curl -s https://codecov.io/bash)
